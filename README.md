@@ -55,37 +55,35 @@ pip install -r requirements.txt
 
 ### 2. 配置设置
 
-#### 复制配置模板
+#### 📋 详细配置指南
+请参考：[CONFIGURATION_GUIDE.md](CONFIGURATION_GUIDE.md) 获取完整的配置说明。
+
+#### 快速配置步骤
+
+**步骤1：复制配置模板**
 ```bash
 cp config/secrets.env.example config/secrets.env
 ```
 
-#### 编辑密钥配置 (`config/secrets.env`)
+**步骤2：编辑密钥文件 (`config/secrets.env`)**
 ```env
-# DeepSeek API配置
-DEEPSEEK_API_KEY=your_deepseek_api_key_here
-
-# GitHub配置
+# 只需要3个密钥
+LLM_API_KEY=your_llm_api_key_here  # 支持DeepSeek、OpenAI等
 GITHUB_TOKEN=your_github_token_here
-
-# 邮件配置
 EMAIL_PASSWORD=your_email_app_password_here
 ```
 
-#### 编辑主配置 (`config/config.yaml`)
+**步骤3：编辑主配置 (`config/config.yaml`)**
 ```yaml
-# GitHub仓库配置
+# 修改GitHub仓库 (第79行)
 github:
   repository: "your-username/your-repo-name"
-  
-# 邮件配置
+
+# 修改邮件配置 (第146-149行)
 email:
   sender_email: "your-email@example.com"
   recipient_email: "recipient@example.com"
-  
-# RTD配置
-rtd:
-  base_url: "https://your-project.readthedocs.io/zh-cn/latest/"
+  smtp_server: "smtp.qq.com"  # 根据邮箱提供商选择
 ```
 
 ### 3. 运行测试

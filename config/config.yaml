@@ -59,7 +59,7 @@ llm:
   # LLM API configuration - supports OpenAI, DeepSeek, and other compatible APIs
   provider: "deepseek"  # Options: "openai", "deepseek", "custom"
   model: "deepseek-chat"  # DeepSeek models: "deepseek-chat", "deepseek-reasoner"
-  # Base URL for API (can be overridden by environment variable)
+  # Base URL for API (从环境变量LLM_BASE_URL读取，或使用默认值)
   base_url: "https://api.deepseek.com"  # DeepSeek API endpoint
   # Maximum tokens for summary
   max_tokens: 2000
@@ -77,9 +77,7 @@ llm:
 # GitHub Configuration
 github:
   # Target repository for uploading summaries (format: username/repo-name)
-  target_repo: "your-username/paper-summaries"
-  # GitHub username (can be overridden by GITHUB_USERNAME env var)
-  username: "your-username"
+  repository: "iseDocument/iseDocument"
   # Branch to commit to
   branch: "main"
   # Directory to store summaries in the repository
@@ -144,12 +142,19 @@ topic_organization:
 
 # Email Notification Configuration
 email:
-  # SMTP server settings
-  smtp_server: "smtp.gmail.com"
+  # 发送方邮箱配置
+  sender_email: "yerenbot@gmail.com"
+  # 接收方邮箱配置
+  recipient_email: "syeren@foxmail.com"
+  # SMTP服务器配置
+  smtp_server: "smtp.gmail.com"  # QQ邮箱: smtp.qq.com, Gmail: smtp.gmail.com, 163邮箱: smtp.163.com
   smtp_port: 587
-  # Daily report settings
+  use_tls: true
+  # 每日报告设置
   send_daily_report: true
   report_time: "08:00"  # 早上8点发送报告
-  # Email template settings
+  # 邮件模板设置
   include_summary_preview: true
   max_papers_per_topic: 10
+  # 邮件主题模板
+  subject_template: "📚 每日论文摘要报告 - {date}"

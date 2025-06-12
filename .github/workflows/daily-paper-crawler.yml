@@ -51,7 +51,7 @@ jobs:
         
     - name: Create secrets.env
       run: |
-        echo "DEEPSEEK_API_KEY=${{ secrets.DEEPSEEK_API_KEY }}" >> config/secrets.env
+        echo "LLM_API_KEY=${{ secrets.LLM_API_KEY }}" >> config/secrets.env
         echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> config/secrets.env
         echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" >> config/secrets.env
         

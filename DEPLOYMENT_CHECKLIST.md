@@ -14,8 +14,14 @@
 
 ### 3. API密钥获取
 
-#### DeepSeek API
+#### LLM API (选择其一)
+**DeepSeek API (推荐，成本低)**
 - [ ] 注册 [DeepSeek](https://platform.deepseek.com/) 账户
+- [ ] 获取API密钥
+- [ ] 确认账户有足够余额
+
+**OpenAI API (可选)**
+- [ ] 注册 [OpenAI](https://platform.openai.com/) 账户
 - [ ] 获取API密钥
 - [ ] 确认账户有足够余额
 
@@ -33,7 +39,7 @@
 ### 4. GitHub Secrets配置
 进入仓库 Settings → Secrets and variables → Actions
 
-- [ ] 添加 `DEEPSEEK_API_KEY`
+- [ ] 添加 `LLM_API_KEY`
 - [ ] 添加 `GITHUB_TOKEN`
 - [ ] 添加 `EMAIL_PASSWORD`
 
@@ -91,7 +97,7 @@ git push origin main
 
 ### 常见错误
 1. **Secrets未配置**
-   - 错误：`KeyError: 'DEEPSEEK_API_KEY'`
+   - 错误：`KeyError: 'LLM_API_KEY'`
    - 解决：检查GitHub Secrets配置
 
 2. **权限不足**

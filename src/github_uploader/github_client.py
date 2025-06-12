@@ -49,33 +49,26 @@ class GitHubClient:
         return token
     
     def _get_github_username(self) -> str:
-        """Get GitHub username from environment variables or config."""
-        username = os.getenv('GITHUB_USERNAME') or self.config.get('username')
-        if not username:
-            raise ValueError("GitHub username is required (set GITHUB_USERNAME or config)")
-        return username
-    
+        """Get GitHub username from config."""
+        repository = self.config.get('repository')
+        if not repository:
+            raise ValueError("GitHub repository is required in config.yaml (format: username/repo)")
+
+        if '/' not in repository:
+            raise ValueError("Repository must be in format 'username/repo'")
+
+        return repository.split('/')[0]
+
     def _get_repo_name(self) -> str:
-        """Get repository name from environment variables or config."""
-        repo = os.getenv('GITHUB_REPO') or self.config.get('target_repo')
-        if not repo:
-            raise ValueError("GitHub repository is required (set GITHUB_REPO or config)")
+        """Get repository name from config."""
+        repository = self.config.get('repository')
+        if not repository:
+            raise ValueError("GitHub repository is required in config.yaml (format: username/repo)")
 
-        # Handle different formats:
-        # - "username/repo"
-        # - "repo"
-        # - "https://github.com/username/repo.git"
-        # - "https://github.com/username/repo"
+        if '/' not in repository:
+            raise ValueError("Repository must be in format 'username/repo'")
 
-        if repo.startswith('https://github.com/'):
-            # Extract from URL format
-            repo = repo.replace('https://github.com/', '')
-            if repo.endswith('.git'):
-                repo = repo[:-4]
-
-        if '/' in repo:
-            return repo.split('/')[-1]
-        return repo
+        return repository.split('/')[1]
     
     def _make_request(self, method: str, url: str, **kwargs) -> requests.Response:
         """Make authenticated request to GitHub API."""

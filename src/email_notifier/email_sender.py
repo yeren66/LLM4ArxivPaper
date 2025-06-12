@@ -29,14 +29,22 @@ class EmailSender:
         """
         self.config = config
         self.rtd_config = rtd_config or {}
+
+        # SMTP服务器配置
         self.smtp_server = config.get('smtp_server', 'smtp.gmail.com')
         self.smtp_port = config.get('smtp_port', 587)
-        self.sender_email = os.getenv('SENDER_EMAIL')
-        self.sender_password = os.getenv('SENDER_PASSWORD')
-        self.recipient_email = os.getenv('RECIPIENT_EMAIL')
+        self.use_tls = config.get('use_tls', True)
+
+        # 邮箱地址从config.yaml读取
+        self.sender_email = config.get('sender_email')
+        self.recipient_email = config.get('recipient_email')
+
+        # 密码从环境变量读取
+        self.sender_password = os.getenv('EMAIL_PASSWORD')
 
         if not all([self.sender_email, self.sender_password, self.recipient_email]):
             logger.warning("Email credentials not fully configured. Email notifications will be disabled.")
+            logger.warning(f"Missing: sender_email={bool(self.sender_email)}, password={bool(self.sender_password)}, recipient_email={bool(self.recipient_email)}")
             self.enabled = False
         else:
             self.enabled = True
