@@ -67,18 +67,28 @@ jobs:
     - name: Determine run type
       id: run_type
       run: |
+        echo "Event name: ${{ github.event_name }}"
+        echo "Email only: ${{ github.event.inputs.email_only }}"
+        echo "Start date: ${{ github.event.inputs.start_date }}"
+        echo "End date: ${{ github.event.inputs.end_date }}"
+
         if [ "${{ github.event_name }}" = "schedule" ]; then
           if [ "${{ github.event.schedule }}" = "0 0 * * *" ]; then
             echo "type=email" >> $GITHUB_OUTPUT
+            echo "Scheduled email report mode"
           else
             echo "type=crawl" >> $GITHUB_OUTPUT
+            echo "Scheduled crawl mode"
           fi
         elif [ "${{ github.event.inputs.email_only }}" = "true" ]; then
           echo "type=email" >> $GITHUB_OUTPUT
+          echo "Manual email-only mode"
         elif [ -n "${{ github.event.inputs.start_date }}" ] && [ -n "${{ github.event.inputs.end_date }}" ]; then
           echo "type=date_range" >> $GITHUB_OUTPUT
+          echo "Manual date range mode"
         else
           echo "type=crawl" >> $GITHUB_OUTPUT
+          echo "Default crawl mode (manual trigger or fallback)"
         fi
         
     - name: Run paper crawler
@@ -93,8 +103,9 @@ jobs:
             python src/main.py --date-range --start-date "${{ github.event.inputs.start_date }}" --end-date "${{ github.event.inputs.end_date }}"
             ;;
           "crawl")
-            echo "Running daily crawl..."
-            python src/main.py
+            echo "Running daily crawl mode..."
+            echo "This will: 1) Crawl arXiv papers, 2) Generate LLM summaries, 3) Upload to GitHub"
+            python src/main.py --daily --days-back 1
             ;;
         esac
         
