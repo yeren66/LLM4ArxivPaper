@@ -54,6 +54,12 @@ jobs:
         echo "LLM_API_KEY=${{ secrets.LLM_API_KEY }}" >> config/secrets.env
         echo "GH_TOKEN=${{ secrets.GH_TOKEN }}" >> config/secrets.env
         echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" >> config/secrets.env
+
+    - name: Clear proxy environment variables
+      run: |
+        # Clear any proxy environment variables that might interfere with OpenAI client
+        unset HTTP_PROXY HTTPS_PROXY http_proxy https_proxy ALL_PROXY all_proxy || true
+        echo "Cleared proxy environment variables"
         
     - name: Create logs directory
       run: mkdir -p logs

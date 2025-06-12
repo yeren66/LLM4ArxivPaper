@@ -62,16 +62,41 @@ class OpenAISummarizer:
         if not api_key:
             raise ValueError(f"API key is required for provider '{provider}'. Please set the appropriate environment variable.")
 
-        # Initialize OpenAI client (compatible with DeepSeek and other OpenAI-compatible APIs)
-        client = OpenAI(
-            api_key=api_key,
-            base_url=base_url
-        )
+        try:
+            # Initialize OpenAI client with minimal parameters to avoid proxy issues
+            # Only pass the essential parameters that are guaranteed to be supported
+            if base_url and base_url.strip():
+                # For custom providers like DeepSeek
+                client = OpenAI(
+                    api_key=api_key,
+                    base_url=base_url
+                )
+            else:
+                # For default OpenAI
+                client = OpenAI(
+                    api_key=api_key
+                )
 
-        logger.info(f"Using {provider} API with base URL: {base_url}")
-        logger.info(f"LLM client configured successfully for provider: {provider}")
+            logger.info(f"Using {provider} API with base URL: {base_url or 'default'}")
+            logger.info(f"LLM client configured successfully for provider: {provider}")
 
-        return client
+            return client
+
+        except Exception as e:
+            logger.error(f"Failed to initialize OpenAI client: {e}")
+            logger.error(f"Provider: {provider}, API Key present: {bool(api_key)}, Base URL: {base_url}")
+
+            # Try alternative initialization without base_url if it fails
+            if base_url:
+                logger.warning("Retrying OpenAI client initialization without base_url...")
+                try:
+                    client = OpenAI(api_key=api_key)
+                    logger.info("OpenAI client initialized successfully without base_url")
+                    return client
+                except Exception as e2:
+                    logger.error(f"Alternative initialization also failed: {e2}")
+
+            raise
     
     def _build_system_prompt(self) -> str:
         """Build system prompt for paper summarization."""
