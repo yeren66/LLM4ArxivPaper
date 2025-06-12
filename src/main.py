@@ -545,7 +545,8 @@ class LLM4Reading:
                     summary['sanitized_topic'] = 'general'
 
                 # Add GitHub URL for RTD documentation
-                repo_url = f"https://github.com/{os.getenv('GITHUB_REPO', 'unknown/unknown')}"
+                repository = self.config.get('github', {}).get('repository', 'unknown/unknown')
+                repo_url = f"https://github.com/{repository}"
                 summary['github_url'] = f"{repo_url}/blob/main/summaries/{summary.get('arxiv_id', 'unknown')}.md"
 
             self.email_sender.send_daily_report(summaries)
@@ -759,7 +760,8 @@ class LLM4Reading:
                 summary['topic'] = 'human_computer_interaction'
 
             # 添加GitHub链接
-            repo_url = f"https://github.com/{os.getenv('GITHUB_REPO', 'unknown/unknown')}"
+            repository = self.config.get('github', {}).get('repository', 'unknown/unknown')
+            repo_url = f"https://github.com/{repository}"
             filename = os.path.basename(file_path)
             summary['github_url'] = f"{repo_url}/blob/main/summaries/{filename}"
 

@@ -43,9 +43,9 @@ class GitHubClient:
     
     def _get_github_token(self) -> str:
         """Get GitHub token from environment variables."""
-        token = os.getenv('GITHUB_TOKEN')
+        token = os.getenv('GH_TOKEN')
         if not token:
-            raise ValueError("GITHUB_TOKEN environment variable is required")
+            raise ValueError("GH_TOKEN environment variable is required")
         return token
     
     def _get_github_username(self) -> str:

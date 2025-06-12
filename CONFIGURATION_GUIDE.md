@@ -82,7 +82,7 @@ cp config/secrets.env.example config/secrets.env
 LLM_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 # GitHub Personal Access Token (必需)
-GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+GH_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 # 邮箱应用专用密码 (必需)
 EMAIL_PASSWORD=abcd efgh ijkl mnop
@@ -145,7 +145,7 @@ EMAIL_PASSWORD=abcd efgh ijkl mnop
 - [ ] `config.yaml` 中的 `email.smtp_server`
 - [ ] `config.yaml` 中的 `llm.provider` 和 `llm.model`
 - [ ] `secrets.env` 中的 `LLM_API_KEY`
-- [ ] `secrets.env` 中的 `GITHUB_TOKEN`
+- [ ] `secrets.env` 中的 `GH_TOKEN`
 - [ ] `secrets.env` 中的 `EMAIL_PASSWORD`
 
 ### 可选配置 ⚙️

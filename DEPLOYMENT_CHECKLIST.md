@@ -40,7 +40,7 @@
 进入仓库 Settings → Secrets and variables → Actions
 
 - [ ] 添加 `LLM_API_KEY`
-- [ ] 添加 `GITHUB_TOKEN`
+- [ ] 添加 `GH_TOKEN`
 - [ ] 添加 `EMAIL_PASSWORD`
 
 ### 5. 配置文件修改
@@ -97,7 +97,7 @@ git push origin main
 
 ### 常见错误
 1. **Secrets未配置**
-   - 错误：`KeyError: 'LLM_API_KEY'`
+   - 错误：`KeyError: 'LLM_API_KEY'` 或 `KeyError: 'GH_TOKEN'`
    - 解决：检查GitHub Secrets配置
 
 2. **权限不足**

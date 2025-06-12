@@ -69,7 +69,7 @@ cp config/secrets.env.example config/secrets.env
 ```env
 # 只需要3个密钥
 LLM_API_KEY=your_llm_api_key_here  # 支持DeepSeek、OpenAI等
-GITHUB_TOKEN=your_github_token_here
+GH_TOKEN=your_github_token_here
 EMAIL_PASSWORD=your_email_app_password_here
 ```
 
@@ -255,8 +255,8 @@ jobs:
 
 | Secret名称 | 说明 | 示例值 |
 |-----------|------|--------|
-| `DEEPSEEK_API_KEY` | DeepSeek API密钥 | `sk-xxxxxxxxxxxxxxxx` |
-| `GITHUB_TOKEN` | GitHub访问令牌 | `ghp_xxxxxxxxxxxxxxxx` |
+| `LLM_API_KEY` | LLM API密钥 (DeepSeek/OpenAI等) | `sk-xxxxxxxxxxxxxxxx` |
+| `GH_TOKEN` | GitHub访问令牌 | `ghp_xxxxxxxxxxxxxxxx` |
 | `EMAIL_PASSWORD` | 邮箱应用专用密码 | `abcd efgh ijkl mnop` |
 
 #### 3. GitHub Token权限配置
