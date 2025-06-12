@@ -82,23 +82,58 @@ def test_environment_variables():
     else:
         print("All required environment variables are set.")
 
+def test_date_range_functionality():
+    """Test date range functionality"""
+    print("\n=== Date Range Functionality Test ===")
+    try:
+        from src.main import LLM4Reading
+
+        app = LLM4Reading()
+        print("✅ LLM4Reading app initialized successfully")
+
+        # Test with the specific date range you mentioned (6.3~6.4)
+        start_date = "2025-06-03"
+        end_date = "2025-06-04"
+
+        print(f"Testing date range: {start_date} to {end_date}")
+        print("This should crawl papers from the specified date range...")
+
+        # This will test the date range functionality
+        app.run_date_range(start_date, end_date)
+
+        print("✅ Date range test completed successfully")
+        return True
+
+    except Exception as e:
+        print(f"❌ Date range test failed: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
+
 def main():
     """Main test function"""
     print("=== LLM4Reading OpenAI Fix Test ===")
-    
+
     # Test environment variables
     test_environment_variables()
-    
+
     # Test OpenAI initialization
     print("\n=== OpenAI Client Test ===")
-    success = test_openai_initialization()
-    
-    if success:
-        print("\n✅ All tests passed! The OpenAI client fix appears to be working.")
+    openai_success = test_openai_initialization()
+
+    # Test date range functionality
+    date_range_success = test_date_range_functionality()
+
+    if openai_success and date_range_success:
+        print("\n✅ All tests passed! The system should work correctly.")
+        print("\n📋 Next steps:")
+        print("1. Push the updated code to GitHub")
+        print("2. Manually trigger GitHub Actions with date range 2025-06-03 to 2025-06-04")
+        print("3. Check the logs for 'Manual date range mode detected'")
     else:
-        print("\n❌ Tests failed. Please check the error messages above.")
-    
-    return success
+        print("\n❌ Some tests failed. Please check the error messages above.")
+
+    return openai_success and date_range_success
 
 if __name__ == "__main__":
     success = main()

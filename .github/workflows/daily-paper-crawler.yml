@@ -67,45 +67,64 @@ jobs:
     - name: Determine run type
       id: run_type
       run: |
+        echo "=== Debug Information ==="
         echo "Event name: ${{ github.event_name }}"
-        echo "Email only: ${{ github.event.inputs.email_only }}"
-        echo "Start date: ${{ github.event.inputs.start_date }}"
-        echo "End date: ${{ github.event.inputs.end_date }}"
+        echo "Email only input: '${{ github.event.inputs.email_only }}'"
+        echo "Start date input: '${{ github.event.inputs.start_date }}'"
+        echo "End date input: '${{ github.event.inputs.end_date }}'"
+        echo "========================="
 
-        if [ "${{ github.event_name }}" = "schedule" ]; then
-          if [ "${{ github.event.schedule }}" = "0 0 * * *" ]; then
-            echo "type=email" >> $GITHUB_OUTPUT
-            echo "Scheduled email report mode"
-          else
-            echo "type=crawl" >> $GITHUB_OUTPUT
-            echo "Scheduled crawl mode"
-          fi
+        # Check for date range first (highest priority for manual runs)
+        if [ -n "${{ github.event.inputs.start_date }}" ] && [ -n "${{ github.event.inputs.end_date }}" ]; then
+          echo "type=date_range" >> $GITHUB_OUTPUT
+          echo "✅ Manual date range mode detected"
+          echo "Date range: ${{ github.event.inputs.start_date }} to ${{ github.event.inputs.end_date }}"
+        # Check for email-only mode
         elif [ "${{ github.event.inputs.email_only }}" = "true" ]; then
           echo "type=email" >> $GITHUB_OUTPUT
-          echo "Manual email-only mode"
-        elif [ -n "${{ github.event.inputs.start_date }}" ] && [ -n "${{ github.event.inputs.end_date }}" ]; then
-          echo "type=date_range" >> $GITHUB_OUTPUT
-          echo "Manual date range mode"
+          echo "✅ Manual email-only mode detected"
+        # Check for scheduled runs
+        elif [ "${{ github.event_name }}" = "schedule" ]; then
+          if [ "${{ github.event.schedule }}" = "0 0 * * *" ]; then
+            echo "type=email" >> $GITHUB_OUTPUT
+            echo "✅ Scheduled email report mode"
+          else
+            echo "type=crawl" >> $GITHUB_OUTPUT
+            echo "✅ Scheduled crawl mode"
+          fi
+        # Default to crawl mode
         else
           echo "type=crawl" >> $GITHUB_OUTPUT
-          echo "Default crawl mode (manual trigger or fallback)"
+          echo "✅ Default crawl mode (manual trigger without specific parameters)"
         fi
         
     - name: Run paper crawler
       run: |
+        echo "=== Executing Paper Crawler ==="
+        echo "Selected mode: ${{ steps.run_type.outputs.type }}"
+        echo "==============================="
+
         case "${{ steps.run_type.outputs.type }}" in
           "email")
-            echo "Running email-only mode..."
+            echo "🔄 Running email-only mode..."
+            echo "This will send email report based on existing summaries"
             python src/main.py --email-only
             ;;
           "date_range")
-            echo "Running with date range: ${{ github.event.inputs.start_date }} to ${{ github.event.inputs.end_date }}"
+            echo "🔄 Running date range mode..."
+            echo "Date range: ${{ github.event.inputs.start_date }} to ${{ github.event.inputs.end_date }}"
+            echo "This will: 1) Crawl arXiv papers, 2) Generate LLM summaries, 3) Upload to GitHub"
             python src/main.py --date-range --start-date "${{ github.event.inputs.start_date }}" --end-date "${{ github.event.inputs.end_date }}"
             ;;
           "crawl")
-            echo "Running daily crawl mode..."
+            echo "🔄 Running daily crawl mode..."
             echo "This will: 1) Crawl arXiv papers, 2) Generate LLM summaries, 3) Upload to GitHub"
             python src/main.py --daily --days-back 1
+            ;;
+          *)
+            echo "❌ Unknown mode: ${{ steps.run_type.outputs.type }}"
+            echo "Available modes: email, date_range, crawl"
+            exit 1
             ;;
         esac
         
