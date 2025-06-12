@@ -1,0 +1,128 @@
+name: Daily Paper Crawler
+
+on:
+  # 每日定时运行 - 凌晨3点获取论文，上午8点发送邮件
+  schedule:
+    - cron: '0 19 * * *'  # UTC 19:00 = 北京时间 03:00 (论文爬取)
+    - cron: '0 0 * * *'   # UTC 00:00 = 北京时间 08:00 (邮件报告)
+  
+  # 支持手动触发
+  workflow_dispatch:
+    inputs:
+      start_date:
+        description: '开始日期 (YYYY-MM-DD)'
+        required: false
+        default: ''
+      end_date:
+        description: '结束日期 (YYYY-MM-DD)'
+        required: false
+        default: ''
+      email_only:
+        description: '仅发送邮件报告'
+        required: false
+        default: 'false'
+        type: boolean
+
+jobs:
+  crawl-papers:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        
+    - name: Create secrets.env
+      run: |
+        echo "DEEPSEEK_API_KEY=${{ secrets.DEEPSEEK_API_KEY }}" >> config/secrets.env
+        echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> config/secrets.env
+        echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" >> config/secrets.env
+        
+    - name: Create logs directory
+      run: mkdir -p logs
+        
+    - name: Determine run type
+      id: run_type
+      run: |
+        if [ "${{ github.event_name }}" = "schedule" ]; then
+          if [ "${{ github.event.schedule }}" = "0 0 * * *" ]; then
+            echo "type=email" >> $GITHUB_OUTPUT
+          else
+            echo "type=crawl" >> $GITHUB_OUTPUT
+          fi
+        elif [ "${{ github.event.inputs.email_only }}" = "true" ]; then
+          echo "type=email" >> $GITHUB_OUTPUT
+        elif [ -n "${{ github.event.inputs.start_date }}" ] && [ -n "${{ github.event.inputs.end_date }}" ]; then
+          echo "type=date_range" >> $GITHUB_OUTPUT
+        else
+          echo "type=crawl" >> $GITHUB_OUTPUT
+        fi
+        
+    - name: Run paper crawler
+      run: |
+        case "${{ steps.run_type.outputs.type }}" in
+          "email")
+            echo "Running email-only mode..."
+            python src/main.py --email-only
+            ;;
+          "date_range")
+            echo "Running with date range: ${{ github.event.inputs.start_date }} to ${{ github.event.inputs.end_date }}"
+            python src/main.py --date-range --start-date "${{ github.event.inputs.start_date }}" --end-date "${{ github.event.inputs.end_date }}"
+            ;;
+          "crawl")
+            echo "Running daily crawl..."
+            python src/main.py
+            ;;
+        esac
+        
+    - name: Upload logs
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: logs-${{ github.run_number }}
+        path: logs/
+        retention-days: 7
+        
+    - name: Check for failures
+      if: failure()
+      run: |
+        echo "Job failed. Check logs for details."
+        if [ -f logs/llm4reading.log ]; then
+          echo "Last 50 lines of log:"
+          tail -50 logs/llm4reading.log
+        fi
+
+  # 可选：发送通知到Slack/Discord等
+  notify:
+    needs: crawl-papers
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+    - name: Notify success
+      if: needs.crawl-papers.result == 'success'
+      run: |
+        echo "✅ Daily paper crawler completed successfully"
+        
+    - name: Notify failure
+      if: needs.crawl-papers.result == 'failure'
+      run: |
+        echo "❌ Daily paper crawler failed"
+        echo "Check the logs for more details"

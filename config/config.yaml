@@ -1,0 +1,155 @@
+# LLM4Reading Configuration File
+
+# arXiv Configuration
+arxiv:
+  # Base URL for arXiv API
+  api_base_url: "http://export.arxiv.org/api/query"
+  # ar5iv base URL for HTML conversion
+  ar5iv_base_url: "https://ar5iv.labs.arxiv.org/html"
+  # Maximum number of papers to process per run
+  max_papers: 50
+  # Delay between API requests (seconds)
+  request_delay: 1
+  # Search configuration - 优化后的关键词和分类配置
+  # 按主题分组的关键词，支持独立搜索和更好的分类
+  keyword_groups:
+    test_generation:
+      - "test generation"
+      - "test case generation"
+      - "unit test generation"
+      - "automated test generation"
+      - "test synthesis"
+    software_testing:
+      - "software testing"
+      - "automated testing"
+      - "unit testing"
+      - "integration testing"
+      - "regression testing"
+    code_generation:
+      - "code generation"
+      - "program synthesis"
+      - "automated programming"
+      - "code completion"
+      - "source code generation"
+    code_knowledge_graph:
+      - "code knowledge graph"
+      - "program knowledge graph"
+      - "software knowledge graph"
+      - "code representation"
+      - "program understanding"
+  # Subject categories to search (扩展分类覆盖更多相关领域)
+  categories: "cs.AI,cs.SE,cs.CL,cs.LG,cs.PL"
+  # Number of days to look back for new papers
+  days_back: 1
+  # Sort order: relevance, lastUpdatedDate, submittedDate
+  sort_by: "submittedDate"
+  # Sort order: ascending, descending
+  sort_order: "descending"
+  # 搜索策略配置
+  search_strategy:
+    # 是否为每个关键词组单独搜索
+    separate_keyword_searches: true
+    # 是否使用引号包围短语搜索
+    use_phrase_search: true
+    # 每个关键词组的最大结果数
+    max_results_per_group: 20
+
+# LLM Configuration
+llm:
+  # LLM API configuration - supports OpenAI, DeepSeek, and other compatible APIs
+  provider: "deepseek"  # Options: "openai", "deepseek", "custom"
+  model: "deepseek-chat"  # DeepSeek models: "deepseek-chat", "deepseek-reasoner"
+  # Base URL for API (can be overridden by environment variable)
+  base_url: "https://api.deepseek.com"  # DeepSeek API endpoint
+  # Maximum tokens for summary
+  max_tokens: 2000
+  # Temperature for text generation
+  temperature: 0.3
+  # System prompt language
+  language: "chinese"
+  # Summary format
+  summary_format: "markdown"
+  # Include sections in summary
+  include_sections: ["abstract", "introduction", "methodology", "results", "conclusion"]
+  # Maximum input tokens (to avoid exceeding context limit)
+  max_input_tokens: 8000
+
+# GitHub Configuration
+github:
+  # Target repository for uploading summaries (format: username/repo-name)
+  target_repo: "your-username/paper-summaries"
+  # GitHub username (can be overridden by GITHUB_USERNAME env var)
+  username: "your-username"
+  # Branch to commit to
+  branch: "main"
+  # Directory to store summaries in the repository
+  summaries_dir: "summaries"
+  # Commit message template (supports {title}, {arxiv_id}, {date} placeholders)
+  commit_message_template: "Add paper summary: {title} (arXiv:{arxiv_id})"
+  # Auto-create index file
+  auto_index: true
+  # Trigger RTD build after upload
+  trigger_rtd: true
+
+# Logging Configuration
+logging:
+  # Log level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+  level: "INFO"
+  # Log file path
+  file: "logs/llm4reading.log"
+  # Log format
+  format: "{time:YYYY-MM-DD HH:mm:ss} | {level} | {name}:{function}:{line} | {message}"
+  # Log rotation
+  rotation: "1 day"
+  retention: "30 days"
+
+# Processing Configuration
+processing:
+  # Enable parallel processing
+  parallel: true
+  # Maximum number of concurrent workers
+  max_workers: 3
+  # Timeout for each paper processing (seconds)
+  timeout: 300
+  # Retry attempts for failed operations
+  retry_attempts: 3
+  # Delay between retries (seconds)
+  retry_delay: 5
+
+# Read the Docs Configuration
+rtd:
+  # Base URL for your RTD documentation site
+  base_url: "https://isedocument.readthedocs.io/zh-cn/latest"
+  # Path prefix for paper notes (relative to base_url)
+  paper_note_path: "paper_note"
+  # File extension for RTD links (.html for HTML, .rst for source)
+  file_extension: ".html"
+  # Webhook URL for triggering builds
+  webhook_url: "your_rtd_webhook_url"
+  # Project name
+  project_name: "llm4reading"
+
+# Topic Organization Configuration
+topic_organization:
+  # Base directory for storing papers (relative to repository root)
+  base_dir: "source/paper_note"
+  # Default topic for unclassified papers
+  default_topic: "general"
+  # Whether to automatically create new topics
+  auto_create_topics: true
+  # Custom topic mapping (optional)
+  topic_mapping: {}
+  # Keep files in Markdown format with metadata header
+  add_metadata_header: true
+
+# Email Notification Configuration
+email:
+  # SMTP server settings
+  smtp_server: "smtp.gmail.com"
+  smtp_port: 587
+  # Daily report settings
+  send_daily_report: true
+  report_time: "08:00"  # 早上8点发送报告
+  # Email template settings
+  include_summary_preview: true
+  max_papers_per_topic: 10

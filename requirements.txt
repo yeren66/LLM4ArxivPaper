@@ -1,0 +1,39 @@
+# Gmail API
+google-api-python-client==2.108.0
+google-auth-httplib2==0.1.1
+google-auth-oauthlib==1.1.0
+
+# HTTP requests and web scraping
+requests==2.31.0
+beautifulsoup4==4.12.2
+lxml==4.9.3
+
+# OpenAI API
+openai==1.3.7
+
+# GitHub API (using requests for direct API access)
+# PyGithub==1.59.1  # Replaced with direct requests for better control
+
+# Configuration and environment
+python-dotenv==1.0.0
+pyyaml==6.0.1
+
+# Date and time handling
+python-dateutil==2.8.2
+
+# Logging and utilities
+loguru==0.7.2
+
+# arXiv API
+arxiv==1.4.8
+
+# HTML parsing and text extraction
+html2text==2020.1.16
+markdownify==0.11.6
+
+# Email parsing
+email-validator==2.1.0
+
+# Async support
+aiohttp==3.9.1
+asyncio==3.4.3
