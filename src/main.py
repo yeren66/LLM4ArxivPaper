@@ -22,7 +22,7 @@ import sys
 import yaml
 import argparse
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
@@ -274,59 +274,60 @@ class LLM4Reading:
     def upload_summaries_to_github(self, summaries: List[Dict], local_files: List[str],
                                   organized_results: Optional[List[Dict]] = None) -> None:
         """
-        Upload summaries to GitHub repository.
+        Upload organized topic files to GitHub repository (summaries are kept local only).
 
         Args:
             summaries: List of summary dictionaries
-            local_files: List of local file paths
-            organized_results: List of topic organization results (optional)
+            local_files: List of local file paths (not uploaded to GitHub)
+            organized_results: List of topic organization results (uploaded to GitHub)
         """
         try:
-            if not summaries or not local_files:
-                logger.warning("No summaries to upload")
+            if not summaries:
+                logger.warning("No summaries to process")
                 return
 
-            # Upload summaries in batch
-            results = self.github_client.upload_summaries_batch(summaries, local_files)
+            logger.info(f"Processing {len(summaries)} papers for GitHub upload...")
+            logger.info("Note: Summary files are kept local only, only RTD documentation structure is uploaded")
 
             # Upload organized topic files if available
             if organized_results:
-                self.upload_topic_files(organized_results)
-
-            # Count successful uploads
-            successful_uploads = [r for r in results if 'error' not in r]
-            failed_uploads = [r for r in results if 'error' in r]
-
-            logger.info(f"GitHub upload completed: {len(successful_uploads)}/{len(results)} successful")
-
-            if failed_uploads:
-                logger.warning(f"Failed uploads: {len(failed_uploads)}")
-                for failed in failed_uploads:
-                    logger.error(f"Failed to upload {failed.get('local_file_path', 'unknown')}: {failed.get('error', 'unknown error')}")
-
-            # Create and upload index file
-            if successful_uploads:
                 try:
-                    index_file = self.github_client.create_index_file(summaries)
-                    self.github_client.upload_file(
-                        index_file,
-                        "README.md",
-                        f"Update paper summaries index - {len(summaries)} papers"
-                    )
-                    logger.info("Updated repository index file")
-
-                    # Clean up local index file
-                    os.remove(index_file)
-
+                    logger.info("Uploading RTD documentation structure to GitHub...")
+                    self.upload_topic_files(organized_results)
+                    logger.info("RTD documentation structure uploaded successfully")
                 except Exception as e:
-                    logger.error(f"Failed to update index file: {e}")
+                    logger.error(f"Failed to upload topic files: {e}")
+            else:
+                logger.warning("No organized results to upload to GitHub")
+
+            # Create and upload index file for RTD documentation
+            try:
+                logger.info("Creating and uploading documentation index...")
+                index_file = self.github_client.create_index_file(summaries)
+                self.github_client.upload_file(
+                    index_file,
+                    "README.md",
+                    f"Update paper summaries index - {len(summaries)} papers"
+                )
+                logger.info("Updated repository index file")
+
+                # Clean up local index file
+                os.remove(index_file)
+
+            except Exception as e:
+                logger.error(f"Failed to update index file: {e}")
 
             # Trigger RTD build if configured
-            if successful_uploads:
+            try:
                 self.github_client.trigger_rtd_build()
+                logger.info("RTD build triggered successfully")
+            except Exception as e:
+                logger.error(f"Failed to trigger RTD build: {e}")
+
+            logger.info(f"GitHub upload completed: {len(summaries)} papers processed, RTD documentation updated")
 
         except Exception as e:
-            logger.error(f"Failed to upload summaries to GitHub: {e}")
+            logger.error(f"Failed to upload to GitHub: {e}")
 
     def upload_topic_files(self, organized_results: List[Dict]) -> None:
         """
@@ -445,12 +446,16 @@ class LLM4Reading:
             logger.error(f"Application run failed: {e}")
             raise
 
-    def run_daily(self, days_back: int = 1) -> None:
+    def run_daily(self, days_back: int = 1, send_email: bool = True) -> Tuple[List[Dict], List[Dict]]:
         """
         Run daily paper processing (for GitHub Actions).
 
         Args:
             days_back: Number of days back to search for papers
+            send_email: Whether to send email notifications
+
+        Returns:
+            Tuple of (summaries, organized_results)
         """
         logger.info(f"Starting LLM4Reading daily run - processing last {days_back} days...")
 
@@ -459,7 +464,9 @@ class LLM4Reading:
             logger.info(f"Crawling arXiv papers from last {days_back} days...")
             papers = self.crawl_arxiv_papers(days_back)
 
-            self._process_papers_batch(papers, f"daily run ({days_back} days)")
+            summaries, organized_results = self._process_papers_batch(papers, f"daily run ({days_back} days)", send_email=send_email)
+
+            return summaries, organized_results
 
         except Exception as e:
             logger.error(f"Daily run failed: {e}")
@@ -467,11 +474,25 @@ class LLM4Reading:
 
     def run_date_range(self, start_date: str, end_date: str) -> None:
         """
-        Run paper processing for a specific date range.
+        Run paper processing for a specific date range (with email).
 
         Args:
             start_date: Start date in YYYY-MM-DD format
             end_date: End date in YYYY-MM-DD format
+        """
+        self.run_date_range_with_options(start_date, end_date, send_email=True)
+
+    def run_date_range_with_options(self, start_date: str, end_date: str, send_email: bool = True) -> Tuple[List[Dict], List[Dict]]:
+        """
+        Run paper processing for a specific date range with email options.
+
+        Args:
+            start_date: Start date in YYYY-MM-DD format
+            end_date: End date in YYYY-MM-DD format
+            send_email: Whether to send email notifications
+
+        Returns:
+            Tuple of (summaries, organized_results)
         """
         try:
             # Parse dates
@@ -483,7 +504,9 @@ class LLM4Reading:
             # Step 1: Crawl arXiv for papers in date range
             papers = self.crawl_arxiv_papers(start_date=start_dt, end_date=end_dt)
 
-            self._process_papers_batch(papers, f"date range ({start_date} to {end_date})")
+            summaries, organized_results = self._process_papers_batch(papers, f"date range ({start_date} to {end_date})", send_email=send_email)
+
+            return summaries, organized_results
 
         except ValueError as e:
             logger.error(f"Invalid date format: {e}")
@@ -492,7 +515,7 @@ class LLM4Reading:
             logger.error(f"Date range run failed: {e}")
             raise
 
-    def _process_papers_batch(self, papers: List[Dict], run_description: str) -> None:
+    def _process_papers_batch(self, papers: List[Dict], run_description: str, send_email: bool = True) -> Tuple[List[Dict], List[Dict]]:
         """
         Process a batch of papers (common logic for daily and date range runs).
 
@@ -502,7 +525,7 @@ class LLM4Reading:
         """
         if not papers:
             logger.info(f"No papers found for {run_description}")
-            return
+            return [], []
 
         # Log found papers
         logger.info(f"Found {len(papers)} papers to process for {run_description}:")
@@ -515,7 +538,7 @@ class LLM4Reading:
 
         if not summaries:
             logger.warning("No summaries generated")
-            return
+            return [], []
 
         # Step 3: Organize papers by topics
         logger.info("Organizing papers by topics...")
@@ -531,9 +554,31 @@ class LLM4Reading:
 
         logger.info(f"{run_description.capitalize()} completed successfully - processed {len(summaries)} papers")
 
-        # Send email notification if enabled
-        if self.email_sender.enabled and self.config.get('email', {}).get('send_daily_report', True):
+        # 根据参数决定是否发送邮件（带超时保护）
+        if send_email and self.email_sender.enabled and self.config.get('email', {}).get('send_daily_report', True):
             logger.info("Sending daily email report...")
+            try:
+                self._send_email_for_summaries_with_timeout(summaries, organized_results)
+            except Exception as e:
+                logger.error(f"Email sending failed: {e}")
+                logger.info("Continuing without email notification...")
+        elif not send_email:
+            logger.info("Email sending disabled by parameter")
+        else:
+            logger.info("Email notifications disabled or not configured")
+
+        # 返回处理结果
+        return summaries, organized_results
+
+    def _send_email_for_summaries(self, summaries: List[Dict], organized_results: List[Dict]) -> None:
+        """
+        为摘要发送邮件报告
+
+        Args:
+            summaries: 论文摘要列表
+            organized_results: 主题组织结果列表
+        """
+        try:
             # Add topic and GitHub URLs to summaries for email
             for i, summary in enumerate(summaries):
                 # Add topic information from organized_results
@@ -549,9 +594,94 @@ class LLM4Reading:
                 repo_url = f"https://github.com/{repository}"
                 summary['github_url'] = f"{repo_url}/blob/main/summaries/{summary.get('arxiv_id', 'unknown')}.md"
 
-            self.email_sender.send_daily_report(summaries)
-        else:
-            logger.info("Email notifications disabled or not configured")
+            success = self.email_sender.send_daily_report(summaries)
+            if success:
+                logger.info(f"Email report sent successfully with {len(summaries)} papers")
+            else:
+                logger.error("Failed to send email report")
+
+        except Exception as e:
+            logger.error(f"Error sending email for summaries: {e}")
+
+    def _send_email_for_summaries_with_timeout(self, summaries: List[Dict], organized_results: List[Dict], timeout_seconds: int = 60) -> None:
+        """
+        为摘要发送邮件报告（带超时保护）
+
+        Args:
+            summaries: 论文摘要列表
+            organized_results: 主题组织结果列表
+            timeout_seconds: 超时时间（秒）
+        """
+        import signal
+
+        def timeout_handler(signum, frame):
+            raise TimeoutError(f"Email sending timeout after {timeout_seconds} seconds")
+
+        # 设置超时
+        old_handler = signal.signal(signal.SIGALRM, timeout_handler)
+        signal.alarm(timeout_seconds)
+
+        try:
+            self._send_email_for_summaries(summaries, organized_results)
+            signal.alarm(0)  # 取消超时
+            signal.signal(signal.SIGALRM, old_handler)  # 恢复原处理器
+
+        except TimeoutError as e:
+            signal.alarm(0)  # 取消超时
+            signal.signal(signal.SIGALRM, old_handler)  # 恢复原处理器
+            logger.error(f"Email sending timeout: {e}")
+            raise
+        except Exception as e:
+            signal.alarm(0)  # 取消超时
+            signal.signal(signal.SIGALRM, old_handler)  # 恢复原处理器
+            logger.error(f"Email sending error: {e}")
+            raise
+
+    def _send_simple_email_report(self) -> None:
+        """
+        发送简化的邮件报告（基于现有数据或空报告）
+        """
+        if not self.email_sender.enabled:
+            logger.warning("Email sender not enabled")
+            return
+
+        logger.info("Sending simple email report...")
+
+        # 设置超时保护
+        import signal
+
+        def timeout_handler(signum, frame):
+            raise TimeoutError("Email sending timeout after 30 seconds")
+
+        old_handler = signal.signal(signal.SIGALRM, timeout_handler)
+        signal.alarm(30)  # 30秒超时
+
+        try:
+            # 发送空报告（表示系统正常运行）
+            empty_summaries = []
+            from datetime import datetime
+            date_str = datetime.now().strftime('%Y-%m-%d')
+
+            success = self.email_sender.send_daily_report(empty_summaries, date_str)
+
+            signal.alarm(0)  # 取消超时
+            signal.signal(signal.SIGALRM, old_handler)
+
+            if success:
+                logger.info("Simple email report sent successfully")
+            else:
+                logger.error("Failed to send simple email report")
+
+        except TimeoutError:
+            signal.alarm(0)
+            signal.signal(signal.SIGALRM, old_handler)
+            logger.error("Email sending timeout (30 seconds)")
+            raise
+        except Exception as e:
+            signal.alarm(0)
+            signal.signal(signal.SIGALRM, old_handler)
+            logger.error(f"Email sending failed: {e}")
+            raise
 
     def upload_daily_batch_to_github(self, summaries: List[Dict], local_files: List[str],
                                    organized_results: List[Dict]) -> None:
@@ -651,14 +781,28 @@ class LLM4Reading:
             summaries = self._get_summaries_from_github(date_str)
 
             if not summaries:
-                logger.info(f"No summaries found for {date_str}")
-                return
+                logger.info(f"No summaries found for {date_str}, searching for recent summaries...")
+                # 查找最近7天的报告
+                summaries = self._get_recent_summaries(days_back=7)
 
-            # 发送邮件报告
+                if summaries:
+                    logger.info(f"Found {len(summaries)} recent summaries, sending report...")
+                    # 使用最新的日期作为报告日期
+                    latest_date = max([s.get('generated_date', date_str) for s in summaries])
+                    date_str = latest_date
+                else:
+                    logger.info("No recent summaries found, sending empty report...")
+                    # 发送空报告
+                    summaries = []
+
+            # 发送邮件报告（即使是空的）
             success = self.email_sender.send_daily_report(summaries, date_str)
 
             if success:
-                logger.info(f"Email report sent successfully for {date_str}")
+                if summaries:
+                    logger.info(f"Email report sent successfully for {date_str} with {len(summaries)} papers")
+                else:
+                    logger.info(f"Empty email report sent successfully for {date_str}")
             else:
                 logger.error(f"Failed to send email report for {date_str}")
 
@@ -700,6 +844,137 @@ class LLM4Reading:
         except Exception as e:
             logger.error(f"Error getting summaries from GitHub: {e}")
             return []
+
+    def _get_recent_summaries(self, days_back: int = 7) -> List[Dict]:
+        """
+        获取最近几天的论文总结
+
+        Args:
+            days_back: 向前查找的天数
+
+        Returns:
+            论文总结列表
+        """
+        try:
+            summaries = []
+
+            # 检查本地summaries目录
+            summaries_dir = "summaries"
+            if os.path.exists(summaries_dir):
+                summaries.extend(self._scan_local_summaries(summaries_dir, days_back))
+
+            # 检查RTD文档目录
+            rtd_dir = "source/paper_note"
+            if os.path.exists(rtd_dir):
+                summaries.extend(self._scan_rtd_summaries(rtd_dir, days_back))
+
+            # 按日期排序，最新的在前
+            summaries.sort(key=lambda x: x.get('generated_date', ''), reverse=True)
+
+            # 去重（基于arxiv_id）
+            seen_ids = set()
+            unique_summaries = []
+            for summary in summaries:
+                arxiv_id = summary.get('arxiv_id', 'unknown')
+                if arxiv_id not in seen_ids:
+                    seen_ids.add(arxiv_id)
+                    unique_summaries.append(summary)
+
+            logger.info(f"Found {len(unique_summaries)} unique summaries from last {days_back} days")
+            return unique_summaries[:10]  # 限制最多10篇
+
+        except Exception as e:
+            logger.error(f"Error getting recent summaries: {e}")
+            return []
+
+    def _scan_local_summaries(self, summaries_dir: str, days_back: int) -> List[Dict]:
+        """扫描本地summaries目录"""
+        summaries = []
+        current_date = datetime.now()
+
+        for filename in os.listdir(summaries_dir):
+            if filename.endswith('.md'):
+                file_path = os.path.join(summaries_dir, filename)
+
+                # 检查文件修改时间
+                file_mtime = datetime.fromtimestamp(os.path.getmtime(file_path))
+                if (current_date - file_mtime).days <= days_back:
+                    summary = self._parse_summary_file(file_path)
+                    if summary:
+                        summary['generated_date'] = file_mtime.strftime('%Y-%m-%d')
+                        summaries.append(summary)
+
+        return summaries
+
+    def _scan_rtd_summaries(self, rtd_dir: str, days_back: int) -> List[Dict]:
+        """扫描RTD文档目录"""
+        summaries = []
+        current_date = datetime.now()
+
+        # 遍历所有主题目录
+        for topic_dir in os.listdir(rtd_dir):
+            topic_path = os.path.join(rtd_dir, topic_dir)
+            if os.path.isdir(topic_path) and topic_dir != '__pycache__':
+                for filename in os.listdir(topic_path):
+                    if filename.endswith('.md') and not filename.startswith('index'):
+                        file_path = os.path.join(topic_path, filename)
+
+                        # 检查文件修改时间
+                        file_mtime = datetime.fromtimestamp(os.path.getmtime(file_path))
+                        if (current_date - file_mtime).days <= days_back:
+                            summary = self._parse_rtd_summary_file(file_path, topic_dir)
+                            if summary:
+                                summary['generated_date'] = file_mtime.strftime('%Y-%m-%d')
+                                summaries.append(summary)
+
+        return summaries
+
+    def _parse_rtd_summary_file(self, file_path: str, topic: str) -> Optional[Dict]:
+        """
+        解析RTD格式的总结文件
+
+        Args:
+            file_path: 文件路径
+            topic: 主题名称
+
+        Returns:
+            解析后的总结字典
+        """
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+
+            # 提取基本信息
+            summary = {
+                'title': 'Unknown Title',
+                'arxiv_id': 'unknown',
+                'authors': [],
+                'summary': content,
+                'topic': topic
+            }
+
+            # 解析元数据（RTD格式）
+            lines = content.split('\n')
+            for line in lines:
+                if '**标题**:' in line or '- **标题**:' in line:
+                    summary['title'] = line.split('**标题**:')[1].strip()
+                elif '**arXiv ID**:' in line or '- **arXiv ID**:' in line:
+                    summary['arxiv_id'] = line.split('**arXiv ID**:')[1].strip()
+                elif '**作者**:' in line or '- **作者**:' in line:
+                    authors_str = line.split('**作者**:')[1].strip()
+                    summary['authors'] = [author.strip() for author in authors_str.split(',')]
+
+            # 添加GitHub链接
+            repository = self.config.get('github', {}).get('repository', 'unknown/unknown')
+            repo_url = f"https://github.com/{repository}"
+            filename = os.path.basename(file_path)
+            summary['github_url'] = f"{repo_url}/blob/main/source/paper_note/{topic}/{filename}"
+
+            return summary
+
+        except Exception as e:
+            logger.error(f"Error parsing RTD summary file {file_path}: {e}")
+            return None
 
     def _parse_summary_file(self, file_path: str) -> Optional[Dict]:
         """
@@ -783,48 +1058,47 @@ class LLM4Reading:
 def main():
     """Main entry point."""
     parser = argparse.ArgumentParser(description='LLM4Reading - Automated Paper Reading System')
-    parser.add_argument('--daemon', action='store_true', help='Run as daemon (continuous monitoring)')
-    parser.add_argument('--email', action='store_true', help='Use email monitoring (legacy)')
-    parser.add_argument('--arxiv', action='store_true', help='Use arXiv crawler (default)')
-    parser.add_argument('--daily', action='store_true', help='Daily run for GitHub Actions')
     parser.add_argument('--date-range', action='store_true', help='Run for specific date range')
     parser.add_argument('--start-date', type=str, help='Start date (YYYY-MM-DD)')
     parser.add_argument('--end-date', type=str, help='End date (YYYY-MM-DD)')
-    parser.add_argument('--days-back', type=int, default=1, help='Number of days back to search')
-    parser.add_argument('--send-email-report', action='store_true', help='Send daily email report')
-    parser.add_argument('--email-only', action='store_true', help='Send email report only (no crawling)')
-    parser.add_argument('--report-date', type=str, help='Date for email report (YYYY-MM-DD)')
+    parser.add_argument('--no-email', action='store_true', help='Skip email notifications')
 
     args = parser.parse_args()
 
     try:
         app = LLM4Reading()
 
-        if args.daemon:
-            app.run_daemon()
-        elif args.email:
-            # Use email monitoring (legacy method)
-            app.run_once(use_arxiv_crawler=False)
-        elif args.daily:
-            # Daily run for GitHub Actions
-            days_back = int(os.getenv('DAYS_BACK', str(args.days_back)))
-            app.run_daily(days_back)
-        elif args.date_range:
+        if args.date_range:
             # Date range run
             if not args.start_date or not args.end_date:
                 print("Error: --date-range requires --start-date and --end-date")
                 sys.exit(1)
-            app.run_date_range(args.start_date, args.end_date)
-        elif args.send_email_report or args.email_only:
-            # Send email report
-            report_date = args.report_date or os.getenv('REPORT_DATE')
-            app.send_email_report(report_date)
-        elif args.arxiv:
-            # Use arXiv crawler
-            app.run_once(use_arxiv_crawler=True)
+
+            # 决定是否发送邮件
+            send_email = not args.no_email
+
+            logger.info(f"Running date range mode: {args.start_date} to {args.end_date}")
+            app.run_date_range_with_options(args.start_date, args.end_date, send_email=send_email)
         else:
-            # Default: use arXiv crawler
-            app.run_once(use_arxiv_crawler=True)
+            # Default run: 自动获取前一周的论文
+            logger.info("Running weekly paper collection...")
+
+            # 计算前一周的日期范围
+            from datetime import datetime, timedelta
+            today = datetime.now()
+            # 获取上周一到上周日的日期
+            last_monday = today - timedelta(days=today.weekday() + 7)
+            last_sunday = last_monday + timedelta(days=6)
+
+            start_date = last_monday.strftime('%Y-%m-%d')
+            end_date = last_sunday.strftime('%Y-%m-%d')
+
+            logger.info(f"Collecting papers from last week: {start_date} to {end_date}")
+
+            # 决定是否发送邮件
+            send_email = not args.no_email
+
+            app.run_date_range_with_options(start_date, end_date, send_email=send_email)
 
     except KeyboardInterrupt:
         logger.info("Application interrupted by user")

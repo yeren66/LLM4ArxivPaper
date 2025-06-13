@@ -65,9 +65,9 @@ class EmailSender:
             logger.warning("Email notifications disabled - missing credentials")
             return False
         
+        # 即使没有摘要也发送邮件（空报告）
         if not summaries:
-            logger.info("No summaries to send in daily report")
-            return True
+            logger.info("No summaries found, sending empty daily report")
         
         try:
             # 生成报告内容
@@ -109,6 +109,9 @@ class EmailSender:
             if topic not in topics:
                 topics[topic] = []
             topics[topic].append(summary)
+
+        # 处理空摘要的情况
+        is_empty_report = len(summaries) == 0
         
         # 生成HTML
         html = f"""
@@ -138,7 +141,20 @@ class EmailSender:
             </div>
             
             <div class="summary">
-                <h2>📊 今日概览</h2>
+                <h2>📊 今日概览</h2>"""
+
+        if is_empty_report:
+            html += f"""
+                <div style="text-align: center; padding: 20px; background-color: #fff3cd; border: 1px solid #ffeaa7; border-radius: 5px;">
+                    <h3>📭 暂无新论文</h3>
+                    <p>今日({date_str})未发现符合条件的新论文。</p>
+                    <p>系统将继续监控arXiv，有新论文时会及时通知您。</p>
+                    <p><strong>监控范围：</strong>测试生成、软件测试、代码生成、知识图谱等领域</p>
+                </div>
+            </div>
+        """
+        else:
+            html += f"""
                 <ul>
                     <li><strong>论文总数:</strong> {len(summaries)} 篇</li>
                     <li><strong>涵盖主题:</strong> {len(topics)} 个</li>
@@ -146,49 +162,51 @@ class EmailSender:
                 </ul>
             </div>
         """
-        
-        # 按主题添加论文
-        for topic, papers in topics.items():
-            topic_display = self._get_topic_display_name(topic)
-            html += f"""
-            <div class="topic-section">
-                <div class="topic-title">
-                    📂 {topic_display} ({len(papers)} 篇)
-                </div>
-            """
-            
-            for paper in papers:
-                title = paper.get('title', 'Unknown Title')
-                arxiv_id = paper.get('arxiv_id', 'unknown')
-                authors = paper.get('authors', [])
-                arxiv_url = f"https://arxiv.org/abs/{arxiv_id}"
-                github_url = paper.get('github_url', '#')
 
-                # 生成RTD文档链接
-                rtd_url = self._generate_rtd_url(paper, topic)
-
-                # 提取总结的第一段作为预览
-                summary_text = paper.get('summary', '')
-                preview = self._extract_summary_preview(summary_text)
-                
+        # 只在有论文时才添加论文列表
+        if not is_empty_report:
+            # 按主题添加论文
+            for topic, papers in topics.items():
+                topic_display = self._get_topic_display_name(topic)
                 html += f"""
-                <div class="paper-item">
-                    <div class="paper-title">
-                        <a href="{arxiv_url}" target="_blank">{title}</a>
+                <div class="topic-section">
+                    <div class="topic-title">
+                        📂 {topic_display} ({len(papers)} 篇)
                     </div>
-                    <div class="paper-meta">
-                        <strong>arXiv ID:</strong> {arxiv_id} |
-                        <strong>作者:</strong> {', '.join(authors[:3])}{'...' if len(authors) > 3 else ''} |
-                        <a href="{github_url}" target="_blank">GitHub</a> |
-                        <a href="{rtd_url}" target="_blank">📖 在线阅读</a>
-                    </div>
-                    <div class="paper-summary">
-                        {preview}
-                    </div>
-                </div>
                 """
-            
-            html += "</div>"
+
+                for paper in papers:
+                    title = paper.get('title', 'Unknown Title')
+                    arxiv_id = paper.get('arxiv_id', 'unknown')
+                    authors = paper.get('authors', [])
+                    arxiv_url = f"https://arxiv.org/abs/{arxiv_id}"
+                    github_url = paper.get('github_url', '#')
+
+                    # 生成RTD文档链接
+                    rtd_url = self._generate_rtd_url(paper, topic)
+
+                    # 提取总结的第一段作为预览
+                    summary_text = paper.get('summary', '')
+                    preview = self._extract_summary_preview(summary_text)
+
+                    html += f"""
+                    <div class="paper-item">
+                        <div class="paper-title">
+                            <a href="{arxiv_url}" target="_blank">{title}</a>
+                        </div>
+                        <div class="paper-meta">
+                            <strong>arXiv ID:</strong> {arxiv_id} |
+                            <strong>作者:</strong> {', '.join(authors[:3])}{'...' if len(authors) > 3 else ''} |
+                            <a href="{github_url}" target="_blank">GitHub</a> |
+                            <a href="{rtd_url}" target="_blank">📖 在线阅读</a>
+                        </div>
+                        <div class="paper-summary">
+                            {preview}
+                        </div>
+                    </div>
+                    """
+
+                html += "</div>"
         
         # 添加页脚
         html += f"""

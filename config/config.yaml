@@ -76,11 +76,11 @@ llm:
 
 # GitHub Configuration
 github:
-  # Target repository for uploading summaries (format: username/repo-name)
+  # Target repository for uploading RTD documentation (format: username/repo-name)
   repository: "iseDocument/iseDocument"
   # Branch to commit to
   branch: "main"
-  # Directory to store summaries in the repository
+  # Directory to store summaries locally (NOT uploaded to GitHub)
   summaries_dir: "summaries"
   # Commit message template (supports {title}, {arxiv_id}, {date} placeholders)
   commit_message_template: "Add paper summary: {title} (arXiv:{arxiv_id})"
@@ -150,11 +150,11 @@ email:
   smtp_server: "smtp.gmail.com"  # QQ邮箱: smtp.qq.com, Gmail: smtp.gmail.com, 163邮箱: smtp.163.com
   smtp_port: 587
   use_tls: true
-  # 每日报告设置
+  # 每周报告设置
   send_daily_report: true
-  report_time: "08:00"  # 早上8点发送报告
+  report_time: "03:00"  # 周一凌晨3点发送报告（与论文获取同时进行）
   # 邮件模板设置
   include_summary_preview: true
   max_papers_per_topic: 10
   # 邮件主题模板
-  subject_template: "📚 每日论文摘要报告 - {date}"
+  subject_template: "📚 每周论文摘要报告 - {date}"

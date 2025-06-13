@@ -324,16 +324,15 @@ arXiv ID：{arxiv_id}
         try:
             os.makedirs(output_dir, exist_ok=True)
 
-            # Generate filename with date_title_arxivid format
+            # Generate filename with consistent format: YYYYMMDD_arxivid.md
             arxiv_id = summary['arxiv_id']
-            title = summary.get('title', 'Unknown')
-            date_str = datetime.now().strftime("%y%m%d")  # 使用2位年份
+            date_str = datetime.now().strftime("%Y%m%d")  # 使用4位年份保持一致
 
-            # Sanitize title for filename (keep first 20 chars, remove special chars)
-            import re
-            sanitized_title = re.sub(r'[^a-zA-Z0-9]', '', title)[:20]
+            # Clean arXiv ID (remove 'arXiv:' prefix if present)
+            if arxiv_id.startswith('arXiv:'):
+                arxiv_id = arxiv_id[6:]
 
-            filename = f"{date_str}_{sanitized_title}_{arxiv_id.replace('/', '_')}.md"
+            filename = f"{date_str}_{arxiv_id.replace('/', '_')}.md"
             filepath = os.path.join(output_dir, filename)
             
             # Write summary to file

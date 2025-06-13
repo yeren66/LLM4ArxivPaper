@@ -5,6 +5,7 @@ Supports both single file uploads and batch operations.
 
 import os
 import base64
+import time
 from typing import Dict, List, Optional, Any
 from datetime import datetime
 from pathlib import Path
@@ -70,15 +71,46 @@ class GitHubClient:
 
         return repository.split('/')[1]
     
-    def _make_request(self, method: str, url: str, **kwargs) -> requests.Response:
-        """Make authenticated request to GitHub API."""
-        try:
-            response = requests.request(method, url, headers=self.headers, **kwargs)
-            response.raise_for_status()
-            return response
-        except requests.exceptions.RequestException as e:
-            logger.error(f"GitHub API request failed: {e}")
-            raise
+    def _make_request(self, method: str, url: str, max_retries: int = 3,
+                     retry_delay: float = 2.0, **kwargs) -> requests.Response:
+        """
+        Make authenticated request to GitHub API with retry mechanism.
+
+        Args:
+            method: HTTP method
+            url: Request URL
+            max_retries: Maximum number of retry attempts
+            retry_delay: Delay between retries in seconds
+            **kwargs: Additional request parameters
+
+        Returns:
+            Response object
+        """
+        last_exception = None
+
+        for attempt in range(max_retries + 1):
+            try:
+                response = requests.request(method, url, headers=self.headers, **kwargs)
+                response.raise_for_status()
+                return response
+
+            except requests.exceptions.RequestException as e:
+                last_exception = e
+
+                if attempt < max_retries:
+                    # Calculate delay with exponential backoff
+                    delay = retry_delay * (2 ** attempt)
+                    logger.warning(f"GitHub API request failed (attempt {attempt + 1}/{max_retries + 1}): {e}")
+                    logger.info(f"Retrying in {delay:.1f} seconds...")
+                    time.sleep(delay)
+                else:
+                    logger.error(f"GitHub API request failed after {max_retries + 1} attempts: {e}")
+
+        # If we get here, all retries failed
+        if last_exception:
+            raise last_exception
+        else:
+            raise requests.exceptions.RequestException("All retry attempts failed")
     
     def get_file_sha(self, file_path: str) -> Optional[str]:
         """
@@ -157,77 +189,148 @@ class GitHubClient:
     def upload_summary(self, summary_data: Dict, local_file_path: str) -> Dict[str, Any]:
         """
         Upload a paper summary to the repository.
-        
+        Note: This method is kept for compatibility but summaries are not uploaded to GitHub.
+        Only RTD documentation structure files are uploaded.
+
         Args:
             summary_data: Summary metadata
             local_file_path: Path to local summary file
-            
+
         Returns:
-            Upload result
+            Upload result (mock result since we don't actually upload)
         """
-        # Generate repository file path
+        # Generate repository file path (for reference only)
         arxiv_id = summary_data.get('arxiv_id', 'unknown')
         date_str = datetime.now().strftime("%Y%m%d")
         filename = f"{date_str}_{arxiv_id.replace('/', '_')}.md"
         repo_file_path = f"{self.summaries_dir}/{filename}"
-        
-        # Generate commit message
-        title = summary_data.get('title', 'Unknown Paper')
-        commit_message = self.commit_message_template.format(
-            title=title,
-            arxiv_id=arxiv_id,
-            date=date_str
-        )
-        
-        # Upload file
-        result = self.upload_file(local_file_path, repo_file_path, commit_message)
-        
-        # Add metadata to result
-        result.update({
+
+        # Return mock result without actually uploading
+        logger.info(f"Skipping summary upload to GitHub: {local_file_path} (summaries are kept local only)")
+
+        return {
             'summary_data': summary_data,
             'repo_file_path': repo_file_path,
-            'local_file_path': local_file_path
-        })
-        
-        return result
+            'local_file_path': local_file_path,
+            'skipped': True,
+            'message': 'Summary files are not uploaded to GitHub repository'
+        }
     
-    def upload_summaries_batch(self, summaries: List[Dict], 
+    def upload_summaries_batch(self, summaries: List[Dict],
                               local_files: List[str]) -> List[Dict[str, Any]]:
         """
-        Upload multiple summaries in batch.
-        
+        Upload multiple summaries in batch with improved error handling.
+
         Args:
             summaries: List of summary metadata
             local_files: List of local file paths
-            
+
         Returns:
             List of upload results
         """
         if len(summaries) != len(local_files):
             raise ValueError("Number of summaries must match number of files")
-        
+
         results = []
-        
-        for summary, local_file in zip(summaries, local_files):
+        successful_count = 0
+        failed_count = 0
+
+        logger.info(f"Starting batch upload of {len(summaries)} files...")
+
+        for i, (summary, local_file) in enumerate(zip(summaries, local_files), 1):
             try:
+                logger.info(f"Uploading file {i}/{len(summaries)}: {local_file}")
                 result = self.upload_summary(summary, local_file)
                 results.append(result)
-                
+                successful_count += 1
+
+                logger.info(f"✅ Successfully uploaded {i}/{len(summaries)}: {local_file}")
+
                 # Add delay between uploads to avoid rate limiting
-                import time
                 time.sleep(1)
-                
+
             except Exception as e:
-                logger.error(f"Failed to upload {local_file}: {e}")
+                failed_count += 1
+                error_msg = str(e)
+                logger.error(f"❌ Failed to upload {i}/{len(summaries)}: {local_file} - {error_msg}")
+
+                # Store detailed error information
                 results.append({
+                    'error': error_msg,
+                    'summary_data': summary,
+                    'local_file_path': local_file,
+                    'upload_index': i,
+                    'failed_at': datetime.now().isoformat()
+                })
+
+                # Continue with next file instead of stopping
+                logger.info(f"Continuing with remaining {len(summaries) - i} files...")
+
+        # Final summary
+        logger.info(f"Batch upload completed: {successful_count}/{len(results)} successful, {failed_count} failed")
+
+        if failed_count > 0:
+            logger.warning(f"Failed uploads summary:")
+            for result in results:
+                if 'error' in result:
+                    logger.warning(f"  - {result.get('local_file_path', 'unknown')}: {result.get('error', 'unknown error')}")
+
+        return results
+
+    def retry_failed_uploads(self, failed_results: List[Dict]) -> List[Dict[str, Any]]:
+        """
+        Retry uploading files that failed in previous batch upload.
+
+        Args:
+            failed_results: List of failed upload results from previous batch
+
+        Returns:
+            List of retry results
+        """
+        if not failed_results:
+            logger.info("No failed uploads to retry")
+            return []
+
+        retry_results = []
+        logger.info(f"Retrying {len(failed_results)} failed uploads...")
+
+        for i, failed_result in enumerate(failed_results, 1):
+            if 'error' not in failed_result:
+                continue  # Skip non-failed results
+
+            summary = failed_result.get('summary_data')
+            local_file = failed_result.get('local_file_path')
+
+            if not summary or not local_file:
+                logger.error(f"Invalid failed result data for retry {i}/{len(failed_results)}")
+                continue
+
+            try:
+                logger.info(f"Retrying upload {i}/{len(failed_results)}: {local_file}")
+                result = self.upload_summary(summary, local_file)
+                retry_results.append(result)
+                logger.info(f"✅ Retry successful {i}/{len(failed_results)}: {local_file}")
+
+                # Add delay between retries
+                time.sleep(2)
+
+            except Exception as e:
+                logger.error(f"❌ Retry failed {i}/{len(failed_results)}: {local_file} - {e}")
+                retry_results.append({
                     'error': str(e),
                     'summary_data': summary,
-                    'local_file_path': local_file
+                    'local_file_path': local_file,
+                    'retry_failed_at': datetime.now().isoformat(),
+                    'original_error': failed_result.get('error', 'unknown')
                 })
-        
-        logger.info(f"Batch upload completed: {len([r for r in results if 'error' not in r])}/{len(results)} successful")
-        return results
-    
+
+        successful_retries = [r for r in retry_results if 'error' not in r]
+        failed_retries = [r for r in retry_results if 'error' in r]
+
+        logger.info(f"Retry completed: {len(successful_retries)}/{len(retry_results)} successful")
+
+        return retry_results
+
     def create_index_file(self, summaries: List[Dict]) -> str:
         """
         Create an index file listing all summaries.
