@@ -1,9 +1,9 @@
 name: Weekly Paper Crawler
 
 on:
-  # 每周定时运行 - 周日凌晨3点获取论文并发送邮件
+  # 每周定时运行 - 周三凌晨3点获取论文并发送邮件
   schedule:
-    - cron: '0 19 * * 0'  # UTC 19:00 = 北京时间周一03:00 (每周运行)
+    - cron: '0 19 * * 2'  # UTC 19:00 = 北京时间周三03:00 (每周运行)
   
   # 支持手动触发
   workflow_dispatch:
