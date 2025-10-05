@@ -3,7 +3,7 @@
 # arXiv Configuration
 arxiv:
   # Base URL for arXiv API
-  api_base_url: "http://export.arxiv.org/api/query"
+  api_base_url: "https://export.arxiv.org/api/query"
   # ar5iv base URL for HTML conversion
   ar5iv_base_url: "https://ar5iv.labs.arxiv.org/html"
   # Maximum number of papers to process per run
