@@ -28,7 +28,7 @@ jobs:
       id-token: write
     env:
       PYTHONPATH: src
-      ENABLE_PAGES_DEPLOY: ${{ vars.ENABLE_PAGES_DEPLOY || 'false' }}
+      ENABLE_PAGES_DEPLOY: ${{ vars.ENABLE_PAGES_DEPLOY || 'true' }}
       PIPELINE_MODE: ${{ github.event.inputs.mode || 'offline' }}
       PIPELINE_TOPIC_LIMIT: ${{ github.event.inputs.topic_limit || '1' }}
       PIPELINE_PAPER_LIMIT: ${{ github.event.inputs.paper_limit || '3' }}
