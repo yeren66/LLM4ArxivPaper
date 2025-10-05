@@ -15,26 +15,45 @@ class EmailDigest:
 		self.site_base_url = site_base_url.rstrip("/")
 
 	def send(self, summaries: Iterable[PaperSummary], subject_context: dict) -> None:
-		if not self.email_config.enabled:
+		config = self.email_config
+		if not config.enabled:
 			print("[INFO] Email digest disabled; skipping send step.")
 			return
-		if not self.email_config.sender or not self.email_config.recipients:
+		if not config.sender or not config.recipients:
 			print("[WARN] Email sender/recipients not configured; skip sending.")
+			return
+		if not config.smtp_host:
+			print("[WARN] SMTP host not configured; skip sending.")
+			return
+
+		recipient_list = list(config.recipients)
+		if not recipient_list:
+			print("[WARN] No email recipients provided; skip sending.")
+			return
+
+		required_auth = config.username or config.password
+		if required_auth and not (config.username and config.password):
+			print("[WARN] SMTP credentials incomplete (username/password); skip sending.")
 			return
 
 		body = self._build_body(list(summaries), subject_context)
-		subject = self.email_config.subject_template.format(**subject_context)
+		subject = config.subject_template.format(**subject_context)
 
 		message = EmailMessage()
 		message["Subject"] = subject
-		message["From"] = self.email_config.sender
-		message["To"] = ", ".join(self.email_config.recipients)
+		message["From"] = config.sender
+		message["To"] = ", ".join(recipient_list)
 		message.set_content(body, subtype="html", charset="utf-8")
 
+		connection_cls = smtplib.SMTP_SSL if config.use_ssl else smtplib.SMTP
 		try:
-			with smtplib.SMTP("localhost") as smtp:
+			with connection_cls(config.smtp_host, config.smtp_port, timeout=config.timeout) as smtp:
+				if config.use_tls and not config.use_ssl:
+					smtp.starttls()
+				if config.username and config.password:
+					smtp.login(config.username, config.password)
 				smtp.send_message(message)
-			print("[INFO] Email digest submitted to localhost SMTP server.")
+			print("[INFO] Email digest submitted to SMTP server.")
 		except Exception as exc:  # pragma: no cover - runtime environment specific
 			print(f"[WARN] Failed to send email digest: {exc}")
 

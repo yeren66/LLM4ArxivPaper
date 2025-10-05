@@ -80,6 +80,13 @@ class EmailConfig:
 	sender: Optional[str] = None
 	recipients: List[str] = field(default_factory=list)
 	subject_template: str = "每周论文雷达 - {run_date}"
+	smtp_host: Optional[str] = None
+	smtp_port: int = 587
+	username: Optional[str] = None
+	password: Optional[str] = None
+	use_tls: bool = True
+	use_ssl: bool = False
+	timeout: int = 30
 
 
 @dataclass
@@ -164,6 +171,13 @@ class PipelineConfig:
 				sender=email_section.get("sender"),
 				recipients=list(email_section.get("recipients", [])),
 				subject_template=email_section.get("subject_template", "每周论文雷达 - {run_date}"),
+				smtp_host=email_section.get("smtp_host"),
+				smtp_port=int(email_section.get("smtp_port", 587)),
+				username=email_section.get("username"),
+				password=email_section.get("password"),
+				use_tls=bool(email_section.get("use_tls", True)),
+				use_ssl=bool(email_section.get("use_ssl", False)),
+				timeout=int(email_section.get("timeout", 30)),
 			),
 			runtime=RuntimeConfig(
 				mode=runtime_section.get("mode", "offline"),
