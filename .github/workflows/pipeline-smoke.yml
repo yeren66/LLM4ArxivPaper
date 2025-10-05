@@ -33,6 +33,7 @@ jobs:
       PIPELINE_TOPIC_LIMIT: ${{ github.event.inputs.topic_limit || '1' }}
       PIPELINE_PAPER_LIMIT: ${{ github.event.inputs.paper_limit || '3' }}
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY || '' }}
+      MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD || '' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

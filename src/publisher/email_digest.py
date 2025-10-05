@@ -36,6 +36,12 @@ class EmailDigest:
 			print("[WARN] SMTP credentials incomplete (username/password); skip sending.")
 			return
 
+		# Debug: check if password was actually loaded
+		if config.password:
+			print(f"[DEBUG] Password loaded, length: {len(config.password)}")
+		else:
+			print("[WARN] Password is empty or not loaded from environment")
+
 		body = self._build_body(list(summaries), subject_context)
 		subject = config.subject_template.format(**subject_context)
 
@@ -46,16 +52,23 @@ class EmailDigest:
 		message.set_content(body, subtype="html", charset="utf-8")
 
 		connection_cls = smtplib.SMTP_SSL if config.use_ssl else smtplib.SMTP
+		print(f"[DEBUG] Using {connection_cls.__name__} to connect to {config.smtp_host}:{config.smtp_port}")
 		try:
 			with connection_cls(config.smtp_host, config.smtp_port, timeout=config.timeout) as smtp:
+				print(f"[DEBUG] Connection established, server: {smtp.sock.getpeername() if hasattr(smtp, 'sock') and smtp.sock else 'unknown'}")
 				if config.use_tls and not config.use_ssl:
+					print("[DEBUG] Initiating STARTTLS...")
 					smtp.starttls()
 				if config.username and config.password:
+					print(f"[DEBUG] Logging in as {config.username}...")
 					smtp.login(config.username, config.password)
+					print("[DEBUG] Login successful")
 				smtp.send_message(message)
 			print("[INFO] Email digest submitted to SMTP server.")
 		except Exception as exc:  # pragma: no cover - runtime environment specific
 			print(f"[WARN] Failed to send email digest: {exc}")
+			import traceback
+			traceback.print_exc()
 
 	# ------------------------------------------------------------------
 

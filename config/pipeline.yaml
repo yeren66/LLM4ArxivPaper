@@ -108,7 +108,7 @@ email:
   smtp_host: "smtp.gmail.com"
   smtp_port: 465
   username: "yerenbot@gmail.com"
-  password: "ebam liko rvud zjkl"  # 建议在运行前导出环境变量
+  password: "${MAIL_PASSWORD}"  # 建议在运行前导出环境变量
   use_tls: false
   use_ssl: true
   timeout: 30
