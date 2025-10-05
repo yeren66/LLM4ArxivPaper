@@ -1,154 +1,170 @@
-# 📚 LLM4Reading - 智能论文自动化阅读系统
+# 📚 LLM4Reading — 面向研究者的 arXiv 智能雷达
 
-**LLM4Reading** 是一个智能、自动化的学术论文管理工具，旨在帮助研究人员快速追踪最新的arXiv论文，自动生成高质量中文摘要，并进行智能主题分类和高效归档。项目全面集成GitHub Actions，可实现完全自动化的论文检索、摘要生成、文档更新和邮件通知。
+LLM4Reading 旨在帮助研究者专注于论文本身：
 
-## 🚀 项目核心功能
+1. **精准抓取**：用户在 YAML 中定义关心的主题、分类和关键词，系统自动从 arXiv 拉取候选论文。
+2. **LLM 筛选**：利用 OpenAI 模型读取摘要，从主题、方法、创新、实验等层面给出综合得分，筛去低相关的内容。
+3. **任务驱动总结**：先生成“作为读者想弄明白的问题”列表，再带着这些 TODO 逐项阅读、回答，最终输出结构化 Markdown 报告。
+4. **轻量发布**：所有总结统一写入 `site/`，GitHub Actions 自动发布为 GitHub Pages；邮件只发送统计信息与访问链接，让用户快速掌握最新进展。
 
-* **自动论文检索**：每周自动搜索arXiv上相关领域最新发布的论文。
-* **AI驱动摘要生成**：使用DeepSeek API自动生成精准且高质量的中文摘要。
-* **智能主题分类**：将获取的论文自动分类到预设的主题中，如软件测试、代码生成、知识图谱等。
-* **自动上传GitHub**：RTD文档结构自动推送到GitHub仓库（本地摘要文件不上传）。
-* **邮件报告系统**：每周自动发送邮件报告，方便快速浏览最新动态。
-
-> **注意**：本项目不集成自动构建文档功能（如Razor Docs）。如果你有此需求，请参考专门构建[Razor Docs 文档](https://razordocs.com)以及[Razor Docs GitHub项目](https://github.com/razordocs/razor-docs)。
-
-## 🛠️ 技术栈与核心架构
-
-项目使用Python 3.9+ 开发，核心技术包括：
-
-* **arXiv API**: 论文检索与获取。
-* **DeepSeek/OpenAI API**: 摘要生成。
-* **GitHub Actions**: 自动化构建和运行任务。
-* **SMTP邮件服务**: 发送自动化邮件通知。
-
-## 🔍 快速上手指南
-
-### 一、环境准备
-
-```bash
-# 克隆项目
-git clone https://github.com/your-username/LLM4Reading.git
-cd LLM4Reading
-
-# 安装依赖
-pip install -r requirements.txt
-```
-
-### 二、关键配置
-
-配置文件位于`config/`目录下，包括主配置文件`config.yaml`和敏感信息文件`secrets.env`。
-
-## 📁 项目结构
-
-```
-LLM4Reading/
-├── src/                          # 核心源代码
-│   ├── main.py                   # 主程序入口
-│   ├── paper_fetcher/            # 论文获取模块
-│   ├── llm_summarizer/           # LLM摘要生成模块
-│   ├── topic_manager/            # 主题分类管理模块
-│   ├── github_uploader/          # GitHub上传模块
-│   └── email_notifier/           # 邮件通知模块
-├── config/                       # 配置文件
-│   ├── config.yaml              # 主配置文件
-│   └── secrets.env              # 密钥配置文件
-├── summaries/                    # 本地论文摘要存储（不上传到GitHub）
-├── source/paper_note/           # RTD文档源文件（上传到GitHub）
-├── logs/                        # 日志文件
-├── .github/workflows/           # GitHub Actions工作流
-└── requirements.txt             # Python依赖
-```
-
-## 📝 文件命名规则
-
-- **本地摘要文件**: `summaries/{YYYYMMDD}_{arxiv_id}.md`
-- **RTD文档文件**: `source/paper_note/{topic}/{YYYYMMDD}_{arxiv_id}.md`
-- **GitHub上传**: 仅上传RTD文档结构，本地summaries目录保持本地存储
-
-* 大模型（LLM）配置
-
-  * `LLM_API_KEY`：大语言模型的API密钥。
-
-* GitHub配置
-
-  * `GH_TOKEN`：用于自动推送论文摘要到GitHub仓库的Personal Access Token。
-  * 仓库名称配置：需要填写你配置好的GitHub仓库名。
-
-* 邮件服务配置
-
-  * `EMAIL_PASSWORD`：邮箱服务的SMTP协议应用专用密码。
-  * 收件邮箱：用于接收自动生成的论文摘要报告。建议使用Gmail服务进行配置。
-
-### 三、运行测试
-
-#### 🔧 使用方式
-
-```bash
-# 1. 默认运行（获取上周论文 + 发送邮件）- 推荐
-python src/main.py
-
-# 2. 只获取论文，不发送邮件
-python src/main.py --no-email
-
-# 3. 指定日期范围获取论文
-python src/main.py --date-range --start-date 2025-06-01 --end-date 2025-06-07
-
-# 4. 指定日期范围，不发送邮件
-python src/main.py --date-range --start-date 2025-06-01 --end-date 2025-06-07 --no-email
-```
-
-#### 📋 src/main.py 参数说明
-
-| 参数 | 作用 |
-|------|------|
-| `--date-range` | 指定日期范围模式 |
-| `--start-date` | 开始日期 (YYYY-MM-DD) |
-| `--end-date` | 结束日期 (YYYY-MM-DD) |
-| `--no-email` | 禁用邮件通知 |
-
-## 📅 GitHub Actions 自动化部署
-
-项目已配置GitHub Actions工作流，支持：
-- 每周一自动运行论文爬取和摘要生成
-- 自动上传RTD文档结构到GitHub
-- 自动发送邮件报告
-
-配置GitHub Secrets：
-- `LLM_API_KEY`: DeepSeek API密钥
-- `LLM_BASE_URL`: DeepSeek API地址
-- `GH_TOKEN`: GitHub Personal Access Token
-- `EMAIL_PASSWORD`: 邮箱SMTP密码
-
-## 🚧 常见问题与故障排除
-
-如遇问题，请参考以下常见情况：
-
-* **Secrets配置错误**：请确认Secrets已在GitHub仓库中正确设置。
-* **邮件发送失败**：确认使用的是邮箱应用专用密码，并检查SMTP服务器配置。
-* **API配额超限**：调整论文获取数量或增加API配额。
-
-
-## 📝 配置说明
-
-主要配置项说明：
-- `config/config.yaml`: 主配置文件，包含arXiv搜索关键词、邮件设置等
-- `config/secrets.env`: 敏感信息配置，包含API密钥、邮箱密码等
-
-## 🎯 最佳使用实践
-
-* 定期监控API使用情况。
-* 根据研究方向及时更新搜索关键词。
-* 检查邮件报告，确保系统正常运行。
-* 定期进行配置备份。
-
-## 🤝 贡献和支持
-
-本项目开源且接受社区贡献，欢迎通过提交Issues或Pull Requests参与项目维护。
-
-## 📜 许可证
-
-本项目遵循MIT许可证，详细信息参见[LICENSE文件](LICENSE)。
+> ⚠️ 提示：仓库正在逐步重构为上述架构。本 README 和 `config/pipeline.yaml` 描述了新版管线的使用方式；旧的 Read the Docs / GitHub 上传相关模块将被完全移除。
 
 ---
 
-📖 **文档网站**：[ReadTheDocs在线文档](https://docs.readthedocs.com/platform/stable/)
+## ✨ 特性速览
+
+- 🧭 **主题驱动抓取**：Topic、关键词、排除规则全部由用户配置，每次运行自动生效。
+- 🧠 **多维度相关性评分**：LLM 对摘要在多个维度打分并加权求和，≥60 即入选。
+- 📋 **TODO 导向阅读**：自动列出想弄清楚的问题，逐条解答后再给综合总结，更贴近实际研究需求。
+- 📬 **邮件速览 + 链接**：邮件只包含统计数据、最值得读的论文列表和 GitHub Pages 链接，不打扰却足够全面。
+- ☁️ **GitHub Pages 托管**：构建产物与源码分离，用户无需关注发布细节，点击链接即可阅读。
+
+---
+
+## �️ 仓库结构（重构完成后）
+
+```
+config/
+  pipeline.yaml         # 带详细注释的总配置（可安全地自定义）
+requirements.txt
+src/
+  core/
+  fetchers/
+  filters/
+  summaries/
+  publisher/
+  workflow/
+templates/
+  site/                 # GitHub Pages 所需 HTML 模板
+site/                   # 构建产物（不提交，Actions 部署到 Pages）
+.github/workflows/
+  publish.yml           # 自动构建 + 部署 GitHub Pages
+```
+
+### 模块职责概览
+
+| 模块 | 职责 |
+| --- | --- |
+| `core.config_loader` | 解析 `pipeline.yaml`，合并环境变量、校验配置 |
+| `fetchers.arxiv_client` | 根据 topic 构造查询，调用 arXiv API（可配置等待时间、最大数量） |
+| `filters.relevance_ranker` | 调用 OpenAI，对摘要进行多维度评分和加权 |
+| `summaries.task_planner` | 生成 TODO 列表；`summaries.task_reader` 按 TODO 与 LLM 交互并提取答案；`summaries.report_builder` 生成 Markdown |
+| `publisher.static_site` | 根据模板批量生成静态页面和索引 |
+| `publisher.email_digest` | 汇总统计、发送邮件（可关闭） |
+| `workflow.pipeline` | 编排整条流程，支持本地 CLI 和 GitHub Actions |
+
+---
+
+## ⚙️ 配置 `config/pipeline.yaml`
+
+> 我们为每个字段写了详细注释，打开文件即可查看。以下给出关键段落说明：
+
+```yaml
+openai:
+  api_key: "${OPENAI_API_KEY}"   # 推荐用环境变量注入
+  model: "gpt-4o-mini"
+
+fetch:
+  days_back: 7                   # 默认抓取过去 7 天
+  max_papers_per_topic: 60        # 每个 topic 初始抓取上限
+
+relevance:
+  scoring_dimensions:            # 多维度权重结构
+    - name: topic_alignment
+      weight: 0.35
+  pass_threshold: 60
+
+summarization:
+  task_list_size: 5
+  max_sections: 4
+
+site:
+  output_dir: "site"
+  base_url: "https://<your-user>.github.io/<your-repo>"
+
+email:
+  enabled: true
+  sender: "${MAIL_SENDER}"
+  recipients:
+    - "your-email@example.com"
+
+topics:
+  - name: "software_testing"
+    label: "软件测试"
+    query:
+      categories: ["cs.SE", "cs.AI"]
+      include_keywords:
+        - "software testing"
+      exclude_keywords:
+        - "quantum"
+    interest_prompt: |
+      我关注大模型在软件测试中的应用……
+```
+
+- **新增/删除 topic**：直接复制节点即可；`name` 会用于输出路径和统计。
+- **敏感信息**：带 `${...}` 的配置建议在本地 `.env` 或 GitHub Secrets 中设置。
+- **不需要邮件**：将 `email.enabled` 改为 `false`，管线会自动跳过该步骤。
+
+---
+
+## � 快速开始（本地）
+
+```bash
+# 1. 准备环境
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+
+# 2. 配置环境变量（示例）
+export OPENAI_API_KEY="sk-..."
+export MAIL_SENDER="bot@example.com"
+export MAIL_PASSWORD="app-password"
+
+# 3. 编辑 config/pipeline.yaml
+#    - 调整 topic / interest_prompt
+#    - 设置 GitHub Pages base_url
+#    - 如不需邮件，改 email.enabled 为 false
+
+# 4. 运行一次完整流程（命令即将提供）
+python -m workflow.cli run --days-back 7
+
+# 5. 本地预览生成的静态站点
+python -m http.server --directory site 8000
+```
+
+> `workflow.cli` 会读取配置、下载论文、筛选、总结，并在控制台输出最相关论文的统计摘要。运行结束后，`site/` 目录就是完整的发布内容（同 GitHub Pages）。
+
+---
+
+## ☁️ 使用 GitHub Actions 发布
+
+1. 在仓库设置里新增 Secrets：`OPENAI_API_KEY`、`MAIL_SENDER`、`MAIL_PASSWORD`（如邮件启用）。
+2. 将 `config/pipeline.yaml` 中的 `site.base_url` 设置为 `https://<username>.github.io/<repo>`。
+3. 推送代码后，`.github/workflows/publish.yml` 会：
+   - 安装依赖并执行 `python -m workflow.cli run`；
+   - 将 `site/` 作为构建产物上传至 GitHub Pages；
+   - （可选）发送邮件摘要。
+4. Actions 完成后，访问邮件或终端输出的链接即可查看最新内容。
+
+---
+
+## ❓ 常见问题
+
+| 问题 | 建议排查 |
+| --- | --- |
+| 抓取不到论文 | 检查 `topics[*].query` 是否过于严格，或提高 `fetch.days_back` |
+| LLM 评分耗时长 | 减少 `max_papers_per_topic`，或调低 `runtime.max_concurrency` |
+| 邮件发送失败 | 确认 `email.enabled`、SMTP 配置、应用密码是否正确 |
+| GitHub Pages 无法访问 | 确认仓库 Settings 中启用了 Pages 且 workflow 正常执行 |
+
+---
+
+## 📝 贡献
+
+欢迎提交 Issue / PR 讨论主题模板、评分 prompt 或总结格式的改进。请在 PR 中说明测试方式与配置变更。
+
+---
+
+## � 许可证
+
+本项目遵循 [MIT License](LICENSE)。

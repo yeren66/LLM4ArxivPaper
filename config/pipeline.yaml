@@ -1,0 +1,120 @@
+# LLM4Reading pipeline configuration
+# --------------------------------------------------------------
+# 所有可调参数集中在此文件，用户可根据需求动态修改。
+# 带有 ${...} 的字段支持通过环境变量覆盖，以便在 GitHub
+# Actions 或本地运行时安全地传入敏感信息。
+
+openai:
+  # OpenAI API 密钥，建议通过环境变量 OPENAI_API_KEY 注入
+  api_key: "${OPENAI_API_KEY}"
+  # 模型名称，可根据账号权限选择，例如 gpt-4o-mini / gpt-4o
+  model: "gpt-4o-mini"
+  # 生成随机性（0-1），推荐偏低以保证摘要稳定
+  temperature: 0.2
+  # OpenAI API 基地址，如需兼容 Azure/BYO 接口可改写
+  base_url: "https://api.openai.com/v1"
+
+fetch:
+  # arXiv 论文抓取默认向前回溯的天数
+  days_back: 7
+  # 每个 topic 允许抓取的最大论文数量（未筛选前）
+  max_papers_per_topic: 60
+  # 请求之间的延时（秒），避免触发 arXiv 速率限制
+  request_interval: 1.0
+
+relevance:
+  # LLM 相关性评估需要的各维度及权重，总和最好为 1.0
+  scoring_dimensions:
+    - name: "topic_alignment"     # 论文主题与兴趣描述的一致性
+      weight: 0.35
+    - name: "methodology_fit"     # 方法论是否符合期待（技术路线、数据集等）
+      weight: 0.25
+    - name: "novelty"             # 创新点是否具有吸引力
+      weight: 0.20
+    - name: "experiment_depth"    # 实验设置是否严谨、充分
+      weight: 0.20
+  # 加权总分达到该阈值（0-100）即视为相关论文
+  pass_threshold: 60
+  # LLM 评分的重试次数（网络抖动等情况）
+  max_retries: 2
+
+summarization:
+  # 让 LLM 站在用户视角输出多少条 TODO / 关注问题
+  task_list_size: 5
+  # 概览总结最多包含多少个段落（含综合结论）
+  max_sections: 4
+  # 每篇论文问答环节的最大重试次数
+  max_question_retries: 2
+
+site:
+  # 静态站点输出目录，构建产物会写入该路径
+  output_dir: "site"
+  # GitHub Pages 访问地址，GitHub Actions 构建后会用于邮件和终端输出
+  base_url: "https://<your-user>.github.io/<your-repo>"
+  # 生成的静态页面语言（目前仅用于模板展示）
+  locale: "zh-CN"
+
+email:
+  # 是否启用邮件通知；如果为 false，系统会跳过邮件步骤
+  enabled: true
+  # 邮件发送人地址（建议使用应用专用密码）
+  sender: "${MAIL_SENDER}"
+  # SMTP 服务密码（建议从环境变量注入）
+  sender_password: "${MAIL_PASSWORD}"
+  # SMTP 服务器配置（Gmail 示例：smtp.gmail.com:587）
+  smtp_host: "smtp.gmail.com"
+  smtp_port: 587
+  use_tls: true
+  # 收件人列表，可填写多个邮箱
+  recipients:
+    - "your-email@example.com"
+  # 邮件主题模板，可使用 {run_date} 占位符
+  subject_template: "LLM4Reading 每周论文雷达 - {run_date}"
+
+runtime:
+  # 并行处理的最大论文数量，按需调整（过高可能触发 API 限制）
+  max_concurrency: 4
+  # 中间数据是否缓存到本地（例如 JSON 元数据），便于调试
+  cache_enabled: true
+  cache_dir: "cache"
+  # 控制台输出等级：info / debug / silent
+  console_level: "info"
+
+# ----------------------------------------------------------------
+# topics 列表定义主要驱动抓取和筛选逻辑。
+# 每个 topic 都包含:
+# - name: 用作路径的内部名称，不可重复
+# - label: 页面和邮件中展示的中文名称
+# - query: arXiv 抓取所需的分类 / 关键词设置
+# - interest_prompt: 让 LLM 了解用户关注点的文本描述
+# 可按需增删 topic 节点；如果你不关心某主题，直接移除即可。
+# ----------------------------------------------------------------
+topics:
+  - name: "software_testing"
+    label: "软件测试"
+    query:
+      categories: ["cs.SE", "cs.AI"]        # arXiv 分类标签
+      include_keywords:                        # 搜索需包含的关键词
+        - "software testing"
+        - "test automation"
+        - "unit test generation"
+      exclude_keywords:                        # 明确排除的关键词
+        - "quantum"
+        - "biology"
+    interest_prompt: |
+      我主要关注大语言模型在软件测试领域的应用，
+      包括测试用例生成、缺陷定位和覆盖率提升等方向。
+
+  - name: "code_generation"
+    label: "代码生成"
+    query:
+      categories: ["cs.AI", "cs.CL"]
+      include_keywords:
+        - "code generation"
+        - "program synthesis"
+        - "large language model"
+      exclude_keywords: []
+    interest_prompt: |
+      我想了解最新的代码生成模型、工具链以及在复杂软件开发场景中的实践。
+
+# 可继续追加更多 topic ...
