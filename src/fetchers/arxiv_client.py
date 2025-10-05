@@ -74,10 +74,22 @@ class ArxivClient:
 	# ------------------------------------------------------------------
 
 	def fetch_for_topic(self, topic: TopicConfig) -> List[PaperCandidate]:
+		threshold_date = datetime.utcnow() - timedelta(days=self.fetch_config.days_back)
+		
+		# 优先使用直接 HTTPS 请求，避免 arxiv 库的 HTTP 301 重定向问题
+		if requests is not None:
+			print(f"[INFO] Fetching papers for topic '{topic.name}' via direct HTTPS API...")
+			papers = self._fallback_fetch(topic, threshold_date)
+			if papers:
+				return papers
+			print(f"[WARN] Direct HTTPS fetch returned no results for topic '{topic.name}'")
+		
+		# 仅当 requests 不可用时才回退到 arxiv.Client
 		if self._client is None or arxiv is None:
-			print("[WARN] arxiv package not available; returning empty results.")
+			print("[WARN] Neither requests nor arxiv package available; returning empty results.")
 			return []
 
+		print(f"[INFO] Falling back to arxiv.Client for topic '{topic.name}'...")
 		query = self._build_query(topic)
 		search = arxiv.Search(
 			query=query,
@@ -86,9 +98,7 @@ class ArxivClient:
 			sort_order=arxiv.SortOrder.Descending,
 		)
 
-		threshold_date = datetime.utcnow() - timedelta(days=self.fetch_config.days_back)
 		papers: List[PaperCandidate] = []
-
 		try:
 			for result in self._client.results(search):
 				published = result.published.replace(tzinfo=None) if result.published else None
@@ -117,17 +127,10 @@ class ArxivClient:
 				if len(papers) >= self.fetch_config.max_papers_per_topic:
 					break
 
-				# 异步客户端已经支持 delay_seconds，但这里仍然显式 sleep，确保兼容
 				sleep(self.fetch_config.request_delay)
 
 		except Exception as exc:  # pragma: no cover
-			print(f"[WARN] arxiv.Client failed for topic '{topic.name}': {exc}")
-			print("[INFO] Attempting direct HTTPS fallback...")
-			return self._fallback_fetch(topic, threshold_date)
-
-		if not papers:
-			print(f"[INFO] arxiv.Client returned no results for topic '{topic.name}', trying fallback.")
-			return self._fallback_fetch(topic, threshold_date)
+			print(f"[WARN] arxiv.Client also failed: {exc}")
 
 		return papers
 
@@ -144,7 +147,7 @@ class ArxivClient:
 			"start": 0,
 			"max_results": self.fetch_config.max_papers_per_topic,
 		}
-		url = "https://export.arxiv.org/api/query"
+		url = "http://export.arxiv.org/api/query"
 
 		try:
 			response = requests.get(url, params=params, timeout=30, allow_redirects=True)
