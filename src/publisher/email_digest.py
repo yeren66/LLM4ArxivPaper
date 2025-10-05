@@ -16,6 +16,7 @@ class EmailDigest:
 
 	def send(self, summaries: Iterable[PaperSummary], subject_context: dict) -> None:
 		if not self.email_config.enabled:
+			print("[INFO] Email digest disabled; skipping send step.")
 			return
 		if not self.email_config.sender or not self.email_config.recipients:
 			print("[WARN] Email sender/recipients not configured; skip sending.")
@@ -33,6 +34,7 @@ class EmailDigest:
 		try:
 			with smtplib.SMTP("localhost") as smtp:
 				smtp.send_message(message)
+			print("[INFO] Email digest submitted to localhost SMTP server.")
 		except Exception as exc:  # pragma: no cover - runtime environment specific
 			print(f"[WARN] Failed to send email digest: {exc}")
 

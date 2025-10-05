@@ -57,6 +57,22 @@ jobs:
             --paper-limit "$PIPELINE_PAPER_LIMIT" \
             --email
 
+      - name: Print pipeline log summary
+        if: always()
+        run: |
+          echo "--- pipeline summary ---"
+          if [ -f site/manifest.json ]; then
+            jq '.' site/manifest.json || cat site/manifest.json
+          else
+            echo "manifest.json missing"
+          fi
+          echo "--- topics directory ---"
+          if [ -d site/topics ]; then
+            find site/topics -maxdepth 2 -type f
+          else
+            echo "site/topics directory missing"
+          fi
+
       - name: Inspect generated site
         if: always()
         run: |

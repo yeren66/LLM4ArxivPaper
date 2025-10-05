@@ -96,7 +96,7 @@ site:
 
 email:
   # ✅ 是否启用邮件推送（false 表示关闭）
-  enabled: false
+  enabled: true
 
   # ✅ 发件人邮箱（需支持 SMTP），建议使用应用专用密码
   sender: "yerenbot@gmail.com"

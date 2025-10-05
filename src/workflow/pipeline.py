@@ -9,11 +9,13 @@ from typing import Iterable, List, Optional
 
 from core.config_loader import load_pipeline_config
 from core.models import (
+	PaperCandidate,
 	PaperSummary,
 	PipelineConfig,
 	PipelineResult,
 	PipelineStats,
 	ScoredPaper,
+	TopicConfig,
 )
 from fetchers.ar5iv_parser import Ar5ivParser
 from fetchers.arxiv_client import ArxivClient
@@ -69,6 +71,14 @@ def run_pipeline(config_path: str, overrides: Optional[PipelineOverrides] = None
 		candidates = arxiv_client.fetch_for_topic(topic)
 		total_fetched += len(candidates)
 
+		if not candidates and config.runtime.mode == "offline":
+			print("[INFO] No live arXiv results; generating offline demo candidate.")
+			candidates = [_build_offline_demo_candidate(topic)]
+
+		if not candidates:
+			print(f"[WARN] No candidates available for topic {topic.label}; skipping.")
+			continue
+
 		if config.runtime.paper_limit is not None:
 			candidates = candidates[: config.runtime.paper_limit]
 
@@ -90,6 +100,7 @@ def run_pipeline(config_path: str, overrides: Optional[PipelineOverrides] = None
 
 	os.environ["PIPELINE_RUN_AT"] = datetime.utcnow().isoformat()
 	site_builder.build(summaries)
+	print(f"[INFO] Static site written to '{config.site.output_dir}'.")
 
 	subject_context = {
 		"run_date": datetime.utcnow().strftime("%Y-%m-%d"),
@@ -117,3 +128,28 @@ def _filter_by_threshold(scored_papers: Iterable[ScoredPaper], config: PipelineC
 		if normalised >= config.relevance.pass_threshold:
 			selected.append(scored)
 	return selected
+
+
+def _build_offline_demo_candidate(topic: TopicConfig) -> PaperCandidate:
+	now = datetime.utcnow()
+	keywords = topic.query.include or [topic.label]
+	categories = topic.query.categories or ["cs.AI"]
+	keyword_str = "、".join(keywords)
+	category_str = ", ".join(categories)
+	abstract = (
+		f"本条目为离线演示数据，用于验证流水线。聚焦主题：{topic.label}。"
+		f" 论文围绕 {keyword_str} 等方向展开，强调 novel 方法并提供 experiment 设计。"
+		f" 适用的 arXiv 分类包括 {category_str}，便于测试自动化流程。"
+	)
+	return PaperCandidate(
+		topic=topic,
+		arxiv_id=f"demo-{topic.name}-{now.strftime('%H%M%S')}",
+		title=f"[Demo] {topic.label} 自动化测试示例",
+		abstract=abstract,
+		authors=["LLM4ArxivPaper Bot"],
+		categories=categories,
+		published=now,
+		updated=now,
+		arxiv_url="https://arxiv.org/abs/0000.00000",
+		pdf_url=None,
+	)
