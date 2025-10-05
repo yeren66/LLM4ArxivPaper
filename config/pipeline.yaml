@@ -12,7 +12,7 @@ openai:
   # 生成随机性（0-1），推荐偏低以保证摘要稳定
   temperature: 0.2
   # OpenAI API 基地址，如需兼容 Azure/BYO 接口可改写
-  base_url: "https://api.openai.com/v1"
+  base_url: "https://api.geekai.pro/v1"
 
 fetch:
   # arXiv 论文抓取默认向前回溯的天数
@@ -50,7 +50,7 @@ site:
   # 静态站点输出目录，构建产物会写入该路径
   output_dir: "site"
   # GitHub Pages 访问地址，GitHub Actions 构建后会用于邮件和终端输出
-  base_url: "https://<your-user>.github.io/<your-repo>"
+  base_url: "https://yeren66.github.io/LLM4ArxivPaper
   # 生成的静态页面语言（目前仅用于模板展示）
   locale: "zh-CN"
 
@@ -58,7 +58,7 @@ email:
   # 是否启用邮件通知；如果为 false，系统会跳过邮件步骤
   enabled: true
   # 邮件发送人地址（建议使用应用专用密码）
-  sender: "${MAIL_SENDER}"
+  sender: "yerenbot@gmail.com"
   # SMTP 服务密码（建议从环境变量注入）
   sender_password: "${MAIL_PASSWORD}"
   # SMTP 服务器配置（Gmail 示例：smtp.gmail.com:587）
@@ -67,7 +67,7 @@ email:
   use_tls: true
   # 收件人列表，可填写多个邮箱
   recipients:
-    - "your-email@example.com"
+    - "syeren@fox.com"
   # 邮件主题模板，可使用 {run_date} 占位符
   subject_template: "LLM4Reading 每周论文雷达 - {run_date}"
 
