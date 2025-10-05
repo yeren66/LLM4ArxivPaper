@@ -124,6 +124,14 @@ class ArxivClient:
 			print(f"[WARN] Failed to fetch arXiv results for topic '{topic.name}': {exc}")
 			return self._fallback_fetch(topic, threshold_date)
 
+		if papers:
+			return papers
+
+		print(f"[WARN] arxiv.Client returned no results for topic '{topic.name}'; attempting HTTPS fallback.")
+		fallback = self._fallback_fetch(topic, threshold_date)
+		if fallback:
+			return fallback
+
 		return papers
 
 	def _fallback_fetch(self, topic: TopicConfig, threshold_date: datetime) -> List[PaperCandidate]:
@@ -139,25 +147,41 @@ class ArxivClient:
 			"start": 0,
 			"max_results": self.fetch_config.max_papers_per_topic,
 		}
-		url = "https://export.arxiv.org/api/query"
-		try:
-			response = requests.get(
-				url,
-				params=params,
-				timeout=30,
-				headers={"User-Agent": "LLM4ArxivPaper/1.0 (fallback)"},
-			)
-			response.raise_for_status()
-		except Exception as exc:  # pragma: no cover
-			print(f"[WARN] Fallback arXiv fetch failed: {exc}")
-			return []
+		endpoints = [
+			"https://export.arxiv.org/api/query",
+			"http://export.arxiv.org/api/query",
+		]
+		last_error: Optional[str] = None
 
-		try:
-			root = ET.fromstring(response.text)
-		except ET.ParseError as exc:  # pragma: no cover
-			print(f"[WARN] Unable to parse arXiv response: {exc}")
-			return []
+		for url in endpoints:
+			try:
+				response = requests.get(
+					url,
+					params=params,
+					timeout=30,
+					headers={"User-Agent": "LLM4ArxivPaper/1.0 (fallback)"},
+					allow_redirects=True,
+				)
+				response.raise_for_status()
+			except Exception as exc:  # pragma: no cover
+				last_error = str(exc)
+				print(f"[WARN] Fallback arXiv fetch failed via {url}: {exc}")
+				continue
 
+			try:
+				return self._parse_fallback_response(response.text, topic, threshold_date)
+			except ET.ParseError as exc:  # pragma: no cover
+				last_error = str(exc)
+				print(f"[WARN] Unable to parse arXiv response from {url}: {exc}")
+				continue
+
+		if last_error:
+			print(f"[WARN] All fallback arXiv attempts failed: {last_error}")
+
+		return []
+
+	def _parse_fallback_response(self, xml_text: str, topic: TopicConfig, threshold_date: datetime) -> List[PaperCandidate]:
+		root = ET.fromstring(xml_text)
 		ns = {"atom": "http://www.w3.org/2005/Atom"}
 		papers: List[PaperCandidate] = []
 
