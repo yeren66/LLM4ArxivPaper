@@ -46,7 +46,10 @@ class TaskReader:
 	def analyse(self, paper: PaperCandidate, tasks: List[TaskItem]) -> Tuple[List[TaskFinding], str, str]:
 		"""Return task findings, overview paragraph, and markdown context."""
 
-		markdown = self.parser.fetch_markdown(paper.arxiv_id) or paper.abstract
+		if paper.arxiv_id.startswith("demo-"):
+			markdown = paper.abstract
+		else:
+			markdown = self.parser.fetch_markdown(paper.arxiv_id) or paper.abstract
 		findings: List[TaskFinding] = []
 
 		for task in tasks:

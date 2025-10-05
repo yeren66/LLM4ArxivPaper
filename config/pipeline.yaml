@@ -102,7 +102,7 @@ email:
   sender: "yerenbot@gmail.com"
 
   # ✅ 收件人列表
-  recipients: []
+  recipients: ["syeren@foxmail.com"]
 
   # ✅ 邮件主题模板，可使用 {run_date}、{paper_count} 占位符
   subject_template: "每周论文雷达 - {run_date}"
