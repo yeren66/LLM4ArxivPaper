@@ -1,120 +1,120 @@
-# LLM4Reading pipeline configuration
-# --------------------------------------------------------------
-# 所有可调参数集中在此文件，用户可根据需求动态修改。
-# 带有 ${...} 的字段支持通过环境变量覆盖，以便在 GitHub
-# Actions 或本地运行时安全地传入敏感信息。
+# =============================
+# LLM4ArxivPaper 主配置文件样例
+#
+# 说明：
+# 1. 所有字段都可以根据需求调整；如无数组配置需要，可删除对应项。
+# 2. 若字段支持从环境变量读取，示例中会使用 ${VAR_NAME}。
+# 3. 该模板旨在帮助快速理解含义，实际运行前请按需精简。
+# =============================
 
 openai:
-  # OpenAI API 密钥，建议通过环境变量 OPENAI_API_KEY 注入
-  api_key: "${OPENAI_API_KEY}"
-  # 模型名称，可根据账号权限选择，例如 gpt-4o-mini / gpt-4o
-  model: "gpt-4o-mini"
-  # 生成随机性（0-1），推荐偏低以保证摘要稳定
-  temperature: 0.2
-  # OpenAI API 基地址，如需兼容 Azure/BYO 接口可改写
-  base_url: "https://api.geekai.pro/v1"
+	# ✅ OpenAI API Key，支持在运行环境中通过 OPENAI_API_KEY 注入
+	api_key: "${OPENAI_API_KEY}"
+
+	# ✅ 若使用 Azure/OpenAI 兼容服务，可指定 `base_url`；默认官方地址可留空
+	base_url: "https://api.geekai.pro/v1"
+
+	# ✅ 相关性打分所用模型（建议使用轻量模型，例如 gpt-4o-mini）
+	relevance_model: "gpt-4o-mini"
+
+	# ✅ TODO 规划与逐项问答所用模型（可与上方一致，或使用更强模型）
+	summarization_model: "gpt-4o-mini"
+
+	# ✅ 全局温度，控制生成随机性（0~1，越低越稳定）
+	temperature: 0.2
 
 fetch:
-  # arXiv 论文抓取默认向前回溯的天数
-  days_back: 7
-  # 每个 topic 允许抓取的最大论文数量（未筛选前）
-  max_papers_per_topic: 60
-  # 请求之间的延时（秒），避免触发 arXiv 速率限制
-  request_interval: 1.0
+	# ✅ 针对每个 Topic 最多抓取多少篇论文，用于控制开销
+	max_papers_per_topic: 50
+
+	# ✅ 查询回溯天数：例如 7 表示抓取近 7 天内发布的论文
+	days_back: 7
+
+	# ✅ arXiv API 请求间隔（秒），避免触发速率限制
+	request_delay: 1.0
+
+topics:
+	# ✅ 每个 Topic 代表一组关注点，可随时增删
+	- name: "software_testing"            # 唯一标识（用于文件名/目录）
+		label: "软件测试"                   # 对用户可见的标签
+
+		query:
+			# ✅ arXiv 分类过滤，填写官方 subject code
+			categories: ["cs.SE", "cs.AI"]
+
+			# ✅ 标题/摘要中希望出现的关键词，支持短语
+			include: ["software testing", "test automation"]
+
+			# ✅ 需排除的关键词，防止噪声
+			exclude: ["quantum", "biomedical"]
+
+		# ✅ 用户对该领域的兴趣描述，将传给 LLM 参考
+		interest_prompt: |
+			我关注大语言模型辅助软件测试的研究，尤其关注测试生成、覆盖率提升和缺陷定位方面的最新方法。
+
+	- name: "code_generation"
+		label: "代码生成"
+		query:
+			categories: ["cs.AI", "cs.CL"]
+			include: ["code generation", "program synthesis"]
+			exclude: []
+		interest_prompt: |
+			我希望了解大型语言模型如何改进代码生成质量，包括提示工程、约束生成和评估方法。
 
 relevance:
-  # LLM 相关性评估需要的各维度及权重，总和最好为 1.0
-  scoring_dimensions:
-    - name: "topic_alignment"     # 论文主题与兴趣描述的一致性
-      weight: 0.35
-    - name: "methodology_fit"     # 方法论是否符合期待（技术路线、数据集等）
-      weight: 0.25
-    - name: "novelty"             # 创新点是否具有吸引力
-      weight: 0.20
-    - name: "experiment_depth"    # 实验设置是否严谨、充分
-      weight: 0.20
-  # 加权总分达到该阈值（0-100）即视为相关论文
-  pass_threshold: 60
-  # LLM 评分的重试次数（网络抖动等情况）
-  max_retries: 2
+	# ✅ 对论文相关度的维度定义，可根据兴趣自行增删/调权重
+	scoring_dimensions:
+		- name: "topic_alignment"       # 主题契合度
+			weight: 0.35
+			description: "论文研究方向是否契合我的关注领域"
+		- name: "methodology_fit"       # 方法论匹配
+			weight: 0.25
+			description: "提出的方法是否与我关心的问题直接相关"
+		- name: "novelty"               # 创新点
+			weight: 0.2
+			description: "论文是否提供新颖的贡献或视角"
+		- name: "experiment_coverage"   # 实验完备性
+			weight: 0.2
+			description: "实验/评估设置是否充分回答关键问题"
+
+	# ✅ 通过阈值：总分 >= 该值视为“相关”，最终保留
+	pass_threshold: 60
 
 summarization:
-  # 让 LLM 站在用户视角输出多少条 TODO / 关注问题
-  task_list_size: 5
-  # 概览总结最多包含多少个段落（含综合结论）
-  max_sections: 4
-  # 每篇论文问答环节的最大重试次数
-  max_question_retries: 2
+	# ✅ TODO 列表的目标条数，实际生成数量可能略有出入
+	task_list_size: 5
+
+	# ✅ 每篇总结中展示的重点段落上限，防止输出过长
+	max_sections: 4
 
 site:
-  # 静态站点输出目录，构建产物会写入该路径
-  output_dir: "site"
-  # GitHub Pages 访问地址，GitHub Actions 构建后会用于邮件和终端输出
-  base_url: "https://yeren66.github.io/LLM4ArxivPaper
-  # 生成的静态页面语言（目前仅用于模板展示）
-  locale: "zh-CN"
+	# ✅ 静态站点输出目录，建议加入 .gitignore
+	output_dir: "site"
+
+	# ✅ 对外访问的基准 URL，GitHub Pages 发布后更新为实际地址
+	base_url: "https://yeren66.github.io/LLM4ArxivPaper"
 
 email:
-  # 是否启用邮件通知；如果为 false，系统会跳过邮件步骤
-  enabled: true
-  # 邮件发送人地址（建议使用应用专用密码）
-  sender: "yerenbot@gmail.com"
-  # SMTP 服务密码（建议从环境变量注入）
-  sender_password: "${MAIL_PASSWORD}"
-  # SMTP 服务器配置（Gmail 示例：smtp.gmail.com:587）
-  smtp_host: "smtp.gmail.com"
-  smtp_port: 587
-  use_tls: true
-  # 收件人列表，可填写多个邮箱
-  recipients:
-    - "syeren@fox.com"
-  # 邮件主题模板，可使用 {run_date} 占位符
-  subject_template: "LLM4Reading 每周论文雷达 - {run_date}"
+	# ✅ 是否启用邮件推送（false 表示关闭）
+	enabled: false
+
+	# ✅ 发件人邮箱（需支持 SMTP），建议使用应用专用密码
+	sender: "yerenbot@gmail.com"
+
+	# ✅ 收件人列表
+	recipients: []
+
+	# ✅ 邮件主题模板，可使用 {run_date}、{paper_count} 占位符
+	subject_template: "每周论文雷达 - {run_date}"
 
 runtime:
-  # 并行处理的最大论文数量，按需调整（过高可能触发 API 限制）
-  max_concurrency: 4
-  # 中间数据是否缓存到本地（例如 JSON 元数据），便于调试
-  cache_enabled: true
-  cache_dir: "cache"
-  # 控制台输出等级：info / debug / silent
-  console_level: "info"
+	# ✅ 运行模式：
+	#    - online  : 调用 OpenAI 接口执行真实打分与总结（需要 API Key）
+	#    - offline : 使用启发式规则，适合本地调试或无网络场景
+	mode: "offline"
 
-# ----------------------------------------------------------------
-# topics 列表定义主要驱动抓取和筛选逻辑。
-# 每个 topic 都包含:
-# - name: 用作路径的内部名称，不可重复
-# - label: 页面和邮件中展示的中文名称
-# - query: arXiv 抓取所需的分类 / 关键词设置
-# - interest_prompt: 让 LLM 了解用户关注点的文本描述
-# 可按需增删 topic 节点；如果你不关心某主题，直接移除即可。
-# ----------------------------------------------------------------
-topics:
-  - name: "software_testing"
-    label: "软件测试"
-    query:
-      categories: ["cs.SE", "cs.AI"]        # arXiv 分类标签
-      include_keywords:                        # 搜索需包含的关键词
-        - "software testing"
-        - "test automation"
-        - "unit test generation"
-      exclude_keywords:                        # 明确排除的关键词
-        - "quantum"
-        - "biology"
-    interest_prompt: |
-      我主要关注大语言模型在软件测试领域的应用，
-      包括测试用例生成、缺陷定位和覆盖率提升等方向。
+	# ✅ 限制处理的 topic 数量；设为 null 表示不限制
+	topic_limit: null
 
-  - name: "code_generation"
-    label: "代码生成"
-    query:
-      categories: ["cs.AI", "cs.CL"]
-      include_keywords:
-        - "code generation"
-        - "program synthesis"
-        - "large language model"
-      exclude_keywords: []
-    interest_prompt: |
-      我想了解最新的代码生成模型、工具链以及在复杂软件开发场景中的实践。
-
-# 可继续追加更多 topic ...
+	# ✅ 限制每个 topic 处理的论文数量；null 表示使用 fetch.max_papers_per_topic
+	paper_limit: null

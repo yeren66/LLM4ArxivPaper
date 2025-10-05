@@ -1,49 +1,45 @@
-"""Command-line entry point for the LLM4Reading pipeline."""
+"""Command-line entry for the pipeline."""
 
 from __future__ import annotations
 
 import argparse
-import logging
 from pathlib import Path
-from typing import Optional
 
-from core.config_loader import load_pipeline_config
-from workflow.pipeline import run_pipeline
+from .pipeline import PipelineOverrides, run_pipeline
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(
-        prog="llm4reading",
-        description="Run the LLM4Reading arXiv processing pipeline",
-    )
-    parser.add_argument(
-        "--config",
-        type=Path,
-        default=Path("config/pipeline.yaml"),
-        help="Path to the pipeline configuration file",
-    )
-    parser.add_argument(
-        "--days-back",
-        type=int,
-        default=None,
-        help="Override fetch.days_back in configuration (optional)",
-    )
-    return parser
+	parser = argparse.ArgumentParser(description="LLM4ArxivPaper pipeline")
+	parser.add_argument("run", nargs="?", help="Execute the pipeline", default="run")
+	parser.add_argument("--config", default="config/pipeline.yaml", help="Path to pipeline YAML config")
+	parser.add_argument("--mode", choices=["online", "offline"], help="Override runtime mode")
+	parser.add_argument("--topic-limit", type=int, help="Limit number of topics processed")
+	parser.add_argument("--paper-limit", type=int, help="Limit number of papers per topic")
+	parser.add_argument("--email", dest="email", action="store_true", help="Force enable email sending")
+	parser.add_argument("--no-email", dest="email", action="store_false", help="Force disable email sending")
+	parser.set_defaults(email=None)
+	return parser
 
 
-def main(argv: Optional[list[str]] = None) -> int:
-    parser = build_parser()
-    args = parser.parse_args(argv)
+def main(argv: list[str] | None = None) -> None:
+	parser = build_parser()
+	args = parser.parse_args(argv)
 
-    config = load_pipeline_config(args.config)
-    if args.days_back is not None:
-        config.fetch.days_back = args.days_back
+	overrides = PipelineOverrides(
+		mode=args.mode,
+		topic_limit=args.topic_limit,
+		paper_limit=args.paper_limit,
+		email_enabled=args.email,
+	)
 
-    logging.basicConfig(level=getattr(logging, config.runtime.console_level.upper(), logging.INFO))
-    run_pipeline(config)
+	result = run_pipeline(args.config, overrides=overrides)
 
-    return 0
+	print("[INFO] Pipeline completed")
+	print(f"[INFO] Topics processed: {result.stats.topics_processed}")
+	print(f"[INFO] Papers fetched: {result.stats.papers_fetched}")
+	print(f"[INFO] Papers selected: {result.stats.papers_selected}")
+	print(f"[INFO] Output directory: {Path('site').resolve()}")
 
 
-if __name__ == "__main__":  # pragma: no cover
-    raise SystemExit(main())
+if __name__ == "__main__":
+	main()

@@ -1,15 +1,7 @@
-from __future__ import annotations
+"""Backward compatible entry point forwarding to the new CLI."""
 
-"""Compatibility wrapper for legacy ``python src/main.py`` entry point."""
-
-from workflow.cli import main as _main
-
-
-def main() -> int:
-    """Invoke the new workflow CLI."""
-
-    return _main()
+from workflow.cli import main
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    main()

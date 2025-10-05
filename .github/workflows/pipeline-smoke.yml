@@ -1,0 +1,97 @@
+name: Pipeline Smoke Test
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Pipeline mode override"
+        required: false
+        default: "offline"
+      topic_limit:
+        description: "Limit number of topics"
+        required: false
+        default: "1"
+      paper_limit:
+        description: "Limit papers per topic"
+        required: false
+        default: "3"
+  schedule:
+    - cron: "0 3 * * 1"
+
+jobs:
+  smoke:
+    name: Run pipeline smoke test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    env:
+      PYTHONPATH: src
+      ENABLE_PAGES_DEPLOY: ${{ vars.ENABLE_PAGES_DEPLOY || 'false' }}
+      PIPELINE_MODE: ${{ github.event.inputs.mode || 'offline' }}
+      PIPELINE_TOPIC_LIMIT: ${{ github.event.inputs.topic_limit || '1' }}
+      PIPELINE_PAPER_LIMIT: ${{ github.event.inputs.paper_limit || '3' }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY || '' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run pipeline
+        run: |
+          python -m workflow.cli \
+            --config config/pipeline.yaml \
+            --mode "$PIPELINE_MODE" \
+            --topic-limit "$PIPELINE_TOPIC_LIMIT" \
+            --paper-limit "$PIPELINE_PAPER_LIMIT" \
+            --email
+
+      - name: Inspect generated site
+        if: always()
+        run: |
+          echo "--- site manifest ---"
+          if [ -f site/manifest.json ]; then
+            cat site/manifest.json
+          else
+            echo "manifest.json missing"
+          fi
+          echo "--- site tree ---"
+          if [ -d site ]; then
+            find site -maxdepth 2 -type f
+          else
+            echo "site directory not generated"
+          fi
+
+      - name: Upload static site artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-preview
+          path: site
+          if-no-files-found: warn
+
+      - name: Configure GitHub Pages (optional)
+        if: env.ENABLE_PAGES_DEPLOY == 'true'
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact (optional)
+        if: env.ENABLE_PAGES_DEPLOY == 'true'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - name: Deploy to GitHub Pages (optional)
+        if: env.ENABLE_PAGES_DEPLOY == 'true'
+        id: deployment
+        uses: actions/deploy-pages@v4

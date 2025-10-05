@@ -1,79 +1,118 @@
-"""Utilities for fetching papers from arXiv."""
+"""Utilities for querying arXiv."""
 
 from __future__ import annotations
 
-import time
 from datetime import datetime, timedelta
-from typing import List
+from time import sleep
+from typing import List, Optional
 
-import arxiv
+try:  # pragma: no cover - optional dependency during linting
+	import arxiv  # type: ignore[import]
+except Exception:  # pragma: no cover - keep going even if arxiv missing
+	arxiv = None  # type: ignore[assignment]
 
-from core.config_loader import FetchConfig
-from core.models import PaperCandidate, TopicTask
-
-
-def _build_query(task: TopicTask) -> str:
-    parts = []
-
-    if task.query.include_keywords:
-        include = " OR ".join(f"all:\"{kw}\"" for kw in task.query.include_keywords)
-        parts.append(f"({include})")
-
-    if task.query.categories:
-        cats = " OR ".join(f"cat:{cat}" for cat in task.query.categories)
-        parts.append(f"({cats})")
-
-    if not parts:
-        # 默认回退到最常用的计算机科学分类
-        parts.append("(cat:cs.AI OR cat:cs.CL OR cat:cs.SE OR cat:cs.LG)")
-
-    return " AND ".join(parts)
+from core.models import FetchConfig, PaperCandidate, TopicConfig
 
 
-def _sanitize_arxiv_id(entry_id: str) -> str:
-    arxiv_id = entry_id.split("/")[-1]
-    return arxiv_id.split("v")[0]
+class ArxivClient:
+	"""Thin wrapper around the :mod:`arxiv` package.
 
+	The class focuses on building expressive queries from topic configuration
+	and converting results into :class:`PaperCandidate` objects.
+	"""
 
-def fetch_candidates(task: TopicTask, fetch_cfg: FetchConfig) -> List[PaperCandidate]:
-    """Fetch recent papers for the given topic."""
+	def __init__(self, fetch_config: FetchConfig):
+		self.fetch_config = fetch_config
+		if arxiv is not None:
+			# arxiv.Client 支持节流参数，用于控制 API 调用速率
+			self._client: Optional[arxiv.Client] = arxiv.Client(  # type: ignore[attr-defined]
+				page_size=100,
+				delay_seconds=fetch_config.request_delay,
+			)
+		else:  # pragma: no cover - fallback when dependency unavailable
+			self._client = None
 
-    query = _build_query(task)
-    search = arxiv.Search(
-        query=query,
-        max_results=fetch_cfg.max_papers_per_topic,
-        sort_by=arxiv.SortCriterion.SubmittedDate,
-        sort_order=arxiv.SortOrder.Descending,
-    )
+	# ------------------------------------------------------------------
+	# Query helpers
+	# ------------------------------------------------------------------
 
-    client = arxiv.Client()
+	def _build_query(self, topic: TopicConfig) -> str:
+		parts: List[str] = []
 
-    cutoff = datetime.utcnow() - timedelta(days=fetch_cfg.days_back)
-    candidates: List[PaperCandidate] = []
+		if topic.query.include:
+			include_expr = [self._keyword_clause(keyword) for keyword in topic.query.include]
+			parts.append(f"({' OR '.join(include_expr)})")
 
-    for result in client.results(search):
-        published = result.published.replace(tzinfo=None) if result.published else None
-        if published and published < cutoff:
-            continue
+		if topic.query.categories:
+			cat_expr = [f"cat:{cat}" for cat in topic.query.categories]
+			parts.append(f"({' OR '.join(cat_expr)})")
 
-        text_blob = (result.title + " " + result.summary).lower()
-        if any(kw.lower() in text_blob for kw in task.query.exclude_keywords):
-            continue
+		if topic.query.exclude:
+			exclude_expr = [self._keyword_clause(keyword) for keyword in topic.query.exclude]
+			parts.append(f"NOT ({' OR '.join(exclude_expr)})")
 
-        candidate = PaperCandidate(
-            arxiv_id=_sanitize_arxiv_id(result.entry_id),
-            title=result.title.strip(),
-            abstract=result.summary.strip(),
-            authors=[author.name for author in result.authors],
-            categories=list(result.categories or []),
-            published=published,
-            extra={
-                "arxiv_url": result.entry_id,
-                "pdf_url": f"https://arxiv.org/pdf/{_sanitize_arxiv_id(result.entry_id)}.pdf",
-            },
-        )
-        candidates.append(candidate)
+		if not parts:
+			return "all:cs"
 
-        time.sleep(max(fetch_cfg.request_interval, 0.0))
+		return " AND ".join(parts)
 
-    return candidates
+	@staticmethod
+	def _keyword_clause(keyword: str) -> str:
+		keyword = keyword.strip()
+		if " " in keyword:
+			return f'ti:"{keyword}" OR abs:"{keyword}"'
+		return f'ti:{keyword} OR abs:{keyword}'
+
+	# ------------------------------------------------------------------
+
+	def fetch_for_topic(self, topic: TopicConfig) -> List[PaperCandidate]:
+		if self._client is None or arxiv is None:
+			print("[WARN] arxiv package not available; returning empty results.")
+			return []
+
+		query = self._build_query(topic)
+		search = arxiv.Search(
+			query=query,
+			max_results=self.fetch_config.max_papers_per_topic,
+			sort_by=arxiv.SortCriterion.SubmittedDate,
+			sort_order=arxiv.SortOrder.Descending,
+		)
+
+		threshold_date = datetime.utcnow() - timedelta(days=self.fetch_config.days_back)
+		papers: List[PaperCandidate] = []
+
+		try:
+			for result in self._client.results(search):
+				published = result.published.replace(tzinfo=None) if result.published else None
+				if published and published < threshold_date:
+					continue
+
+				arxiv_id = result.entry_id.split("/")[-1]
+				if "v" in arxiv_id:
+					arxiv_id = arxiv_id.split("v")[0]
+
+				candidate = PaperCandidate(
+					topic=topic,
+					arxiv_id=arxiv_id,
+					title=result.title.strip(),
+					abstract=result.summary.strip(),
+					authors=[author.name for author in result.authors],
+					categories=list(result.categories),
+					published=published or datetime.utcnow(),
+					updated=(result.updated.replace(tzinfo=None) if result.updated else datetime.utcnow()),
+					arxiv_url=f"https://arxiv.org/abs/{arxiv_id}",
+					pdf_url=f"https://arxiv.org/pdf/{arxiv_id}.pdf",
+				)
+
+				papers.append(candidate)
+
+				if len(papers) >= self.fetch_config.max_papers_per_topic:
+					break
+
+				# 异步客户端已经支持 delay_seconds，但这里仍然显式 sleep，确保兼容
+				sleep(self.fetch_config.request_delay)
+
+		except Exception as exc:  # pragma: no cover - 网络相关错误直接暴露即可
+			print(f"[WARN] Failed to fetch arXiv results for topic '{topic.name}': {exc}")
+
+		return papers

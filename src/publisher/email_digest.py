@@ -1,60 +1,73 @@
-def send_digest(summaries: Iterable[PaperSummary]) -> None:
-"""Minimal email digest sender."""
+"""Optional email digest sender."""
 
 from __future__ import annotations
 
-from datetime import datetime
 import smtplib
 from email.message import EmailMessage
 from typing import Iterable
 
-from core.config_loader import EmailConfig
-from core.models import PaperSummary
+from core.models import EmailConfig, PaperSummary
 
 
-def _build_body(summaries: Iterable[PaperSummary]) -> str:
-    lines = ["LLM4Reading 摘要精选", ""]
-    for summary in summaries:
-        lines.extend(
-            [
-                f"标题：{summary.title}",
-                f"主题：{summary.topic}",
-                f"结论：{summary.conclusion}",
-                "TODO：",
-            ]
-        )
-        for item in summary.todo:
-            lines.append(f"  - {item}")
-        lines.append("")
-    return "\n".join(lines)
+class EmailDigest:
+	def __init__(self, email_config: EmailConfig, site_base_url: str):
+		self.email_config = email_config
+		self.site_base_url = site_base_url.rstrip("/")
 
+	def send(self, summaries: Iterable[PaperSummary], subject_context: dict) -> None:
+		if not self.email_config.enabled:
+			return
+		if not self.email_config.sender or not self.email_config.recipients:
+			print("[WARN] Email sender/recipients not configured; skip sending.")
+			return
 
-def send_digest(config: EmailConfig, summaries: Iterable[PaperSummary]) -> None:
-    """Send email digest if configured; silently no-op otherwise."""
+		body = self._build_body(list(summaries), subject_context)
+		subject = self.email_config.subject_template.format(**subject_context)
 
-    if not config.enabled:
-        return
+		message = EmailMessage()
+		message["Subject"] = subject
+		message["From"] = self.email_config.sender
+		message["To"] = ", ".join(self.email_config.recipients)
+		message.set_content(body, subtype="html", charset="utf-8")
 
-    summaries = list(summaries)
-    if not summaries:
-        return
+		try:
+			with smtplib.SMTP("localhost") as smtp:
+				smtp.send_message(message)
+		except Exception as exc:  # pragma: no cover - runtime environment specific
+			print(f"[WARN] Failed to send email digest: {exc}")
 
-    if not config.sender or not config.sender_password or not config.recipients:
-        raise ValueError("Email configuration incomplete: sender, password, and recipients required when enabled")
+	# ------------------------------------------------------------------
 
-    subject = config.subject_template.format(run_date=datetime.utcnow().strftime("%Y-%m-%d"))
-    body = _build_body(summaries)
+	def _build_body(self, summaries: list[PaperSummary], subject_context: dict) -> str:
+		total = len(summaries)
+		topics: dict[str, list[PaperSummary]] = {}
+		for summary in summaries:
+			topics.setdefault(summary.topic.label, []).append(summary)
 
-    message = EmailMessage()
-    message["From"] = config.sender
-    message["To"] = ", ".join(config.recipients)
-    message["Subject"] = subject
-    message.set_content(body)
+		lines = [
+			"<h1>LLM4ArxivPaper 每周速览</h1>",
+			f"<p>本次共筛选出 <strong>{total}</strong> 篇相关论文。</p>",
+		]
 
-    smtp_cls = smtplib.SMTP_SSL if not config.use_tls and config.smtp_port == 465 else smtplib.SMTP
+		if self.site_base_url:
+			lines.append(
+				f"<p>完整详情请访问：<a href='{self.site_base_url}'>{self.site_base_url}</a></p>"
+			)
 
-    with smtp_cls(config.smtp_host, config.smtp_port, timeout=30) as smtp:
-        if config.use_tls and smtp_cls is smtplib.SMTP:
-            smtp.starttls()
-        smtp.login(config.sender, config.sender_password)
-        smtp.send_message(message)
+		for topic_label, topic_items in topics.items():
+			lines.append(f"<h2>{topic_label}（{len(topic_items)}）</h2>")
+			lines.append("<ul>")
+			for summary in topic_items:
+				url = f"{self.site_base_url}/topics/{summary.topic.name}/{summary.paper.arxiv_id}.html" if self.site_base_url else "#"
+				lines.append(
+					f"  <li><a href='{url}'>{summary.paper.title}</a> — Score {self._format_score(summary)}</li>"
+				)
+			lines.append("</ul>")
+
+		return "\n".join(lines)
+
+	@staticmethod
+	def _format_score(summary: PaperSummary) -> str:
+		total_weight = sum(score.weight for score in summary.score_details.scores) or 1.0
+		value = sum(score.weight * score.value for score in summary.score_details.scores)
+		return f"{(value / total_weight) * 100:.1f}"

@@ -1,71 +1,119 @@
-"""Top-level pipeline orchestration."""
+"""Pipeline orchestration logic."""
 
 from __future__ import annotations
 
-import logging
-from typing import List
+import os
+from dataclasses import dataclass
+from datetime import datetime
+from typing import Iterable, List, Optional
 
-from core.config_loader import PipelineConfig
-from core.models import PaperSummary
-from fetchers.arxiv_client import fetch_candidates
-from filters.relevance_ranker import rank_candidates
-from publisher.email_digest import send_digest
-from publisher.static_site import build_site
-from summaries.report_builder import build_summary
-from summaries.task_planner import build_todo_list
-from summaries.task_reader import answer_questions
+from core.config_loader import load_pipeline_config
+from core.models import (
+	PaperSummary,
+	PipelineConfig,
+	PipelineResult,
+	PipelineStats,
+	ScoredPaper,
+)
+from fetchers.ar5iv_parser import Ar5ivParser
+from fetchers.arxiv_client import ArxivClient
+from filters.relevance_ranker import RelevanceRanker
+from publisher.email_digest import EmailDigest
+from publisher.static_site import StaticSiteBuilder
+from summaries.report_builder import ReportBuilder
+from summaries.task_planner import TaskPlanner
+from summaries.task_reader import TaskReader
 
-LOGGER = logging.getLogger(__name__)
+
+@dataclass
+class PipelineOverrides:
+	mode: Optional[str] = None
+	topic_limit: Optional[int] = None
+	paper_limit: Optional[int] = None
+	email_enabled: Optional[bool] = None
 
 
-def run_pipeline(config: PipelineConfig) -> List[PaperSummary]:
-    """Execute the end-to-end processing pipeline."""
+def run_pipeline(config_path: str, overrides: Optional[PipelineOverrides] = None) -> PipelineResult:
+	config = load_pipeline_config(config_path)
 
-    summaries: List[PaperSummary] = []
+	if overrides:
+		if overrides.mode:
+			config.runtime.mode = overrides.mode
+		if overrides.topic_limit is not None:
+			config.runtime.topic_limit = overrides.topic_limit
+		if overrides.paper_limit is not None:
+			config.runtime.paper_limit = overrides.paper_limit
+		if overrides.email_enabled is not None:
+			config.email.enabled = overrides.email_enabled
 
-    for task in config.topics:
-        LOGGER.info("Fetching candidates for topic %s", task.name)
-        candidates = fetch_candidates(task, config.fetch)
-        if not candidates:
-            LOGGER.info("No candidates fetched for topic %s", task.name)
-            continue
+	arxiv_client = ArxivClient(fetch_config=config.fetch)
+	ranker = RelevanceRanker(config.openai, config.relevance, mode=config.runtime.mode)
+	parser = Ar5ivParser()
+	planner = TaskPlanner(config.openai, config.summarization, mode=config.runtime.mode)
+	reader = TaskReader(parser, config.openai, config.summarization, mode=config.runtime.mode)
+	report_builder = ReportBuilder(config.summarization)
+	site_builder = StaticSiteBuilder(config.site)
+	email_digest = EmailDigest(config.email, config.site.base_url)
 
-        ranked = rank_candidates(task, candidates, config.relevance)
-        for paper, score in ranked:
-            if score.decision != "include":
-                continue
+	start_time = datetime.utcnow()
+	summaries: List[PaperSummary] = []
+	total_fetched = 0
+	total_selected = 0
 
-            todo = build_todo_list(
-                paper,
-                desired_length=config.summarization.task_list_size,
-                interest_prompt=task.interest_prompt,
-            )
+	topics = config.topics
+	if config.runtime.topic_limit is not None:
+		topics = topics[: config.runtime.topic_limit]
 
-            question_limit = config.summarization.max_sections
-            questions_for_answers = todo[:question_limit] if question_limit else todo
-            answers = answer_questions(paper, questions_for_answers)
-            findings = [
-                f"{question} -> {answer}" for question, answer in zip(questions_for_answers, answers)
-            ]
+	for topic in topics:
+		print(f"[INFO] Fetching papers for topic: {topic.label}")
+		candidates = arxiv_client.fetch_for_topic(topic)
+		total_fetched += len(candidates)
 
-            summary = build_summary(
-                paper,
-                todo=todo,
-                findings=findings,
-                topic_label=task.label,
-                score=score.weighted_score,
-            )
-            summaries.append(summary)
+		if config.runtime.paper_limit is not None:
+			candidates = candidates[: config.runtime.paper_limit]
 
-    if summaries:
-        LOGGER.info("Generating static site with %d summaries", len(summaries))
-        build_site(config.site, summaries)
-    else:
-        LOGGER.info("No summaries generated; skipping site build")
+		scored = ranker.score(topic, candidates)
+		selected = _filter_by_threshold(scored, config)
+		total_selected += len(selected)
 
-    try:
-        send_digest(config.email, summaries)
-    except Exception as exc:  # pragma: no cover - best effort notification
-        LOGGER.warning("Failed to send email digest: %s", exc)
+		for scored_paper in selected:
+			tasks = planner.build_tasks(topic, scored_paper.paper)
+			findings, overview, _ = reader.analyse(scored_paper.paper, tasks)
+			summary = report_builder.build(
+				topic=topic,
+				scored_paper=scored_paper,
+				task_list=tasks,
+				findings=findings,
+				overview=overview,
+			)
+			summaries.append(summary)
 
-    return summaries
+	os.environ["PIPELINE_RUN_AT"] = datetime.utcnow().isoformat()
+	site_builder.build(summaries)
+
+	subject_context = {
+		"run_date": datetime.utcnow().strftime("%Y-%m-%d"),
+		"paper_count": len(summaries),
+	}
+	email_digest.send(summaries, subject_context)
+
+	end_time = datetime.utcnow()
+	stats = PipelineStats(
+		start_time=start_time,
+		end_time=end_time,
+		topics_processed=len(topics),
+		papers_fetched=total_fetched,
+		papers_selected=total_selected,
+	)
+
+	return PipelineResult(summaries=summaries, stats=stats)
+
+
+def _filter_by_threshold(scored_papers: Iterable[ScoredPaper], config: PipelineConfig) -> List[ScoredPaper]:
+	total_weight = sum(dim.weight for dim in config.relevance.dimensions) or 1.0
+	selected: List[ScoredPaper] = []
+	for scored in scored_papers:
+		normalised = (scored.total_score / total_weight) * 100
+		if normalised >= config.relevance.pass_threshold:
+			selected.append(scored)
+	return selected

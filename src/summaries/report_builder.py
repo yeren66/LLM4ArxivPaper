@@ -1,65 +1,69 @@
-"""Build markdown summaries for processed papers."""
+"""Assemble final Markdown reports."""
 
 from __future__ import annotations
 
 from datetime import datetime
-from typing import List, Optional
+from typing import List
 
-from core.models import PaperCandidate, PaperSummary
-
-
-def _join_section(title: str, items: List[str]) -> str:
-    if not items:
-        return ""
-    bullet_lines = "\n".join(f"- {item}" for item in items)
-    return f"## {title}\n\n{bullet_lines}\n"
+from core.models import DimensionScore, PaperSummary, ScoredPaper, SummarizationConfig, TaskFinding, TaskItem, TopicConfig
 
 
-def build_summary(
-    paper: PaperCandidate,
-    todo: List[str],
-    findings: List[str],
-    *,
-    topic_label: str,
-    score: Optional[float] = None,
-) -> PaperSummary:
-    """Construct a ``PaperSummary`` with simple markdown output."""
+class ReportBuilder:
+	def __init__(self, summarization_config: SummarizationConfig):
+		self.summarization_config = summarization_config
 
-    conclusion = findings[0] if findings else "建议深入阅读全文以确认细节。"
+	def build(
+		self,
+		topic: TopicConfig,
+		scored_paper: ScoredPaper,
+		task_list: List[TaskItem],
+	findings: List[TaskFinding],
+	overview: str,
+	) -> PaperSummary:
+		paper = scored_paper.paper
 
-    meta_lines = [f"- 主题：{topic_label}"]
-    if score is not None:
-        meta_lines.append(f"- 相关性评分：{score:.1f}")
-    if paper.published:
-        meta_lines.append(f"- 发表日期：{paper.published.strftime('%Y-%m-%d')}")
+		lines: List[str] = []
+		lines.append(f"# {paper.title}")
+		lines.append("")
+		lines.append("**Topic**: {label}".format(label=topic.label))
+		lines.append("**arXiv**: [{id}]({url})".format(id=paper.arxiv_id, url=paper.arxiv_url))
+		lines.append("**Authors**: {authors}".format(authors=", ".join(paper.authors)))
+		lines.append("**Published**: {date}".format(date=paper.published.strftime("%Y-%m-%d")))
+		lines.append("**Score**: {score:.1f}".format(score=self._normalised_score(scored_paper)))
+		lines.append("")
 
-    meta_section = "\n".join(meta_lines)
+		lines.append("## 阅读 TODO")
+		for idx, task in enumerate(task_list, start=1):
+			lines.append(f"{idx}. **{task.question}** - {task.reason}")
+		lines.append("")
 
-    markdown_parts = [
-        f"# {paper.title}",
-        "## 元数据\n" + meta_section,
-        _join_section("阅读 TODO", todo),
-        _join_section("关键发现", findings),
-        f"## 结论\n\n{conclusion}\n",
-    ]
+		lines.append("## 逐项解答")
+		for finding in findings:
+			lines.append(f"### {finding.task.question}")
+			lines.append(finding.answer.strip())
+			lines.append(f"*Confidence: {finding.confidence:.2f}*\n")
 
-    markdown = "\n\n".join(part for part in markdown_parts if part)
+		lines.append("## 综合总结")
+		lines.append(overview.strip() or paper.abstract.strip())
+		lines.append("")
 
-    return PaperSummary(
-        arxiv_id=paper.arxiv_id,
-        title=paper.title,
-        topic=topic_label,
-        todo=todo,
-        findings=findings,
-        conclusion=conclusion,
-        markdown=markdown,
-        score=score,
-        metadata={
-            "authors": paper.authors,
-            "categories": paper.categories,
-            "published": paper.published.isoformat() if paper.published else None,
-            "generated_at": datetime.utcnow().isoformat(),
-            "arxiv_url": paper.extra.get("arxiv_url"),
-            "pdf_url": paper.extra.get("pdf_url"),
-        },
-    )
+		lines.append("---")
+		lines.append("*Generated at {timestamp}*".format(timestamp=datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")))
+
+		markdown = "\n".join(lines)
+
+		return PaperSummary(
+			paper=paper,
+			topic=topic,
+			task_list=task_list,
+			findings=findings,
+			overview=overview,
+			score_details=scored_paper,
+			markdown=markdown,
+		)
+
+	@staticmethod
+	def _normalised_score(scored_paper: ScoredPaper) -> float:
+		total_weight = sum(score.weight for score in scored_paper.scores) or 1.0
+		weighted_value = sum(score.weight * score.value for score in scored_paper.scores)
+		return (weighted_value / total_weight) * 100

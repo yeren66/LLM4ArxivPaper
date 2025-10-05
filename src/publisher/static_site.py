@@ -1,87 +1,156 @@
-"""Build a minimal static site to browse paper summaries."""
+"""Generate a minimal static site for published summaries."""
 
 from __future__ import annotations
 
-from datetime import datetime
-from html import escape
+import json
+import os
+import shutil
+from collections import defaultdict
 from pathlib import Path
-from typing import Iterable
+from typing import Dict, Iterable, List
 
-from core.config_loader import SiteConfig
-from core.models import PaperSummary
-
-
-def _render_summary(summary: PaperSummary) -> str:
-    arxiv_url = summary.metadata.get("arxiv_url")
-    if not arxiv_url:
-        extra = summary.metadata.get("extra")
-        if isinstance(extra, dict):
-            arxiv_url = extra.get("arxiv_url")
-
-    title = escape(summary.title)
-    todo_items = "".join(f"<li>{escape(item)}</li>" for item in summary.todo)
-    findings = "".join(f"<li>{escape(item)}</li>" for item in summary.findings)
-    conclusion = escape(summary.conclusion)
-
-    meta_parts = [f"<span class='topic'>{escape(summary.topic)}</span>"]
-    if summary.score is not None:
-        meta_parts.append(f"<span class='score'>相关性：{summary.score:.1f}</span>")
-    published = summary.metadata.get("published")
-    if published:
-        meta_parts.append(f"<span class='published'>发表：{escape(str(published))}</span>")
-    if arxiv_url:
-        meta_parts.append(
-            f"<a href='{escape(str(arxiv_url))}' target='_blank' rel='noopener noreferrer'>arXiv</a>"
-        )
-
-    meta_html = " | ".join(meta_parts)
-
-    return (
-        "<article class='paper'>"
-        f"<h2>{title}</h2>"
-        f"<div class='meta'>{meta_html}</div>"
-        "<section><h3>阅读 TODO</h3><ul>" + todo_items + "</ul></section>"
-        "<section><h3>关键发现</h3><ul>" + findings + "</ul></section>"
-        f"<section><h3>结论</h3><p>{conclusion}</p></section>"
-        "</article>"
-    )
+from core.models import PaperSummary, SiteConfig
 
 
-def build_site(config: SiteConfig, summaries: Iterable[PaperSummary]) -> Path:
-    """Generate ``index.html`` under the configured output directory."""
+class StaticSiteBuilder:
+	def __init__(self, site_config: SiteConfig):
+		self.site_config = site_config
 
-    output_dir = config.output_dir
-    output_dir.mkdir(parents=True, exist_ok=True)
-    index_path = output_dir / "index.html"
+	# ------------------------------------------------------------------
 
-    rendered = "\n".join(_render_summary(summary) for summary in summaries)
+	def build(self, summaries: Iterable[PaperSummary]) -> Dict[str, str]:
+		output_dir = Path(self.site_config.output_dir)
+		if output_dir.exists():
+			shutil.rmtree(output_dir)
+		output_dir.mkdir(parents=True, exist_ok=True)
 
-    html = f"""<!DOCTYPE html>
-<html lang=\"{escape(config.locale)}\">
-  <head>
-    <meta charset=\"utf-8\" />
-    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />
-    <title>LLM4Reading 摘要汇总</title>
-    <style>
-      body {{ font-family: -apple-system, BlinkMacSystemFont, \"PingFang SC\", sans-serif; margin: 2rem; background: #f8f9fa; color: #212529; }}
-      header {{ margin-bottom: 2rem; }}
-      .paper {{ background: #fff; padding: 1.5rem; border-radius: 12px; box-shadow: 0 8px 16px rgba(0,0,0,0.05); margin-bottom: 1.5rem; }}
-      .paper h2 {{ margin-top: 0; }}
-      .meta {{ font-size: 0.9rem; color: #495057; margin-bottom: 1rem; display: flex; flex-wrap: wrap; gap: 0.75rem; }}
-      section {{ margin-bottom: 1rem; }}
-      ul {{ padding-left: 1.2rem; }}
-    </style>
-  </head>
-  <body>
-    <header>
-      <h1>LLM4Reading 摘要汇总</h1>
-      <p>构建时间：{datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')}</p>
-      <p>站点地址：{escape(config.base_url or '尚未配置')}</p>
-    </header>
-    {rendered or '<p>本次运行未筛选出符合条件的论文。</p>'}
-  </body>
-</html>
-"""
+		topic_groups: Dict[str, List[PaperSummary]] = defaultdict(list)
+		for summary in summaries:
+			topic_groups[summary.topic.name].append(summary)
 
-    index_path.write_text(html, encoding="utf-8")
-    return index_path
+		index_entries = []
+		for topic_name, topic_summaries in topic_groups.items():
+			topic_dir = output_dir / "topics" / topic_name
+			topic_dir.mkdir(parents=True, exist_ok=True)
+			for summary in topic_summaries:
+				file_name = f"{summary.paper.arxiv_id}.html"
+				file_path = topic_dir / file_name
+				file_path.write_text(self._render_paper(summary), encoding="utf-8")
+			index_entries.append((topic_name, topic_summaries))
+
+		index_path = output_dir / "index.html"
+		index_path.write_text(self._render_index(index_entries), encoding="utf-8")
+
+		manifest_path = output_dir / "manifest.json"
+		manifest = {
+			"base_url": self.site_config.base_url,
+			"generated": os.environ.get("PIPELINE_RUN_AT"),
+			"topics": {
+				topic: [summary.paper.arxiv_id for summary in items]
+				for topic, items in topic_groups.items()
+			},
+		}
+		manifest_path.write_text(json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8")
+
+		return {"index": str(index_path)}
+
+	# ------------------------------------------------------------------
+
+	def _render_index(self, index_entries: List[tuple]) -> str:
+		base_url = self.site_config.base_url.rstrip("/")
+		html_parts = [
+			"<!DOCTYPE html>",
+			"<html lang='zh-cn'>",
+			"<head>",
+			"  <meta charset='utf-8'>",
+			"  <title>LLM4ArxivPaper 汇总</title>",
+			"  <style>body{font-family:Segoe UI,Helvetica,Arial,sans-serif;margin:2rem;}" \
+			"a{text-decoration:none;color:#0366d6;} .topic{margin-bottom:2rem;}" \
+			"h1{margin-bottom:1rem;} ul{padding-left:1.2rem;}</style>",
+			"</head>",
+			"<body>",
+			"  <h1>LLM4ArxivPaper 汇总</h1>",
+		]
+
+		if not index_entries:
+			html_parts.append("  <p>暂未生成任何论文摘要。</p>")
+		else:
+			for topic_name, topic_summaries in index_entries:
+				html_parts.append(f"  <div class='topic'>")
+				html_parts.append(f"    <h2>{topic_summaries[0].topic.label} ({len(topic_summaries)})</h2>")
+				html_parts.append("    <ul>")
+				for summary in topic_summaries:
+					relative_path = f"topics/{topic_name}/{summary.paper.arxiv_id}.html"
+					url = f"{base_url}/{relative_path}" if base_url else relative_path
+					html_parts.append(
+						"      <li><a href='{url}'>{title}</a>".format(
+							url=url,
+							title=summary.paper.title,
+						)
+					)
+				html_parts.append("    </ul>")
+				html_parts.append("  </div>")
+
+		html_parts.append("</body>")
+		html_parts.append("</html>")
+		return "\n".join(html_parts)
+
+	def _render_paper(self, summary: PaperSummary) -> str:
+		base_lines = [
+			"<!DOCTYPE html>",
+			"<html lang='zh-cn'>",
+			"<head>",
+			"  <meta charset='utf-8'>",
+			f"  <title>{summary.paper.title}</title>",
+			"  <style>body{font-family:Segoe UI,Helvetica,Arial,sans-serif;margin:2rem;}" \
+			"h1{margin-bottom:0.5rem;} .meta{color:#555;margin-bottom:1.5rem;}" \
+			"section{margin-bottom:1.5rem;} pre{white-space:pre-wrap;}</style>",
+			"</head>",
+			"<body>",
+			f"  <a href='../..'>返回首页</a>",
+			f"  <h1>{summary.paper.title}</h1>",
+			"  <div class='meta'>",
+			f"    <div>Topic: {summary.topic.label}</div>",
+			f"    <div>Score: {self._format_score(summary.score_details)}</div>",
+			f"    <div>Authors: {', '.join(summary.paper.authors)}</div>",
+			f"    <div>arXiv: <a href='{summary.paper.arxiv_url}'>{summary.paper.arxiv_id}</a></div>",
+			"  </div>",
+			"  <section>",
+			"    <h2>阅读 TODO</h2>",
+			"    <ul>",
+		]
+
+		for task in summary.task_list:
+			base_lines.append(f"      <li><strong>{task.question}</strong> – {task.reason}</li>")
+		base_lines.extend([
+			"    </ul>",
+			"  </section>",
+			"  <section>",
+			"    <h2>逐项解答</h2>",
+		])
+
+		for finding in summary.findings:
+			base_lines.append("    <article>")
+			base_lines.append(f"      <h3>{finding.task.question}</h3>")
+			base_lines.append(f"      <p>{finding.answer}</p>")
+			base_lines.append(f"      <p><em>Confidence: {finding.confidence:.2f}</em></p>")
+			base_lines.append("    </article>")
+
+		base_lines.extend([
+			"  </section>",
+			"  <section>",
+			"    <h2>综合总结</h2>",
+			f"    <p>{summary.overview}</p>",
+			"  </section>",
+			"</body>",
+			"</html>",
+		])
+
+		return "\n".join(base_lines)
+
+	@staticmethod
+	@staticmethod
+	def _format_score(scored_paper) -> str:
+		total_weight = sum(score.weight for score in scored_paper.scores) or 1.0
+		value = sum(score.weight * score.value for score in scored_paper.scores)
+		return f"{(value / total_weight) * 100:.1f}"
