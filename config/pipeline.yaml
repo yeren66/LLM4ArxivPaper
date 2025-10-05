@@ -109,8 +109,8 @@ email:
   smtp_port: 465
   username: "yerenbot@gmail.com"
   password: "${MAIL_PASSWORD}"  # 建议在运行前导出环境变量
-  use_tls: true
-  use_ssl: false
+  use_tls: false
+  use_ssl: true
   timeout: 30
 
   # ✅ 邮件主题模板，可使用 {run_date}、{paper_count} 占位符
