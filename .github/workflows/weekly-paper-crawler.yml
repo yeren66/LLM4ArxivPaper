@@ -1,0 +1,170 @@
+name: Weekly Paper Crawler
+
+on:
+  # 每周定时运行 - 周三凌晨3点获取论文并发送邮件
+  schedule:
+    - cron: '0 19 * * 2'  # UTC 19:00 = 北京时间周三03:00 (每周运行)
+  
+  # 支持手动触发
+  workflow_dispatch:
+    inputs:
+      start_date:
+        description: '检索开始日期 (YYYY-MM-DD)'
+        required: false
+        default: ''
+      end_date:
+        description: '检索结束日期 (YYYY-MM-DD)'
+        required: false
+        default: ''
+      no_email:
+        description: '禁用邮件通知'
+        required: false
+        default: 'false'
+        type: boolean
+
+jobs:
+  crawl-papers:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        
+    - name: Cache pip dependencies
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        
+    - name: Create secrets.env
+      run: |
+        echo "LLM_API_KEY=${{ secrets.LLM_API_KEY }}" >> config/secrets.env
+        echo "GH_TOKEN=${{ secrets.GH_TOKEN }}" >> config/secrets.env
+        echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD || secrets.MAIL_PASSWORD }}" >> config/secrets.env
+        echo "MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD || secrets.EMAIL_PASSWORD }}" >> config/secrets.env
+
+    - name: Clear proxy environment variables
+      run: |
+        # Clear any proxy environment variables that might interfere with OpenAI client
+        unset HTTP_PROXY HTTPS_PROXY http_proxy https_proxy ALL_PROXY all_proxy || true
+        echo "Cleared proxy environment variables"
+        
+    - name: Create logs directory
+      run: mkdir -p logs
+        
+    - name: Determine run type
+      id: run_type
+      run: |
+        echo "=== Debug Information ==="
+        echo "Event name: ${{ github.event_name }}"
+        echo "No email input: '${{ github.event.inputs.no_email }}'"
+        echo "Start date input: '${{ github.event.inputs.start_date }}'"
+        echo "End date input: '${{ github.event.inputs.end_date }}'"
+        echo "========================="
+
+        # Check for date range first (highest priority for manual runs)
+        if [ -n "${{ github.event.inputs.start_date }}" ] && [ -n "${{ github.event.inputs.end_date }}" ]; then
+          if [ "${{ github.event.inputs.no_email }}" = "true" ]; then
+            echo "type=date_range_no_email" >> $GITHUB_OUTPUT
+            echo "✅ Manual date range mode (no email) detected"
+          else
+            echo "type=date_range" >> $GITHUB_OUTPUT
+            echo "✅ Manual date range mode detected"
+          fi
+          echo "Date range: ${{ github.event.inputs.start_date }} to ${{ github.event.inputs.end_date }}"
+        # Check for no-email mode
+        elif [ "${{ github.event.inputs.no_email }}" = "true" ]; then
+          echo "type=no_email" >> $GITHUB_OUTPUT
+          echo "✅ Manual no-email mode detected"
+        # Check for scheduled runs
+        elif [ "${{ github.event_name }}" = "schedule" ]; then
+          echo "type=crawl" >> $GITHUB_OUTPUT
+          echo "✅ Scheduled crawl mode"
+        # Default to crawl mode
+        else
+          echo "type=crawl" >> $GITHUB_OUTPUT
+          echo "✅ Default crawl mode (manual trigger without specific parameters)"
+        fi
+        
+    - name: Run paper crawler
+      run: |
+        echo "=== Executing Paper Crawler ==="
+        echo "Selected mode: ${{ steps.run_type.outputs.type }}"
+        echo "==============================="
+
+        case "${{ steps.run_type.outputs.type }}" in
+          "no_email")
+            echo "🔄 Running no-email mode..."
+            echo "This will crawl papers from last week without sending email"
+            python src/main.py --no-email
+            ;;
+          "date_range")
+            echo "🔄 Running date range mode..."
+            echo "Date range: ${{ github.event.inputs.start_date }} to ${{ github.event.inputs.end_date }}"
+            echo "This will: 1) Crawl arXiv papers, 2) Generate LLM summaries, 3) Upload to GitHub, 4) Send email"
+            python src/main.py --date-range --start-date "${{ github.event.inputs.start_date }}" --end-date "${{ github.event.inputs.end_date }}"
+            ;;
+          "date_range_no_email")
+            echo "🔄 Running date range mode (no email)..."
+            echo "Date range: ${{ github.event.inputs.start_date }} to ${{ github.event.inputs.end_date }}"
+            echo "This will: 1) Crawl arXiv papers, 2) Generate LLM summaries, 3) Upload to GitHub (no email)"
+            python src/main.py --date-range --start-date "${{ github.event.inputs.start_date }}" --end-date "${{ github.event.inputs.end_date }}" --no-email
+            ;;
+          "crawl")
+            echo "🔄 Running weekly crawl mode..."
+            echo "This will: 1) Crawl arXiv papers from last week, 2) Generate LLM summaries, 3) Upload to GitHub, 4) Send email report"
+            python src/main.py
+            ;;
+          *)
+            echo "❌ Unknown mode: ${{ steps.run_type.outputs.type }}"
+            echo "Available modes: no_email, date_range, date_range_no_email, crawl"
+            exit 1
+            ;;
+        esac
+        
+    - name: Upload logs
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: logs-${{ github.run_number }}
+        path: logs/
+        retention-days: 7
+        
+    - name: Check for failures
+      if: failure()
+      run: |
+        echo "Job failed. Check logs for details."
+        if [ -f logs/llm4reading.log ]; then
+          echo "Last 50 lines of log:"
+          tail -50 logs/llm4reading.log
+        fi
+
+  # 可选：发送通知到Slack/Discord等
+  notify:
+    needs: crawl-papers
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+    - name: Notify success
+      if: needs.crawl-papers.result == 'success'
+      run: |
+        echo "✅ Weekly paper crawler completed successfully"
+
+    - name: Notify failure
+      if: needs.crawl-papers.result == 'failure'
+      run: |
+        echo "❌ Weekly paper crawler failed"
+        echo "Check the logs for more details"
