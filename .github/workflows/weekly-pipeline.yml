@@ -36,7 +36,10 @@ jobs:
       - name: Run LLM4ArxivPaper pipeline
         env:
           # Required: GitHub Secrets must be explicitly passed as env vars
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          BASE_URL: ${{ secrets.BASE_URL }}
+          API_KEY: ${{ secrets.API_KEY }}
+          MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+          MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
         run: python src/main.py
         
       - name: Upload Pages artifact

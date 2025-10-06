@@ -40,7 +40,10 @@ jobs:
 
       - name: Run pipeline (test mode)
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          BASE_URL: ${{ secrets.BASE_URL }}
+          API_KEY: ${{ secrets.API_KEY }}
+          MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+          MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
         run: |
           if [ "${{ github.event.inputs.paper_limit }}" != "" ]; then
             python src/main.py --paper-limit ${{ github.event.inputs.paper_limit }}
