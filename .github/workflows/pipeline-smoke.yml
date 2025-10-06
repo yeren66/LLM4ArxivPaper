@@ -79,12 +79,10 @@ jobs:
           retention-days: 7
           
       - name: Deploy to GitHub Pages (optional)
-        if: success() && github.event.inputs.enable_email == 'true'
         uses: actions/upload-pages-artifact@v3
         with:
           path: site
           
       - name: Deploy Pages
-        if: success() && github.event.inputs.enable_email == 'true'
         id: deployment
         uses: actions/deploy-pages@v4
