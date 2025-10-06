@@ -13,7 +13,6 @@ def build_parser() -> argparse.ArgumentParser:
 	parser.add_argument("run", nargs="?", help="Execute the pipeline", default="run")
 	parser.add_argument("--config", default="config/pipeline.yaml", help="Path to pipeline YAML config")
 	parser.add_argument("--mode", choices=["online", "offline"], help="Override runtime mode")
-	parser.add_argument("--topic-limit", type=int, help="Limit number of topics processed")
 	parser.add_argument("--paper-limit", type=int, help="Limit number of papers per topic")
 	parser.add_argument("--email", dest="email", action="store_true", help="Force enable email sending")
 	parser.add_argument("--no-email", dest="email", action="store_false", help="Force disable email sending")
@@ -27,7 +26,6 @@ def main(argv: list[str] | None = None) -> None:
 
 	overrides = PipelineOverrides(
 		mode=args.mode,
-		topic_limit=args.topic_limit,
 		paper_limit=args.paper_limit,
 		email_enabled=args.email,
 	)

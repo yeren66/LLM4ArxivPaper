@@ -62,10 +62,17 @@ class RelevanceRanker:
 		if self._client is None:
 			raise RuntimeError("OpenAI client is not available")
 
+		# Determine output language instruction
+		language_instruction = (
+			"Respond in Simplified Chinese (zh-CN)." 
+			if self.openai_config.language == "zh-CN" 
+			else "Respond in English."
+		)
+
 		instructions = (
-			"你是科研助理，需要根据用户的兴趣对论文摘要进行相关性评分。"
-			"请按照 0~100 的打分标准，给出每个维度的得分和一句理由。"
-			"最终仅输出 JSON，键为维度名称，值包含 score 与 reason。"
+			"You are a research assistant tasked with evaluating the relevance of academic papers based on user interests. "
+			"For each scoring dimension, assign a score from 0 to 100 and provide a brief rationale. "
+			f"Output only a JSON object where each dimension name is a key, with 'score' and 'reason' fields. {language_instruction}"
 		)
 
 		dimensions_payload = [

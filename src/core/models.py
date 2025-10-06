@@ -47,6 +47,7 @@ class OpenAIConfig:
 	relevance_model: str
 	summarization_model: str
 	temperature: float = 0.2
+	language: str = "zh-CN"  # Output language: 'zh-CN' or 'en'
 
 
 @dataclass
@@ -79,7 +80,7 @@ class EmailConfig:
 	enabled: bool = False
 	sender: Optional[str] = None
 	recipients: List[str] = field(default_factory=list)
-	subject_template: str = "每周论文雷达 - {run_date}"
+	subject_template: str = "Weekly Paper Radar - {run_date}"
 	smtp_host: Optional[str] = None
 	smtp_port: int = 587
 	username: Optional[str] = None
@@ -92,7 +93,6 @@ class EmailConfig:
 @dataclass
 class RuntimeConfig:
 	mode: str = "offline"
-	topic_limit: Optional[int] = None
 	paper_limit: Optional[int] = None
 
 
@@ -147,6 +147,7 @@ class PipelineConfig:
 				relevance_model=openai_section.get("relevance_model", "gpt-4o-mini"),
 				summarization_model=openai_section.get("summarization_model", "gpt-4o-mini"),
 				temperature=float(openai_section.get("temperature", 0.2)),
+				language=openai_section.get("language", "zh-CN"),
 			),
 			fetch=FetchConfig(
 				max_papers_per_topic=int(fetch_section.get("max_papers_per_topic", 25)),
@@ -170,7 +171,7 @@ class PipelineConfig:
 				enabled=bool(email_section.get("enabled", False)),
 				sender=email_section.get("sender"),
 				recipients=list(email_section.get("recipients", [])),
-				subject_template=email_section.get("subject_template", "每周论文雷达 - {run_date}"),
+				subject_template=email_section.get("subject_template", "Weekly Paper Radar - {run_date}"),
 				smtp_host=email_section.get("smtp_host"),
 				smtp_port=int(email_section.get("smtp_port", 587)),
 				username=email_section.get("username"),
@@ -181,7 +182,6 @@ class PipelineConfig:
 			),
 			runtime=RuntimeConfig(
 				mode=runtime_section.get("mode", "offline"),
-				topic_limit=runtime_section.get("topic_limit"),
 				paper_limit=runtime_section.get("paper_limit"),
 			),
 		)
@@ -204,6 +204,7 @@ class PaperCandidate:
 	updated: datetime
 	arxiv_url: str
 	pdf_url: Optional[str] = None
+	affiliations: List[str] = field(default_factory=list)
 
 
 @dataclass
@@ -242,14 +243,26 @@ class TaskFinding:
 
 
 @dataclass
+class CoreSummary:
+	"""Five-aspect core summary of a paper."""
+	problem: str  # What problem does it solve
+	solution: str  # What solution is proposed
+	methodology: str  # Core methodology/steps/strategy
+	experiments: str  # Experimental design, Metrics, baseline, dataset
+	conclusion: str  # Conclusion
+
+
+@dataclass
 class PaperSummary:
 	paper: PaperCandidate
 	topic: TopicConfig
+	core_summary: CoreSummary  # Five-aspect summary
 	task_list: List[TaskItem]
 	findings: List[TaskFinding]
 	overview: str
 	score_details: ScoredPaper
 	markdown: str
+	brief_summary: str = ""  # 1-2 paragraph narrative summary (Why? What? How?)
 
 
 @dataclass

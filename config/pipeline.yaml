@@ -1,54 +1,57 @@
 # =============================
-# LLM4ArxivPaper 主配置文件样例
+# LLM4ArxivPaper Main Configuration Template
 #
-# 说明：
-# 1. 所有字段都可以根据需求调整；如无数组配置需要，可删除对应项。
-# 2. 若字段支持从环境变量读取，示例中会使用 ${VAR_NAME}。
-# 3. 该模板旨在帮助快速理解含义，实际运行前请按需精简。
+# Notes:
+# 1. All fields can be adjusted as needed; delete unused array configurations if not required.
+# 2. If a field supports reading from environment variables, ${VAR_NAME} format is used in examples.
+# 3. This template aims to help quickly understand meanings; please streamline as needed before actual run.
 # =============================
 
 openai:
-  # ✅ OpenAI API Key，支持在运行环境中通过 OPENAI_API_KEY 注入
-  api_key: "${OPENAI_API_KEY}"
+  # ✅ OpenAI API Key, supports injection via OPENAI_API_KEY environment variable
+  api_key: "${API_KEY}"
 
-  # ✅ 若使用 Azure/OpenAI 兼容服务，可指定 `base_url`；默认官方地址可留空
-  base_url: "https://api.geekai.pro/v1"
+  # ✅ If using Azure/OpenAI compatible service, specify `base_url`; leave empty for default official address
+  base_url: "${BASE_URL}"
 
-  # ✅ 相关性打分所用模型（建议使用轻量模型，例如 gpt-4o-mini）
+  # ✅ Model for relevance scoring (recommended to use lightweight model, e.g. gpt-4o-mini)
   relevance_model: "gpt-4o-mini"
 
-  # ✅ TODO 规划与逐项问答所用模型（可与上方一致，或使用更强模型）
-  summarization_model: "gpt-4o-mini"
+  # ✅ Model for TODO planning and item-by-item Q&A (can be same as above or use stronger model)
+  summarization_model: "gpt-4o"
 
-  # ✅ 全局温度，控制生成随机性（0~1，越低越稳定）
+  # ✅ Global temperature, controls generation randomness (0~1, lower = more stable)
   temperature: 0.2
 
+  # ✅ Output language: 'zh-CN' (Simplified Chinese) or 'en' (English)
+  language: "zh-CN"
+
 fetch:
-  # ✅ 针对每个 Topic 最多抓取多少篇论文，用于控制开销
+  # ✅ Max papers to fetch per Topic, used to control costs
   max_papers_per_topic: 50
 
-  # ✅ 查询回溯天数：例如 7 表示抓取近 7 天内发布的论文
+  # ✅ Query lookback days: e.g., 7 means fetch papers published within last 7 days
   days_back: 7
 
-  # ✅ arXiv API 请求间隔（秒），避免触发速率限制
-  request_delay: 1.0
+  # ✅ arXiv API request interval (seconds), avoid rate limiting
+  request_delay: 3.0
 
 topics:
-  # ✅ 每个 Topic 代表一组关注点，可随时增删
-  - name: "software_testing"            # 唯一标识（用于文件名/目录）
-    label: "软件测试"                   # 对用户可见的标签
+  # ✅ Each Topic represents a focus area, can be added/removed anytime
+  - name: "software_testing"            # Unique identifier (for filenames/directories)
+    label: "软件测试"                   # User-visible label (can be Chinese for prompts)
 
     query:
-      # ✅ arXiv 分类过滤，填写官方 subject code
+      # ✅ arXiv category filter, fill in official subject code
       categories: ["cs.SE", "cs.AI"]
 
-      # ✅ 标题/摘要中希望出现的关键词，支持短语
+      # ✅ Keywords expected in title/abstract, supports phrases
       include: ["software testing", "test automation"]
 
-      # ✅ 需排除的关键词，防止噪声
+      # ✅ Keywords to exclude, prevent noise
       exclude: ["quantum", "biomedical"]
 
-    # ✅ 用户对该领域的兴趣描述，将传给 LLM 参考
+    # ✅ User's interest description for this field, passed to LLM for reference
     interest_prompt: |
       我关注大语言模型辅助软件测试的研究，尤其关注测试生成、覆盖率提升和缺陷定位方面的最新方法。
 
@@ -62,68 +65,65 @@ topics:
       我希望了解大型语言模型如何改进代码生成质量，包括提示工程、约束生成和评估方法。
 
 relevance:
-  # ✅ 对论文相关度的维度定义，可根据兴趣自行增删/调权重
+  # ✅ Dimension definitions for paper relevance, can add/remove/adjust weights based on interests
   scoring_dimensions:
-    - name: "topic_alignment"       # 主题契合度
+    - name: "topic_alignment"       # Topic fit
       weight: 0.35
-      description: "论文研究方向是否契合我的关注领域"
-    - name: "methodology_fit"       # 方法论匹配
+      description: "Whether paper research direction aligns with my focus areas"
+    - name: "methodology_fit"       # Methodology match
       weight: 0.25
-      description: "提出的方法是否与我关心的问题直接相关"
-    - name: "novelty"               # 创新点
+      description: "Whether proposed methods are directly relevant to my concerns"
+    - name: "novelty"               # Innovation
       weight: 0.2
-      description: "论文是否提供新颖的贡献或视角"
-    - name: "experiment_coverage"   # 实验完备性
+      description: "Whether paper provides novel contributions or perspectives"
+    - name: "experiment_coverage"   # Experiment completeness
       weight: 0.2
-      description: "实验/评估设置是否充分回答关键问题"
+      description: "Whether experiment/evaluation setup sufficiently answers key questions"
 
-  # ✅ 通过阈值：总分 >= 该值视为“相关”，最终保留
+  # ✅ Pass threshold: total score >= this value considered "relevant", ultimately retained
   pass_threshold: 60
 
 summarization:
-  # ✅ TODO 列表的目标条数，实际生成数量可能略有出入
+  # ✅ Target number of TODO list items, actual generated count may vary slightly
   task_list_size: 5
 
-  # ✅ 每篇总结中展示的重点段落上限，防止输出过长
+  # ✅ Max key sections displayed in each summary, prevent overly long output
   max_sections: 4
 
 site:
-  # ✅ 静态站点输出目录，建议加入 .gitignore
+  # ✅ Static site output directory, recommend adding to .gitignore
   output_dir: "site"
 
-  # ✅ 对外访问的基准 URL，GitHub Pages 发布后更新为实际地址
+  # ✅ External access base URL, update to actual address after GitHub Pages publishing
   base_url: "https://yeren66.github.io/LLM4ArxivPaper"
 
 email:
-  # ✅ 是否启用邮件推送（false 表示关闭）
+  # ✅ Whether to enable email push (false = disabled)
   enabled: true
 
-  # ✅ 发件人邮箱（需支持 SMTP），建议使用应用专用密码
-  sender: "yerenbot@gmail.com"
+  # ✅ Sender email (must support SMTP), recommend using app-specific password
+  sender: "${MAIL_USERNAME}"
 
-  # ✅ 收件人列表
+  # ✅ Recipient list
   recipients: ["syeren@foxmail.com"]
 
-  # ✅ SMTP 服务器设置（建议使用环境变量注入敏感信息）
+  # ✅ SMTP server settings (recommend injecting sensitive info via environment variables)
   smtp_host: "smtp.gmail.com"
   smtp_port: 465
-  username: "yerenbot@gmail.com"
-  password: "${MAIL_PASSWORD}"  # 建议在运行前导出环境变量
+  username: "${MAIL_USERNAME}"
+  password: "${MAIL_PASSWORD}"  # Recommend exporting environment variable before running
   use_tls: false
   use_ssl: true
   timeout: 30
 
-  # ✅ 邮件主题模板，可使用 {run_date}、{paper_count} 占位符
-  subject_template: "每周论文雷达 - {run_date}"
+  # ✅ Email subject template, can use {run_date}, {paper_count} placeholders
+  subject_template: "📑 Weekly Paper Reading - {run_date}"
 
 runtime:
-  # ✅ 运行模式：
-  #    - online  : 调用 OpenAI 接口执行真实打分与总结（需要 API Key）
-  #    - offline : 使用启发式规则，适合本地调试或无网络场景
-  mode: "offline"
+  # ✅ Run mode:
+  #    - online  : Call OpenAI API for real scoring & summarization (requires API Key)
+  #    - offline : Use heuristic rules, suitable for local debugging or no-network scenarios
+  mode: "online"
 
-  # ✅ 限制处理的 topic 数量；设为 null 表示不限制
-  topic_limit: null
-
-  # ✅ 限制每个 topic 处理的论文数量；null 表示使用 fetch.max_papers_per_topic
+  # ✅ Limit paper count processed per topic; null means use fetch.max_papers_per_topic
   paper_limit: null

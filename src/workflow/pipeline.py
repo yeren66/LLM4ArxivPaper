@@ -30,7 +30,6 @@ from summaries.task_reader import TaskReader
 @dataclass
 class PipelineOverrides:
 	mode: Optional[str] = None
-	topic_limit: Optional[int] = None
 	paper_limit: Optional[int] = None
 	email_enabled: Optional[bool] = None
 
@@ -41,8 +40,6 @@ def run_pipeline(config_path: str, overrides: Optional[PipelineOverrides] = None
 	if overrides:
 		if overrides.mode:
 			config.runtime.mode = overrides.mode
-		if overrides.topic_limit is not None:
-			config.runtime.topic_limit = overrides.topic_limit
 		if overrides.paper_limit is not None:
 			config.runtime.paper_limit = overrides.paper_limit
 		if overrides.email_enabled is not None:
@@ -62,14 +59,11 @@ def run_pipeline(config_path: str, overrides: Optional[PipelineOverrides] = None
 	total_fetched = 0
 	total_selected = 0
 
-	topics = config.topics
-	if config.runtime.topic_limit is not None:
-		topics = topics[: config.runtime.topic_limit]
-
-	for topic in topics:
-		print(f"[INFO] Fetching papers for topic: {topic.label}")
+	for topic_index, topic in enumerate(config.topics, start=1):
+		print(f"[INFO] ({topic_index}/{len(config.topics)}) Fetching papers for topic: {topic.label}")
 		candidates = arxiv_client.fetch_for_topic(topic)
 		total_fetched += len(candidates)
+		print(f"[INFO] Topic {topic.label}: fetched {len(candidates)} candidates")
 
 		if not candidates and config.runtime.mode == "offline":
 			print("[INFO] No live arXiv results; generating offline demo candidate.")
@@ -81,22 +75,42 @@ def run_pipeline(config_path: str, overrides: Optional[PipelineOverrides] = None
 
 		if config.runtime.paper_limit is not None:
 			candidates = candidates[: config.runtime.paper_limit]
+			print(
+				f"[INFO] Topic {topic.label}: applying paper limit {config.runtime.paper_limit}, using {len(candidates)} candidates"
+			)
 
 		scored = ranker.score(topic, candidates)
 		selected = _filter_by_threshold(scored, config)
+		print(
+			f"[INFO] Topic {topic.label}: scored {len(scored)} papers, {len(selected)} passed threshold {config.relevance.pass_threshold}"
+		)
 		total_selected += len(selected)
 
-		for scored_paper in selected:
-			tasks = planner.build_tasks(topic, scored_paper.paper)
-			findings, overview, _ = reader.analyse(scored_paper.paper, tasks)
+		total_weight = sum(dim.weight for dim in config.relevance.dimensions) or 1.0
+		for paper_index, scored_paper in enumerate(selected, start=1):
+			normalised_score = (scored_paper.total_score / total_weight) * 100
+			print(
+				f"[INFO] Topic {topic.label}: processing paper {paper_index}/{len(selected)} "
+				f"[{scored_paper.paper.arxiv_id}] {scored_paper.paper.title} — score {normalised_score:.1f}"
+			)
+			# New workflow: pass interest_prompt instead of pre-built tasks
+			core_summary, tasks, findings, overview, brief_summary, _ = reader.analyse(
+				scored_paper.paper, 
+				topic.interest_prompt
+			)
 			summary = report_builder.build(
 				topic=topic,
 				scored_paper=scored_paper,
+				core_summary=core_summary,
 				task_list=tasks,
 				findings=findings,
 				overview=overview,
+				brief_summary=brief_summary,
 			)
 			summaries.append(summary)
+			print(
+				f"[INFO] Topic {topic.label}: completed summary for {scored_paper.paper.arxiv_id}, total summaries {len(summaries)}"
+			)
 
 	os.environ["PIPELINE_RUN_AT"] = datetime.utcnow().isoformat()
 	site_builder.build(summaries)
@@ -112,7 +126,7 @@ def run_pipeline(config_path: str, overrides: Optional[PipelineOverrides] = None
 	stats = PipelineStats(
 		start_time=start_time,
 		end_time=end_time,
-		topics_processed=len(topics),
+		topics_processed=len(config.topics),
 		papers_fetched=total_fetched,
 		papers_selected=total_selected,
 	)
@@ -134,19 +148,20 @@ def _build_offline_demo_candidate(topic: TopicConfig) -> PaperCandidate:
 	now = datetime.utcnow()
 	keywords = topic.query.include or [topic.label]
 	categories = topic.query.categories or ["cs.AI"]
-	keyword_str = "、".join(keywords)
+	keyword_str = ", ".join(keywords)
 	category_str = ", ".join(categories)
 	abstract = (
-		f"本条目为离线演示数据，用于验证流水线。聚焦主题：{topic.label}。"
-		f" 论文围绕 {keyword_str} 等方向展开，强调 novel 方法并提供 experiment 设计。"
-		f" 适用的 arXiv 分类包括 {category_str}，便于测试自动化流程。"
+		f"This is offline demo data for pipeline verification. Focused topic: {topic.label}."
+		f" The paper explores directions around {keyword_str}, emphasizing novel methods and experimental design."
+		f" Applicable arXiv categories include {category_str}, facilitating automated workflow testing."
 	)
 	return PaperCandidate(
 		topic=topic,
 		arxiv_id=f"demo-{topic.name}-{now.strftime('%H%M%S')}",
-		title=f"[Demo] {topic.label} 自动化测试示例",
+		title=f"[Demo] {topic.label} Automated Test Example",
 		abstract=abstract,
 		authors=["LLM4ArxivPaper Bot"],
+		affiliations=["LLM4ArxivPaper Project"],
 		categories=categories,
 		published=now,
 		updated=now,

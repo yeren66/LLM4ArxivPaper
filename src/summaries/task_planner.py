@@ -49,11 +49,19 @@ class TaskPlanner:
 		if self._client is None:
 			raise RuntimeError("OpenAI client unavailable")
 
+		# Determine output language instruction
+		language_instruction = (
+			"Respond in Simplified Chinese (zh-CN)." 
+			if self.openai_config.language == "zh-CN" 
+			else "Respond in English."
+		)
+
 		system_prompt = (
-			"你是科研助理，需要站在用户角度列一个阅读 TODO 列表。"
-			"请聚焦于真正影响决策的问题，每个 TODO 包含 question 和 reason 字段。"
-			"最多返回 {n} 个条目，仅返回 JSON 数组。"
-		).format(n=self.summarization_config.task_list_size)
+			"You are a research assistant helping users create a reading TODO list from the user's perspective. "
+			"Focus on questions that truly impact decision-making. Each TODO should contain 'question' and 'reason' fields. "
+			f"Return at most {self.summarization_config.task_list_size} items as a JSON object with a 'todos' key containing an array. "
+			f"{language_instruction}"
+		)
 
 		payload = {
 			"user_interest": topic.interest_prompt,

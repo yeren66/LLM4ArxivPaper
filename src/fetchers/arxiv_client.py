@@ -32,7 +32,7 @@ class ArxivClient:
 	def __init__(self, fetch_config: FetchConfig):
 		self.fetch_config = fetch_config
 		if arxiv is not None:
-			# arxiv.Client 支持节流参数，用于控制 API 调用速率
+			# arxiv.Client supports throttling parameters to control API call rate
 			self._client: Optional[arxiv.Client] = arxiv.Client(  # type: ignore[attr-defined]
 				page_size=100,
 				delay_seconds=fetch_config.request_delay,
@@ -76,7 +76,7 @@ class ArxivClient:
 	def fetch_for_topic(self, topic: TopicConfig) -> List[PaperCandidate]:
 		threshold_date = datetime.utcnow() - timedelta(days=self.fetch_config.days_back)
 		
-		# 优先使用直接 HTTPS 请求，避免 arxiv 库的 HTTP 301 重定向问题
+		# Prefer direct HTTPS request to avoid HTTP 301 redirect issue in arxiv library
 		if requests is not None:
 			print(f"[INFO] Fetching papers for topic '{topic.name}' via direct HTTPS API...")
 			papers = self._fallback_fetch(topic, threshold_date)
@@ -84,7 +84,7 @@ class ArxivClient:
 				return papers
 			print(f"[WARN] Direct HTTPS fetch returned no results for topic '{topic.name}'")
 		
-		# 仅当 requests 不可用时才回退到 arxiv.Client
+		# Only fallback to arxiv.Client when requests is unavailable
 		if self._client is None or arxiv is None:
 			print("[WARN] Neither requests nor arxiv package available; returning empty results.")
 			return []
@@ -109,6 +109,14 @@ class ArxivClient:
 				if "v" in arxiv_id:
 					arxiv_id = arxiv_id.split("v")[0]
 
+				affiliations = []
+				for author in result.authors:
+					aff = getattr(author, "affiliation", None)
+					if aff:
+						aff_clean = aff.strip()
+						if aff_clean and aff_clean not in affiliations:
+							affiliations.append(aff_clean)
+
 				candidate = PaperCandidate(
 					topic=topic,
 					arxiv_id=arxiv_id,
@@ -120,6 +128,7 @@ class ArxivClient:
 					updated=(result.updated.replace(tzinfo=None) if result.updated else datetime.utcnow()),
 					arxiv_url=f"https://arxiv.org/abs/{arxiv_id}",
 					pdf_url=f"https://arxiv.org/pdf/{arxiv_id}.pdf",
+					affiliations=affiliations,
 				)
 
 				papers.append(candidate)
@@ -159,7 +168,7 @@ class ArxivClient:
 
 	def _parse_fallback_response(self, xml_text: str, topic: TopicConfig, threshold_date: datetime) -> List[PaperCandidate]:
 		root = ET.fromstring(xml_text)
-		ns = {"atom": "http://www.w3.org/2005/Atom"}
+		ns = {"atom": "http://www.w3.org/2005/Atom", "arxiv": "http://arxiv.org/schemas/atom"}
 		papers: List[PaperCandidate] = []
 
 		for entry in root.findall("atom:entry", ns):
@@ -190,6 +199,13 @@ class ArxivClient:
 				updated_dt = published_dt
 
 			authors = [author.text for author in entry.findall("atom:author/atom:name", ns) if author.text]
+			affiliations: List[str] = []
+			for author_el in entry.findall("atom:author", ns):
+				aff_text = author_el.findtext("arxiv:affiliation", default="", namespaces=ns)
+				if aff_text:
+					aff_clean = aff_text.strip()
+					if aff_clean and aff_clean not in affiliations:
+						affiliations.append(aff_clean)
 			categories = [cat.attrib.get("term", "") for cat in entry.findall("atom:category", ns) if cat.attrib.get("term")]
 
 			candidate = PaperCandidate(
@@ -203,6 +219,7 @@ class ArxivClient:
 				updated=updated_dt,
 				arxiv_url=f"https://arxiv.org/abs/{arxiv_id}",
 				pdf_url=f"https://arxiv.org/pdf/{arxiv_id}.pdf",
+				affiliations=affiliations,
 			)
 
 			papers.append(candidate)

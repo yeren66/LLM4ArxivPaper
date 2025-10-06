@@ -1,170 +1,150 @@
-# 📚 LLM4Reading — 面向研究者的 arXiv 智能雷达
 
-LLM4Reading 旨在帮助研究者专注于论文本身：
+# 📚 LLM4ArxivPaper — Arxiv Paper Auto-Pusher Powered by LLM
 
-1. **精准抓取**：用户在 YAML 中定义关心的主题、分类和关键词，系统自动从 arXiv 拉取候选论文。
-2. **LLM 筛选**：利用 OpenAI 模型读取摘要，从主题、方法、创新、实验等层面给出综合得分，筛去低相关的内容。
-3. **任务驱动总结**：先生成“作为读者想弄明白的问题”列表，再带着这些 TODO 逐项阅读、回答，最终输出结构化 Markdown 报告。
-4. **轻量发布**：所有总结统一写入 `site/`，GitHub Actions 自动发布为 GitHub Pages；邮件只发送统计信息与访问链接，让用户快速掌握最新进展。
+**LLM4ArxivPaper** is an intelligent tool that automatically crawls, filters, summarizes, and generates paper reports based on your research interests.
 
-> ⚠️ 提示：仓库正在逐步重构为上述架构。本 README 和 `config/pipeline.yaml` 描述了新版管线的使用方式；旧的 Read the Docs / GitHub 上传相关模块将被完全移除。
+The project regularly fetches the latest papers from Arxiv related to your research topics, uses LLM to generate summaries, and builds browsable weekly reports via **GitHub Pages**. It also supports **email push**.
 
+Supports **Chinese and English report generation**, enabling a full workflow from auto-crawling → intelligent filtering → LLM summarization → report generation → email push.
+
+Demo: [View here](https://yeren66.github.io/LLM4ArxivPaper)
+
+>[Switch to Chinese (README_zh.md)](README_zh.md)
 ---
 
-## ✨ 特性速览
+## 🚀 Quick Start (about 10 min)
 
-- 🧭 **主题驱动抓取**：Topic、关键词、排除规则全部由用户配置，每次运行自动生效。
-- 🧠 **多维度相关性评分**：LLM 对摘要在多个维度打分并加权求和，≥60 即入选。
-- 📋 **TODO 导向阅读**：自动列出想弄清楚的问题，逐条解答后再给综合总结，更贴近实际研究需求。
-- 📬 **邮件速览 + 链接**：邮件只包含统计数据、最值得读的论文列表和 GitHub Pages 链接，不打扰却足够全面。
-- ☁️ **GitHub Pages 托管**：构建产物与源码分离，用户无需关注发布细节，点击链接即可阅读。
+### 1. Fork the Repository
 
----
+Fork this project to your personal GitHub account.
 
-## �️ 仓库结构（重构完成后）
+### 2. Enable GitHub Pages
 
-```
-config/
-  pipeline.yaml         # 带详细注释的总配置（可安全地自定义）
-requirements.txt
-src/
-  core/
-  fetchers/
-  filters/
-  summaries/
-  publisher/
-  workflow/
-templates/
-  site/                 # GitHub Pages 所需 HTML 模板
-site/                   # 构建产物（不提交，Actions 部署到 Pages）
-.github/workflows/
-  publish.yml           # 自动构建 + 部署 GitHub Pages
-```
+Create a Pages site in your repository, see the official guide:
 
-### 模块职责概览
+👉 [Create a GitHub Pages site](https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site)
 
-| 模块 | 职责 |
-| --- | --- |
-| `core.config_loader` | 解析 `pipeline.yaml`，合并环境变量、校验配置 |
-| `fetchers.arxiv_client` | 根据 topic 构造查询，调用 arXiv API（可配置等待时间、最大数量） |
-| `filters.relevance_ranker` | 调用 OpenAI，对摘要进行多维度评分和加权 |
-| `summaries.task_planner` | 生成 TODO 列表；`summaries.task_reader` 按 TODO 与 LLM 交互并提取答案；`summaries.report_builder` 生成 Markdown |
-| `publisher.static_site` | 根据模板批量生成静态页面和索引 |
-| `publisher.email_digest` | 汇总统计、发送邮件（可关闭） |
-| `workflow.pipeline` | 编排整条流程，支持本地 CLI 和 GitHub Actions |
+### 3. Configure pipeline.yaml
 
----
-
-## ⚙️ 配置 `config/pipeline.yaml`
-
-> 我们为每个字段写了详细注释，打开文件即可查看。以下给出关键段落说明：
+Edit the pipeline.yaml file in the root directory. The minimal core configuration is as follows (detailed comments in the yaml file):
 
 ```yaml
-openai:
-  api_key: "${OPENAI_API_KEY}"   # 推荐用环境变量注入
-  model: "gpt-4o-mini"
-
-fetch:
-  days_back: 7                   # 默认抓取过去 7 天
-  max_papers_per_topic: 60        # 每个 topic 初始抓取上限
-
-relevance:
-  scoring_dimensions:            # 多维度权重结构
-    - name: topic_alignment
-      weight: 0.35
-  pass_threshold: 60
-
-summarization:
-  task_list_size: 5
-  max_sections: 4
-
-site:
-  output_dir: "site"
-  base_url: "https://<your-user>.github.io/<your-repo>"
-
-email:
-  enabled: true
-  sender: "${MAIL_SENDER}"
-  recipients:
-    - "your-email@example.com"
-
+language: "en"  # Report language (optional: zh-CN / en)
 topics:
   - name: "software_testing"
-    label: "软件测试"
+    label: "software testing"
     query:
       categories: ["cs.SE", "cs.AI"]
-      include_keywords:
-        - "software testing"
-      exclude_keywords:
-        - "quantum"
+      include: ["software testing", "test automation"]
+      exclude: ["quantum", "biomedical"]
     interest_prompt: |
-      我关注大模型在软件测试中的应用……
+      I am interested in research on LLM-assisted software testing, especially new methods for test generation, coverage improvement, and defect localization.
+
+recipients: ["xxx@example.com"]
+base_url: "https://<github_username>.github.io/LLM4ArxivPaper"
 ```
 
-- **新增/删除 topic**：直接复制节点即可；`name` 会用于输出路径和统计。
-- **敏感信息**：带 `${...}` 的配置建议在本地 `.env` 或 GitHub Secrets 中设置。
-- **不需要邮件**：将 `email.enabled` 改为 `false`，管线会自动跳过该步骤。
+> 💡 Tip: You can configure multiple topics, and the project will crawl and generate reports for each research direction.
+
+------
+
+### 4. Configure Secrets
+
+Go to your repository:
+
+**Settings → Secrets and Variables → Actions → New repository secret**
+
+Add the following:
+
+| Secret Name     | Description                  | Required |
+|-----------------|-----------------------------|----------|
+| API_KEY         | API key for LLM service      | ✅       |
+| BASE_URL        | LLM API endpoint (default OpenAI) | ✅       |
+| MAIL_USERNAME   | Gmail account (full address) | ⚠️ Email feature |
+| MAIL_PASSWORD   | Gmail app password           | ⚠️ Email feature |
+
+> 📧 [Get Gmail app password](https://support.google.com/mail/answer/185833)
+
+If you do not enable email, you can omit MAIL_USERNAME and MAIL_PASSWORD. After execution, you can directly access the generated report at base_url (https://<github_username>.github.io/LLM4ArxivPaper).
+
+------
+
+### 5. Enable GitHub Actions
+
+Go to **Settings → Pages** in your repository, and set **Source** to **GitHub Actions**.
+
+------
+
+### 6. Run the Script
+
+You can manually trigger the workflow (pipeline-smoke) for testing, or wait for automatic execution every Monday (modify schedule in .github/workflows/weekly-pipeline.yml).
 
 ---
 
-## � 快速开始（本地）
+## 💼 How It Works
 
-```bash
-# 1. 准备环境
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
+The project runs weekly and follows these steps:
 
-# 2. 配置环境变量（示例）
-export OPENAI_API_KEY="sk-..."
-export MAIL_SENDER="bot@example.com"
-export MAIL_PASSWORD="app-password"
+1. Crawl new papers from Arxiv based on user-configured topics.
+2. Filter papers intelligently (based on title, author, abstract, etc.), scoring for novelty, completeness, etc.
+3. Filter out papers with scores below 60.
+4. Use LLM to generate five-dimensional summaries for selected papers.
+5. Build readable report pages and push to GitHub Pages.
+6. (Optional) Send reports via email to specified recipients.
 
-# 3. 编辑 config/pipeline.yaml
-#    - 调整 topic / interest_prompt
-#    - 设置 GitHub Pages base_url
-#    - 如不需邮件，改 email.enabled 为 false
+### 📄 LLM Summary Template Example
 
-# 4. 运行一次完整流程（命令即将提供）
-python -m workflow.cli run --days-back 7
-
-# 5. 本地预览生成的静态站点
-python -m http.server --directory site 8000
+```
+Please summarize this paper from the following 5 aspects:
+1. What problem does it solve?
+2. What solution is proposed?
+3. What are the core methods/strategies? (detailed)
+4. How is the experiment designed? Metrics, baseline, and dataset?
+5. What are the conclusions?
 ```
 
-> `workflow.cli` 会读取配置、下载论文、筛选、总结，并在控制台输出最相关论文的统计摘要。运行结束后，`site/` 目录就是完整的发布内容（同 GitHub Pages）。
+After summarization, the LLM will also generate and answer several "extended questions" based on your research interests, providing more tailored insights.
+
+### ⚙️ System Flowchart
+
+```mermaid
+graph LR
+    A[Scheduled Trigger] --> B[Crawl Arxiv]
+    B --> C[Intelligent Filtering & Scoring]
+    C --> D[LLM Summary Generation]
+    D --> E[Report Building]
+    E --> F[GitHub Pages Publishing]
+    E --> G[Email Push]
+```
 
 ---
 
-## ☁️ 使用 GitHub Actions 发布
+## 🤝 Contributing
 
-1. 在仓库设置里新增 Secrets：`OPENAI_API_KEY`、`MAIL_SENDER`、`MAIL_PASSWORD`（如邮件启用）。
-2. 将 `config/pipeline.yaml` 中的 `site.base_url` 设置为 `https://<username>.github.io/<repo>`。
-3. 推送代码后，`.github/workflows/publish.yml` 会：
-   - 安装依赖并执行 `python -m workflow.cli run`；
-   - 将 `site/` 作为构建产物上传至 GitHub Pages；
-   - （可选）发送邮件摘要。
-4. Actions 完成后，访问邮件或终端输出的链接即可查看最新内容。
+Contributions are welcome! Submit Issues or Pull Requests.
+
+1. Fork this repository
+2. Create a feature branch: git checkout -b feature/AmazingFeature
+3. Commit your changes: git commit -m 'Add some AmazingFeature'
+4. Push the branch: git push origin feature/AmazingFeature
+5. Open a Pull Request 🎉
+
+------
+
+## 📄 License
+
+This project is licensed under the **MIT License**
+
+See [LICENSE](LICENSE) for details.
+
+------
+
+## 🙏 Acknowledgements
+
+- [Arxiv](https://arxiv.org/) — Paper data source
+- [GitHub Actions](https://github.com/features/actions) — Automation platform
+- [OpenAI](https://openai.com) — Powerful LLM support
 
 ---
 
-## ❓ 常见问题
 
-| 问题 | 建议排查 |
-| --- | --- |
-| 抓取不到论文 | 检查 `topics[*].query` 是否过于严格，或提高 `fetch.days_back` |
-| LLM 评分耗时长 | 减少 `max_papers_per_topic`，或调低 `runtime.max_concurrency` |
-| 邮件发送失败 | 确认 `email.enabled`、SMTP 配置、应用密码是否正确 |
-| GitHub Pages 无法访问 | 确认仓库 Settings 中启用了 Pages 且 workflow 正常执行 |
-
----
-
-## 📝 贡献
-
-欢迎提交 Issue / PR 讨论主题模板、评分 prompt 或总结格式的改进。请在 PR 中说明测试方式与配置变更。
-
----
-
-## � 许可证
-
-本项目遵循 [MIT License](LICENSE)。

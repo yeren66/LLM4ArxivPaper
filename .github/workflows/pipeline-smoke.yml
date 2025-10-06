@@ -1,39 +1,30 @@
-name: Pipeline Smoke Test
+name: Manual Test Pipeline
 
 on:
   workflow_dispatch:
     inputs:
-      mode:
-        description: "Pipeline mode override"
-        required: false
-        default: "offline"
-      topic_limit:
-        description: "Limit number of topics"
-        required: false
-        default: "1"
       paper_limit:
-        description: "Limit papers per topic"
+        description: 'Max papers per topic (for quick testing)'
         required: false
-        default: "3"
-  schedule:
-    - cron: "0 3 * * 1"
+        default: '5'
+        type: string
+      enable_email:
+        description: 'Enable email sending'
+        required: false
+        default: false
+        type: boolean
 
 jobs:
-  smoke:
-    name: Run pipeline smoke test
+  test-pipeline:
+    name: Test Pipeline Execution
     runs-on: ubuntu-latest
+    
+    # Required for optional GitHub Pages deployment
     permissions:
       contents: read
       pages: write
       id-token: write
-    env:
-      PYTHONPATH: src
-      ENABLE_PAGES_DEPLOY: ${{ vars.ENABLE_PAGES_DEPLOY || 'true' }}
-      PIPELINE_MODE: ${{ github.event.inputs.mode || 'offline' }}
-      PIPELINE_TOPIC_LIMIT: ${{ github.event.inputs.topic_limit || '1' }}
-      PIPELINE_PAPER_LIMIT: ${{ github.event.inputs.paper_limit || '3' }}
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY || '' }}
-      MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD || '' }}
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -45,70 +36,52 @@ jobs:
           cache: "pip"
 
       - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+        run: pip install -r requirements.txt
 
-      - name: Run pipeline
+      - name: Run pipeline (test mode)
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          python -m workflow.cli \
-            --config config/pipeline.yaml \
-            --mode "$PIPELINE_MODE" \
-            --topic-limit "$PIPELINE_TOPIC_LIMIT" \
-            --paper-limit "$PIPELINE_PAPER_LIMIT" \
-            --email
+          if [ "${{ github.event.inputs.paper_limit }}" != "" ]; then
+            python src/main.py --paper-limit ${{ github.event.inputs.paper_limit }}
+          else
+            python src/main.py
+          fi
 
-      - name: Print pipeline log summary
+      - name: Check generated output
         if: always()
         run: |
-          echo "--- pipeline summary ---"
-          if [ -f site/manifest.json ]; then
-            jq '.' site/manifest.json || cat site/manifest.json
-          else
-            echo "manifest.json missing"
-          fi
-          echo "--- topics directory ---"
-          if [ -d site/topics ]; then
-            find site/topics -maxdepth 2 -type f
-          else
-            echo "site/topics directory missing"
-          fi
-
-      - name: Inspect generated site
-        if: always()
-        run: |
-          echo "--- site manifest ---"
-          if [ -f site/manifest.json ]; then
-            cat site/manifest.json
-          else
-            echo "manifest.json missing"
-          fi
-          echo "--- site tree ---"
+          echo "=== Generated site structure ==="
           if [ -d site ]; then
-            find site -maxdepth 2 -type f
+            tree site -L 2 || find site -maxdepth 2
+            echo ""
+            echo "=== Manifest content ==="
+            if [ -f site/manifest.json ]; then
+              cat site/manifest.json
+            fi
+            echo ""
+            echo "✅ Site directory generated successfully"
           else
-            echo "site directory not generated"
+            echo "❌ Site directory not generated"
+            exit 1
           fi
 
-      - name: Upload static site artifact
+      - name: Upload test artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: site-preview
+          name: test-site-output
           path: site
           if-no-files-found: warn
-
-      - name: Configure GitHub Pages (optional)
-        if: env.ENABLE_PAGES_DEPLOY == 'true'
-        uses: actions/configure-pages@v5
-
-      - name: Upload Pages artifact (optional)
-        if: env.ENABLE_PAGES_DEPLOY == 'true'
+          retention-days: 7
+          
+      - name: Deploy to GitHub Pages (optional)
+        if: success() && github.event.inputs.enable_email == 'true'
         uses: actions/upload-pages-artifact@v3
         with:
           path: site
-
-      - name: Deploy to GitHub Pages (optional)
-        if: env.ENABLE_PAGES_DEPLOY == 'true'
+          
+      - name: Deploy Pages
+        if: success() && github.event.inputs.enable_email == 'true'
         id: deployment
         uses: actions/deploy-pages@v4
