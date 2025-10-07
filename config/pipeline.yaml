@@ -24,7 +24,7 @@ openai:
   temperature: 0.2
 
   # ✅ Output language: 'zh-CN' (Simplified Chinese) or 'en' (English)
-  language: "zh-CN"
+  language: "en"
 
 fetch:
   # ✅ Max papers to fetch per Topic, used to control costs
