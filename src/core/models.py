@@ -205,6 +205,7 @@ class PaperCandidate:
 	arxiv_url: str
 	pdf_url: Optional[str] = None
 	affiliations: List[str] = field(default_factory=list)
+	comment: Optional[str] = None
 
 
 @dataclass

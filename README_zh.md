@@ -6,9 +6,11 @@
 
 支持 **中英文报告生成**，可实现从自动爬取 → 智能筛选 → LLM 总结 → 报告生成 → 邮件推送 的完整流程。
 
+> [Switch to English (README.md)](README.md)
+
 示例 Demo：[查看这里](https://yeren66.github.io/LLM4ArxivPaper)
 
-> [Switch to English (README.md)](README.md)
+![](https://yerens-blog.oss-cn-beijing.aliyuncs.com/picgo_upload/20251007094813.png)
 ---
 
 ## **🚀 快速开始（约 10 分钟）**

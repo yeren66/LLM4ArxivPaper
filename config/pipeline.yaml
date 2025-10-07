@@ -39,30 +39,30 @@ fetch:
 topics:
   # ✅ Each Topic represents a focus area, can be added/removed anytime
   - name: "software_testing"            # Unique identifier (for filenames/directories)
-    label: "软件测试"                   # User-visible label (can be Chinese for prompts)
+    label: "software testing"                   # User-visible label (can be Chinese for prompts)
 
     query:
       # ✅ arXiv category filter, fill in official subject code
       categories: ["cs.SE", "cs.AI"]
 
       # ✅ Keywords expected in title/abstract, supports phrases
-      include: ["software testing", "test automation"]
+      include: ["software testing", "test generation", "test update"]
 
       # ✅ Keywords to exclude, prevent noise
       exclude: ["quantum", "biomedical"]
 
     # ✅ User's interest description for this field, passed to LLM for reference
     interest_prompt: |
-      我关注大语言模型辅助软件测试的研究，尤其关注测试生成、覆盖率提升和缺陷定位方面的最新方法。
+      I am interested in test case generation and test update. I want to understand how LLMs and Static Analysis can be effectively combined to improve software testing efficiency and effectiveness.
 
-  - name: "code_generation"
-    label: "代码生成"
+  - name: "Code Agent"
+    label: "Code Agent"
     query:
-      categories: ["cs.AI", "cs.CL"]
-      include: ["code generation", "program synthesis"]
+      categories: ["cs.AI", "cs.SE"]
+      include: ["software development", "program analysis"]
       exclude: []
     interest_prompt: |
-      我希望了解大型语言模型如何改进代码生成质量，包括提示工程、约束生成和评估方法。
+      I am interested in how code agents can assist in software development and program analysis. I want to explore the capabilities and limitations of current code agents in real-world software engineering tasks.
 
 relevance:
   # ✅ Dimension definitions for paper relevance, can add/remove/adjust weights based on interests

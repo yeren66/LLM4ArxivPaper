@@ -117,6 +117,8 @@ class ArxivClient:
 						if aff_clean and aff_clean not in affiliations:
 							affiliations.append(aff_clean)
 
+				comment = getattr(result, "comment", None)
+
 				candidate = PaperCandidate(
 					topic=topic,
 					arxiv_id=arxiv_id,
@@ -129,6 +131,7 @@ class ArxivClient:
 					arxiv_url=f"https://arxiv.org/abs/{arxiv_id}",
 					pdf_url=f"https://arxiv.org/pdf/{arxiv_id}.pdf",
 					affiliations=affiliations,
+					comment=comment,
 				)
 
 				papers.append(candidate)
@@ -207,6 +210,11 @@ class ArxivClient:
 					if aff_clean and aff_clean not in affiliations:
 						affiliations.append(aff_clean)
 			categories = [cat.attrib.get("term", "") for cat in entry.findall("atom:category", ns) if cat.attrib.get("term")]
+			
+			# Parse arxiv:comment if present
+			comment = entry.findtext("arxiv:comment", default=None, namespaces=ns)
+			if comment:
+				comment = comment.strip()
 
 			candidate = PaperCandidate(
 				topic=topic,
@@ -220,6 +228,7 @@ class ArxivClient:
 				arxiv_url=f"https://arxiv.org/abs/{arxiv_id}",
 				pdf_url=f"https://arxiv.org/pdf/{arxiv_id}.pdf",
 				affiliations=affiliations,
+				comment=comment,
 			)
 
 			papers.append(candidate)

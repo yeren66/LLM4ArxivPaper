@@ -204,6 +204,43 @@ body {
   margin-bottom: 0.5rem;
 }
 
+/* Stats in Sidebar */
+.sidebar-stats {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar-stats h3 {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+
+.sidebar-stat-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  font-size: 0.875rem;
+}
+
+.sidebar-stat-icon {
+  font-size: 1rem;
+}
+
+.sidebar-stat-label {
+  color: var(--text-secondary);
+  flex: 1;
+}
+
+.sidebar-stat-value {
+  font-weight: 600;
+  color: var(--accent);
+}
+
 .sidebar-nav {
   padding: 1rem 0;
 }
@@ -250,7 +287,7 @@ body {
 .top-bar {
   background: var(--card-bg);
   border-bottom: 1px solid var(--border-color);
-  padding: 1rem 2rem;
+  padding: 1.25rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -259,10 +296,21 @@ body {
   z-index: 50;
 }
 
-.top-bar-left {
-  display: flex;
-  gap: 2rem;
-  align-items: center;
+.top-bar-title {
+  flex: 1;
+}
+
+.top-bar-title h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  color: var(--text-primary);
+}
+
+.top-bar-title p {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  margin: 0;
 }
 
 .lang-toggle {
@@ -275,6 +323,7 @@ body {
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
+  flex-shrink: 0;
 }
 
 .lang-toggle:hover {
@@ -283,66 +332,18 @@ body {
   color: var(--accent);
 }
 
-/* Stats Panel */
-.stats-panel {
-  display: flex;
-  gap: 1.5rem;
-  align-items: center;
-}
-
-.stat-item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background: var(--bg-color);
-  border-radius: 6px;
-}
-
-.stat-icon {
-  font-size: 1.25rem;
-}
-
-.stat-value {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--accent);
-}
-
-.stat-label {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
 /* Content Container */
 .container {
   flex: 1;
-  padding: 2rem;
+  padding: 1rem 1.5rem;
   max-width: var(--page-max-width);
   margin: 0 auto;
   width: 100%;
 }
 
-.page-header {
-  margin-bottom: 2rem;
-}
-
-.page-title {
-  font-size: 1.875rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-}
-
-.page-subtitle {
-  font-size: 1rem;
-  color: var(--text-secondary);
-}
-
 /* Topic Sections - Flat List Design */
 .topic-section {
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
   scroll-margin-top: 4rem;
 }
 
@@ -379,7 +380,7 @@ body {
 }
 
 .paper-item {
-  padding: 1.25rem 1.5rem;
+  padding: 0.875rem 1.25rem;
   border-bottom: 1px solid var(--border-color);
   transition: background 0.2s;
 }
@@ -534,11 +535,31 @@ body {
             "</head>",
             f"<body data-lang='{self.language}'>",
             "  <div class='page'>",
-            # Sidebar
+            # Sidebar with stats
             "    <aside class='sidebar'>",
             "      <div class='sidebar-header'>",
             f"        <h1>{self._i18n('LLM4ArxivPaper', 'LLM4ArxivPaper')}</h1>",
             "      </div>",
+            # Stats in sidebar
+            "      <div class='sidebar-stats'>",
+            f"        <h3>{self._i18n('统计信息', 'Statistics')}</h3>",
+            "        <div class='sidebar-stat-item'>",
+            f"          <span class='sidebar-stat-icon'>📄</span>",
+            f"          <span class='sidebar-stat-label'>{self._i18n('论文', 'Papers')}</span>",
+            f"          <span class='sidebar-stat-value'>{total_papers}</span>",
+            "        </div>",
+            "        <div class='sidebar-stat-item'>",
+            f"          <span class='sidebar-stat-icon'>🏷️</span>",
+            f"          <span class='sidebar-stat-label'>{self._i18n('专题', 'Topics')}</span>",
+            f"          <span class='sidebar-stat-value'>{total_topics}</span>",
+            "        </div>",
+            "        <div class='sidebar-stat-item'>",
+            f"          <span class='sidebar-stat-icon'>🕒</span>",
+            f"          <span class='sidebar-stat-label'>{self._i18n('更新', 'Updated')}</span>",
+            f"          <span class='sidebar-stat-value'>{update_time}</span>",
+            "        </div>",
+            "      </div>",
+            # Topics navigation
             "      <nav class='sidebar-nav'>",
             f"        <h3>{self._i18n('专题导航', 'Topics')}</h3>",
             "        <ul>",
@@ -546,39 +567,16 @@ body {
             "        </ul>",
             "      </nav>",
             "    </aside>",
-            # Main content
+            # Main content with title in sticky header
             "    <div class='main-content'>",
             "      <header class='top-bar'>",
-            "        <div class='stats-panel'>",
-            f"          <div class='stat-item'>",
-            f"            <span class='stat-icon'>📄</span>",
-            "            <div>",
-            f"              <div class='stat-value'>{total_papers}</div>",
-            f"              <div class='stat-label'>{self._i18n('论文', 'Papers')}</div>",
-            "            </div>",
-            "          </div>",
-            f"          <div class='stat-item'>",
-            f"            <span class='stat-icon'>📚</span>",
-            "            <div>",
-            f"              <div class='stat-value'>{total_topics}</div>",
-            f"              <div class='stat-label'>{self._i18n('专题', 'Topics')}</div>",
-            "            </div>",
-            "          </div>",
-            f"          <div class='stat-item'>",
-            f"            <span class='stat-icon'>📅</span>",
-            "            <div>",
-            f"              <div class='stat-value'>{update_time}</div>",
-            f"              <div class='stat-label'>{self._i18n('更新', 'Updated')}</div>",
-            "            </div>",
-            "          </div>",
+            "        <div class='top-bar-title'>",
+            f"          <h1>{self._i18n('每周精选科技论文', 'Weekly Research Highlights')}</h1>",
+            f"          <p>{self._i18n('聚合最新 arXiv 热门论文，结合智能阅读助手生成深入摘要与阅读指南', 'Curated arXiv picks with AI-generated summaries and reading guides')}</p>",
             "        </div>",
             f"        {self._lang_toggle_button()}",
             "      </header>",
             "      <main class='container'>",
-            "        <div class='page-header'>",
-            f"          <h1 class='page-title'>{self._i18n('每周精选科技论文', 'Weekly Research Highlights')}</h1>",
-            f"          <p class='page-subtitle'>{self._i18n('聚合最新 arXiv 热门论文，结合智能阅读助手生成深入摘要与阅读指南', 'Curated arXiv picks with AI-generated summaries and reading guides')}</p>",
-            "        </div>",
         ]
 
         if not index_entries:
@@ -692,12 +690,82 @@ body {
   border-bottom: 1px solid var(--border-color);
 }
 
-.toc-header h3 {
-  font-size: 0.875rem;
+.toc-header a {
+  display: block;
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.toc-header a:hover {
+  color: var(--accent);
+}
+
+/* Paper Info in Sidebar */
+.sidebar-paper-info {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar-paper-info h3 {
+  font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--text-secondary);
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+
+/* Navigation Section Header */
+.sidebar-nav-header {
+  padding: 1rem 1rem 0.5rem;
+}
+
+.sidebar-nav-header h3 {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 0;
+}
+
+.sidebar-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.5rem 0;
+  font-size: 0.875rem;
+  border-bottom: 1px solid var(--bg-secondary);
+}
+
+.sidebar-info-item:last-child {
+  border-bottom: none;
+}
+
+.sidebar-info-label {
+  color: var(--text-muted);
+  font-weight: 500;
+  font-size: 0.75rem;
+}
+
+.sidebar-info-value {
+  color: var(--text-primary);
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.sidebar-info-value a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.sidebar-info-value a:hover {
+  text-decoration: underline;
 }
 
 .toc-nav {
@@ -738,13 +806,38 @@ body {
 .top-bar {
   background: var(--card-bg);
   border-bottom: 1px solid var(--border-color);
-  padding: 1rem 2rem;
+  padding: 1.25rem 2rem;
   position: sticky;
   top: 0;
   z-index: 50;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1.5rem;
+}
+
+.top-bar-title {
+  flex: 1;
+  min-width: 0;
+}
+
+.paper-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.4;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.top-bar-actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-shrink: 0;
 }
 
 .back-link {
@@ -753,10 +846,16 @@ body {
   text-decoration: none;
   font-size: 0.875rem;
   transition: color 0.2s;
+  white-space: nowrap;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
 }
 
 .back-link:hover {
   color: var(--accent);
+  background: var(--accent-light);
+  border-color: var(--accent);
 }
 
 .lang-toggle {
@@ -781,52 +880,52 @@ body {
   flex: 1;
   max-width: var(--page-max-width);
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1.5rem 2rem;
   width: 100%;
 }
 
 /* Paper Header - Flat Design */
 .paper-header {
-  margin-bottom: 2rem;
-}
-
-.paper-title {
-  font-size: 2rem;
-  font-weight: 700;
   margin-bottom: 1.5rem;
-  line-height: 1.3;
 }
 
-/* Flat Meta Bar */
+/* Flat Meta Bar - Simplified */
 .meta-bar {
   display: flex;
-  flex-wrap: wrap;
-  gap: 2rem;
-  padding: 1.25rem 0;
-  border-top: 1px solid var(--border-color);
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem 0;
   border-bottom: 1px solid var(--border-color);
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
 .meta-item {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.5rem;
   font-size: 0.875rem;
+  padding: 0.5rem 0;
 }
 
 .meta-icon {
   font-size: 1.125rem;
+  flex-shrink: 0;
+  margin-top: 0.125rem;
 }
 
 .meta-label {
   color: var(--text-muted);
   font-weight: 500;
+  flex-shrink: 0;
+  min-width: 4rem;
 }
 
 .meta-value {
   color: var(--text-primary);
   font-weight: 600;
+  word-break: break-word;
+  line-height: 1.6;
+  flex: 1;
 }
 
 .meta-value a {
@@ -1002,27 +1101,15 @@ body {
         else:
             authors_display = self._i18n("未知作者", "Unknown authors")
 
-        if paper.affiliations:
-            affiliations_display = self._escape("；".join(paper.affiliations))
-        else:
-            affiliations_display = self._i18n("未知机构", "Unknown institution")
-
-        meta_items: Sequence[Tuple[str, str]] = [
+        # Sidebar info items (Topic, Score, Published, arXiv)
+        sidebar_info_items: List[Tuple[str, str]] = [
             (
                 self._i18n("所属专题", "Topic"),
                 self._escape(summary.topic.label),
             ),
             (
-                self._i18n("相关度得分", "Relevance score"),
+                self._i18n("相关度得分", "Relevance Score"),
                 score,
-            ),
-            (
-                self._i18n("作者", "Authors"),
-                authors_display,
-            ),
-            (
-                self._i18n("作者单位", "Affiliations"),
-                affiliations_display,
             ),
             (
                 self._i18n("发表日期", "Published"),
@@ -1033,6 +1120,23 @@ body {
                 f"<a href='{arxiv_link}' target='_blank' rel='noopener'>{arxiv_id}</a>",
             ),
         ]
+        
+        # Top bar meta items (only Authors and Comment)
+        top_meta_items: List[Tuple[str, str, str]] = [
+            (
+                "👤",
+                self._i18n("作者", "Authors"),
+                authors_display,
+            ),
+        ]
+        
+        # Add comment if available
+        if paper.comment:
+            top_meta_items.append((
+                "💬",
+                self._i18n("备注", "Comment"),
+                self._escape(paper.comment),
+            ))
 
         # Build TOC navigation links
         toc_links = [
@@ -1054,14 +1158,30 @@ body {
             "</head>",
             f"<body data-lang='{self.language}'>",
             "  <div class='page'>",
-            # Sidebar TOC
+            # Sidebar with Paper Info and TOC
             "    <aside class='sidebar-toc'>",
             "      <div class='toc-header'>",
-            f"        <h3>{self._i18n('目录', 'Contents')}</h3>",
+            f"        <a href='../..'>{self._i18n('🏠 首页', '🏠 HOME')}</a>",
             "      </div>",
-            "      <nav class='toc-nav'>",
-            "        <ul>",
+            # Paper info in sidebar (at top)
+            "      <div class='sidebar-paper-info'>",
+            f"        <h3>{self._i18n('论文信息', 'Paper Info')}</h3>",
         ]
+        
+        # Add sidebar info items
+        for label_html, value_html in sidebar_info_items:
+            lines.append("        <div class='sidebar-info-item'>")
+            lines.append(f"          <span class='sidebar-info-label'>{label_html}</span>")
+            lines.append(f"          <span class='sidebar-info-value'>{value_html}</span>")
+            lines.append("        </div>")
+        
+        # Add TOC navigation section
+        lines.append("      </div>")
+        lines.append("      <div class='sidebar-nav-header'>")
+        lines.append(f"        <h3>{self._i18n('目录导航', 'Navigation')}</h3>")
+        lines.append("      </div>")
+        lines.append("      <nav class='toc-nav'>")
+        lines.append("        <ul>")
         
         for label, href in toc_links:
             lines.append(f"          <li><a href='{href}'>{label}</a></li>")
@@ -1073,44 +1193,25 @@ body {
             # Main content
             "    <div class='main-content'>",
             "      <header class='top-bar'>",
-            f"        <a href='../..' class='back-link i18n' data-lang-zh='返回首页' data-lang-en='Back to home'>返回首页</a>",
-            f"        {self._lang_toggle_button()}",
+            "        <div class='top-bar-title'>",
+            f"          <h1 class='paper-title'>{title}</h1>",
+            "        </div>",
+            "        <div class='top-bar-actions'>",
+            f"          {self._lang_toggle_button()}",
+            "        </div>",
             "      </header>",
             "      <main class='container'>",
             "        <div class='paper-header'>",
-            f"          <h1 class='paper-title'>{title}</h1>",
-            # Flat meta bar
+            # Simplified meta bar - only Authors and Comment
             "          <div class='meta-bar'>",
         ])
         
-        # Build flat meta items with icons
-        meta_icons = {
-            "所属专题": "📚", "Topic": "📚",
-            "相关度得分": "📊", "Relevance score": "📊",
-            "作者": "👤", "Authors": "👤",
-            "作者单位": "🏛️", "Affiliations": "🏛️",
-            "发表日期": "📅", "Published": "📅",
-            "arXiv": "🔗",
-        }
-        
-        for label_html, value_html in meta_items:
-            # Extract plain label from i18n span if present
-            if 'i18n' in label_html:
-                # Get icon - simplified approach
-                icon = "📄"
-                for key, ico in meta_icons.items():
-                    if key in label_html:
-                        icon = ico
-                        break
-            else:
-                icon = meta_icons.get("arXiv", "🔗")
-            
+        # Add top meta items (Authors and Comment only)
+        for icon, label_html, value_html in top_meta_items:
             lines.append("            <div class='meta-item'>")
             lines.append(f"              <span class='meta-icon'>{icon}</span>")
-            lines.append("              <div>")
-            lines.append(f"                <span class='meta-label'>{label_html}:</span>")
-            lines.append(f"                <span class='meta-value'>{value_html}</span>")
-            lines.append("              </div>")
+            lines.append(f"              <span class='meta-label'>{label_html}:</span>")
+            lines.append(f"              <span class='meta-value'>{value_html}</span>")
             lines.append("            </div>")
 
         lines.append("          </div>")
