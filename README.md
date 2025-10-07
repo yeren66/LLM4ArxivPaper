@@ -3,17 +3,17 @@
 
 **LLM4ArxivPaper** is an intelligent tool that automatically crawls, filters, summarizes, and generates paper reports based on your research interests.
 
-The project regularly fetches the latest papers from Arxiv related to your research topics, uses LLM to generate summaries, and builds browsable weekly reports via **GitHub Pages**. It also supports **email push**.
+The project regularly fetches the latest papers from Arxiv related to your research topics, uses LLM to generate summaries, and builds browsable weekly reports via **GitHub Pages**. It also supports **email push**. The cost of using LLM is about $0.1 per paper.
 
 Supports **Chinese and English report generation**, enabling a full workflow from auto-crawling → intelligent filtering → LLM summarization → report generation → email push.
 
->[中文 (README_zh.md)](README_zh.md)
+>[中文版本](README_zh.md)
 
 Demo: [View here](https://yeren66.github.io/LLM4ArxivPaper)
 
-![](https://yerens-blog.oss-cn-beijing.aliyuncs.com/picgo_upload/202510071504797.png)
-
 ![](https://yerens-blog.oss-cn-beijing.aliyuncs.com/picgo_upload/202510071503695.png)
+
+![](https://yerens-blog.oss-cn-beijing.aliyuncs.com/picgo_upload/202510071504797.png)
 ---
 
 ## 🚀 Quick Start (about 10 min)
