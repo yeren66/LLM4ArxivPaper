@@ -7,9 +7,13 @@ The project regularly fetches the latest papers from Arxiv related to your resea
 
 Supports **Chinese and English report generation**, enabling a full workflow from auto-crawling → intelligent filtering → LLM summarization → report generation → email push.
 
+>[中文 (README_zh.md)](README_zh.md)
+
 Demo: [View here](https://yeren66.github.io/LLM4ArxivPaper)
 
->[Switch to Chinese (README_zh.md)](README_zh.md)
+![](https://yerens-blog.oss-cn-beijing.aliyuncs.com/picgo_upload/202510071504797.png)
+
+![](https://yerens-blog.oss-cn-beijing.aliyuncs.com/picgo_upload/202510071503695.png)
 ---
 
 ## 🚀 Quick Start (about 10 min)
