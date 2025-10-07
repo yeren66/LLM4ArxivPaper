@@ -38,8 +38,8 @@ fetch:
 
 topics:
   # ✅ Each Topic represents a focus area, can be added/removed anytime
-  - name: "software_testing"            # Unique identifier (for filenames/directories)
-    label: "software testing"                   # User-visible label (can be Chinese for prompts)
+  - name: "Software Testing"            # Unique identifier (for filenames/directories)
+    label: "Software Testing"                   # User-visible label (can be Chinese for prompts)
 
     query:
       # ✅ arXiv category filter, fill in official subject code
