@@ -78,11 +78,11 @@ class ArxivClient:
 		
 		# Prefer direct HTTPS request to avoid HTTP 301 redirect issue in arxiv library
 		if requests is not None:
-			print(f"[INFO] Fetching papers for topic '{topic.name}' via direct HTTPS API...")
+			print(f"[INFO] Fetching papers for topic '{topic.name}' via direct API...")
 			papers = self._fallback_fetch(topic, threshold_date)
 			if papers:
 				return papers
-			print(f"[WARN] Direct HTTPS fetch returned no results for topic '{topic.name}'")
+			print(f"[WARN] Direct API fetch returned no results for topic '{topic.name}'")
 		
 		# Only fallback to arxiv.Client when requests is unavailable
 		if self._client is None or arxiv is None:
@@ -159,15 +159,47 @@ class ArxivClient:
 			"start": 0,
 			"max_results": self.fetch_config.max_papers_per_topic,
 		}
-		url = "http://export.arxiv.org/api/query"
-
-		try:
-			response = requests.get(url, params=params, timeout=30, allow_redirects=True)
-			response.raise_for_status()
-			return self._parse_fallback_response(response.text, topic, threshold_date)
-		except Exception as exc:
-			print(f"[WARN] Fallback arXiv fetch failed: {exc}")
-			return []
+		
+		# Try HTTPS first (preferred), then HTTP if HTTPS fails
+		urls = [
+			"https://export.arxiv.org/api/query",
+			"http://export.arxiv.org/api/query"
+		]
+		
+		last_error = None
+		for url in urls:
+			try:
+				print(f"[DEBUG] Attempting to fetch from: {url}")
+				response = requests.get(url, params=params, timeout=30, allow_redirects=True)
+				response.raise_for_status()
+				
+				# Successfully got a response, parse it
+				print(f"[DEBUG] Successfully fetched from: {url}")
+				result = self._parse_fallback_response(response.text, topic, threshold_date)
+				
+				# If we got results, return them
+				if result:
+					print(f"[DEBUG] Parsed {len(result)} papers from response")
+					return result
+				
+				# If no results but valid response, check totalResults in XML
+				if "totalResults" in response.text:
+					# Valid response with 0 results is OK, return empty list
+					print(f"[DEBUG] Valid response but 0 papers match the criteria")
+					return []
+				
+				# Invalid response, try next URL
+				print(f"[DEBUG] Invalid response from {url}, trying next URL...")
+				continue
+					
+			except Exception as exc:
+				last_error = exc
+				print(f"[DEBUG] Failed to fetch from {url}: {exc}")
+				continue
+		
+		# If we get here, all URLs failed
+		print(f"[WARN] Fallback arXiv fetch failed with all URLs. Last error: {last_error}")
+		return []
 
 	def _parse_fallback_response(self, xml_text: str, topic: TopicConfig, threshold_date: datetime) -> List[PaperCandidate]:
 		root = ET.fromstring(xml_text)
