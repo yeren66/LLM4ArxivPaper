@@ -1,20 +1,28 @@
 /**
- * Thin wrapper around Upstash Redis (the new home for what used to be
- * "Vercel KV"). When the Upstash integration is installed on the Vercel
- * project, env vars are auto-injected:
+ * Thin wrapper around Upstash Redis.
  *
- *    UPSTASH_REDIS_REST_URL
- *    UPSTASH_REDIS_REST_TOKEN
+ * Vercel injects different env-var names depending on which integration
+ * you used:
  *
- * For local dev WITHOUT a real Redis (the common case while iterating), we
- * fall back to an in-memory `Map`. This keeps the dev loop friction-free.
- * Data is lost on process restart — acceptable for prototyping.
+ *   - Upstash marketplace (direct):       UPSTASH_REDIS_REST_URL / _TOKEN
+ *   - Vercel's KV / new Storage product:  KV_REST_API_URL        / KV_REST_API_TOKEN
+ *
+ * We accept either pair, so whichever provisioning path you took on Vercel
+ * just works. ``@upstash/redis``'s own ``Redis.fromEnv()`` only looks at
+ * the first pair, so we construct the client explicitly with whichever
+ * pair is present.
+ *
+ * For local dev WITHOUT a real Redis, we fall back to an in-memory Map.
+ * Fine for prototyping (data lost on process restart); NOT fine in
+ * serverless production — different invocations hit different Lambda
+ * instances, so the Map looks like it forgets every write. The fallback is
+ * announced via :func:`kvBackend` for debug.
  *
  * Key conventions:
  *    stars                       → JSON object { arxiv_id: { topic, note, ts } }
+ *    hidden                      → JSON object { arxiv_id: { hidden_at } }
  *    chat:<arxiv_id>             → JSON array of { role, content, ts }
  *    chat-meta:<arxiv_id>        → JSON { last_message_at }
- *    rate-limit:<ip>:<yyyymmdd>  → integer counter (planned, UX5)
  */
 
 import type { Redis } from "@upstash/redis";
@@ -26,10 +34,21 @@ type KVLike = {
   keys(pattern: string): Promise<string[]>;
 };
 
+type Creds = { url: string; token: string };
+
+function resolveCreds(): Creds | null {
+  const pairs: Array<[string | undefined, string | undefined]> = [
+    [process.env.UPSTASH_REDIS_REST_URL, process.env.UPSTASH_REDIS_REST_TOKEN],
+    [process.env.KV_REST_API_URL, process.env.KV_REST_API_TOKEN],
+  ];
+  for (const [url, token] of pairs) {
+    if (url && token) return { url, token };
+  }
+  return null;
+}
+
 function hasRealKV(): boolean {
-  return Boolean(
-    process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN,
-  );
+  return resolveCreds() !== null;
 }
 
 // --- in-memory fallback for local dev ---------------------------------------
@@ -78,8 +97,12 @@ const memKV: KVLike = {
 let _realRedis: Redis | null = null;
 async function realRedis(): Promise<KVLike> {
   if (_realRedis) return _realRedis as unknown as KVLike;
+  const creds = resolveCreds();
+  if (!creds) throw new Error("No Redis credentials present");
   const { Redis } = await import("@upstash/redis");
-  _realRedis = Redis.fromEnv();
+  // Construct explicitly so we work with either env-var pair — fromEnv()
+  // only knows about UPSTASH_REDIS_REST_*.
+  _realRedis = new Redis({ url: creds.url, token: creds.token });
   return _realRedis as unknown as KVLike;
 }
 
