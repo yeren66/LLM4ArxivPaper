@@ -132,6 +132,20 @@ email:
   #    using {run_date} and {paper_count} placeholders.
   subject_template: ""
 
+archive:
+  # ✅ The daily archive-to-git cron snapshots live KV state into this repo.
+  #    Each switch can also be overridden by an env var of the same name in
+  #    UPPER_SNAKE_CASE (ARCHIVE_STARS / ARCHIVE_CHATS).
+  #
+  #    stars — low-sensitivity ("papers I found interesting"); a git backup
+  #            is generally useful, so default ON.
+  #    chats — your LLM conversations may reveal what you're researching.
+  #            Default OFF so a mis-configured PUBLIC repo never leaks them.
+  #            If your instance repo is PRIVATE (the recommended setup),
+  #            flip this to true to get a durable git backup of chat history.
+  stars: true
+  chats: false
+
 runtime:
   # ✅ Run mode:
   #    - online  : Call OpenAI API for real scoring & summarization (requires API Key)

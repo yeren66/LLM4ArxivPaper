@@ -13,6 +13,7 @@
 import { kvGet, kvSet } from "@/lib/kv";
 import { readAnalysis } from "@/lib/data-reader";
 import { buildChatSystemPrompt } from "@/lib/chat-context";
+import { resolvedLLMModel } from "@/lib/pipeline-config";
 
 // Node runtime — Edge runtime's fetch can clash with local-network TUN
 // proxies (Clash etc.); we kept hitting `fetch failed` against Redis there.
@@ -77,8 +78,10 @@ export async function POST(req: Request): Promise<Response> {
     { role: "user", content: message },
   ];
 
-  // 5. Stream from the LLM (DeepSeek-compatible). Same env vars as the
-  // Python pipeline so you only ever paste one set of keys.
+  // 5. Stream from the LLM (DeepSeek-compatible). Key + base URL stay as
+  // env vars (the key is a secret); the model name comes from
+  // config/pipeline.yaml so the chat uses the same model as the analysis
+  // pipeline by default — LLM_MODEL still wins if explicitly set.
   const baseUrl =
     process.env.LLM_BASE_URL ||
     process.env.DEEPSEEK_BASE_URL ||
@@ -86,10 +89,7 @@ export async function POST(req: Request): Promise<Response> {
   const apiKey =
     process.env.LLM_API_KEY || process.env.DEEPSEEK_API_KEY;
   if (!apiKey) return json({ error: "LLM_API_KEY not configured" }, 500);
-  const model =
-    process.env.LLM_MODEL ||
-    process.env.DEEPSEEK_MODEL ||
-    "deepseek-v4-flash";
+  const model = await resolvedLLMModel();
 
   const upstream = await fetch(`${baseUrl.replace(/\/$/, "")}/chat/completions`, {
     method: "POST",

@@ -14,6 +14,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { kvGet, kvListKeys } from "@/lib/kv";
 import { writeIfChanged } from "@/lib/github-write";
+import { resolvedArchiveStars, resolvedArchiveChats } from "@/lib/pipeline-config";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -25,22 +26,17 @@ function authorised(req: NextRequest): boolean {
   return req.headers.get("authorization") === `Bearer ${secret}`;
 }
 
-// Which KV state gets snapshotted into the (possibly public) git repo.
+// Which KV state gets snapshotted into the (possibly public) git repo. The
+// defaults live in config/pipeline.yaml under `archive:`; ARCHIVE_STARS and
+// ARCHIVE_CHATS env vars still override per deployment when set.
 //
-//   ARCHIVE_STARS  default TRUE  — "papers I found interesting" is low
-//                                  sensitivity and the git backup is useful.
-//   ARCHIVE_CHATS  default FALSE — your conversations with the LLM can reveal
-//                                  what you're researching / confused about.
-//                                  Fail-safe OFF so a misconfigured PUBLIC
-//                                  repo never leaks chats. If your instance
-//                                  repo is PRIVATE (the recommended setup),
-//                                  set ARCHIVE_CHATS=true to get a git backup.
-function archiveStarsEnabled(): boolean {
-  return process.env.ARCHIVE_STARS !== "false";
-}
-function archiveChatsEnabled(): boolean {
-  return process.env.ARCHIVE_CHATS === "true";
-}
+//   stars  default TRUE  — "papers I found interesting" is low sensitivity
+//                          and the git backup is useful.
+//   chats  default FALSE — your conversations with the LLM can reveal what
+//                          you're researching / confused about. Fail-safe
+//                          OFF so a mis-configured PUBLIC repo never leaks
+//                          chats. If your instance repo is PRIVATE (the
+//                          recommended setup), flip to true for a backup.
 
 type StarsMap = Record<string, { topic?: string; note?: string; starred_at: string }>;
 type ChatMessage = { role: "user" | "assistant"; content: string; ts: string };
@@ -57,8 +53,11 @@ export async function GET(req: NextRequest) {
   const errors: { path: string; error: string }[] = [];
   const skipped: string[] = [];
 
+  const starsOn = await resolvedArchiveStars();
+  const chatsOn = await resolvedArchiveChats();
+
   // 1. Stars — single shared file ----------------------------------------
-  if (archiveStarsEnabled()) {
+  if (starsOn) {
     try {
       const stars = (await kvGet<StarsMap>("stars")) ?? {};
       const snapshot = { updated_at: new Date().toISOString(), stars };
@@ -72,11 +71,11 @@ export async function GET(req: NextRequest) {
       });
     }
   } else {
-    skipped.push("stars (ARCHIVE_STARS=false)");
+    skipped.push("stars (archive.stars=false)");
   }
 
   // 2. Chats — one file per paper ----------------------------------------
-  if (archiveChatsEnabled()) {
+  if (chatsOn) {
     try {
       const chatKeys = await kvListKeys("chat:*");
       for (const key of chatKeys) {
@@ -107,7 +106,7 @@ export async function GET(req: NextRequest) {
       errors.push({ path: "chat:*", error: err?.message ?? String(err) });
     }
   } else {
-    skipped.push("chats (ARCHIVE_CHATS not 'true' — chats stay KV-only)");
+    skipped.push("chats (archive.chats=false — chats stay KV-only)");
   }
 
   const commits = results.filter((r) => r.changed).length;
