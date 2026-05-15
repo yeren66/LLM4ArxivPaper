@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import random
 from datetime import datetime, timedelta
 from time import monotonic, sleep
 from typing import List, Optional
@@ -30,7 +31,26 @@ _ARXIV_USER_AGENT = "LLM4ArxivPaper/2.0 (weekly arXiv digest bot; +https://githu
 _MIN_REQUEST_INTERVAL = 3.0
 
 # How many times to retry a request that comes back 429/503 before giving up.
-_MAX_RETRIES = 4
+# Six attempts with capped exponential backoff (3s, 6s, 12s, 24s, 48s, 60s
+# with jitter) totals ~150s worst-case — enough to ride out a typical arXiv
+# rate-limit spell without ballooning into multi-minute waits per request.
+_MAX_RETRIES = 6
+_MAX_BACKOFF = 60.0
+
+# When a request gives up after exhausting retries, the client enters a
+# process-wide cooldown so the *next* call (e.g. the next topic) doesn't
+# immediately re-trigger the same arXiv-side rate limit. Empirically GitHub
+# Actions runs hit topics back-to-back and the second one always failed
+# unless the client first paused.
+_COOLDOWN_AFTER_GIVEUP = 60.0
+
+# Cap on what we honour from a server-supplied `Retry-After` — arXiv has
+# been seen returning unreasonable values on occasion.
+_MAX_RETRY_AFTER = 120.0
+
+# (connect, read) tuple. arXiv stays slow when overloaded; a generous read
+# timeout keeps us from mis-counting slow-but-eventual responses as timeouts.
+_REQUEST_TIMEOUT = (15, 60)
 
 _ARXIV_API_URL = "https://export.arxiv.org/api/query"
 
@@ -49,6 +69,10 @@ class ArxivClient:
 		# limit — across pagination AND across topics, not just within one
 		# pagination loop.
 		self._last_request_at: float = 0.0
+		# Earliest monotonic time at which the next request is allowed to go
+		# out. Bumped whenever a request gives up after exhausting retries,
+		# so a following topic doesn't immediately re-trigger the rate limit.
+		self._cooldown_until: float = 0.0
 		if arxiv is not None:
 			# arxiv.Client supports throttling parameters to control API call rate
 			self._client: Optional[arxiv.Client] = arxiv.Client(  # type: ignore[attr-defined]
@@ -109,22 +133,52 @@ class ArxivClient:
 	# ------------------------------------------------------------------
 
 	def _throttle(self) -> None:
-		"""Block until enough time has passed since the previous API request.
+		"""Block until the next request is allowed.
 
-		The interval is the larger of the configured ``request_delay`` and
-		arXiv's published 3-second minimum. Because ``_last_request_at`` is
-		instance state, the gap is enforced across pagination *and* across
-		topics within a single pipeline run — not just inside one loop.
+		Enforces two constraints:
+		1. The minimum gap between requests (the larger of arXiv's published
+		   3-second guidance and the configured ``request_delay``), across
+		   pagination AND across topics within one pipeline run.
+		2. The post-give-up cooldown, so a freshly-failed request's rate
+		   limit doesn't bleed into the next topic.
 		"""
 		interval = max(_MIN_REQUEST_INTERVAL, self.fetch_config.request_delay)
-		elapsed = monotonic() - self._last_request_at
-		if 0 < elapsed < interval:
-			sleep(interval - elapsed)
+		now = monotonic()
+		ready_at = max(self._last_request_at + interval, self._cooldown_until)
+		if ready_at > now:
+			wait = ready_at - now
+			# Don't spam the log for the routine sub-second throttle; do flag
+			# the longer waits so the run log shows the cooldown kicking in.
+			if wait >= 5.0:
+				print(f"[INFO] pausing {wait:.0f}s before next arXiv request (cooldown)")
+			sleep(wait)
 		self._last_request_at = monotonic()
+
+	def _backoff_seconds(self, attempt: int) -> float:
+		"""Exponential backoff with a cap and ±15 % jitter.
+
+		Jitter matters in CI: multiple GitHub Actions jobs hitting arXiv at
+		the same time would otherwise retry in lockstep and dogpile the
+		server. Spreading them out gives a much better chance of one of
+		them landing on a moment arXiv is willing to answer.
+		"""
+		base = max(_MIN_REQUEST_INTERVAL, self.fetch_config.request_delay)
+		raw = base * (2 ** (attempt - 1))
+		capped = min(_MAX_BACKOFF, raw)
+		return capped * random.uniform(0.85, 1.15)
+
+	def _enter_cooldown(self, reason: str) -> None:
+		"""Push the next-allowed-request time out by the cooldown window."""
+		self._cooldown_until = monotonic() + _COOLDOWN_AFTER_GIVEUP
+		print(
+			f"[INFO] arXiv client entering {_COOLDOWN_AFTER_GIVEUP:.0f}s "
+			f"cooldown ({reason})"
+		)
 
 	def _arxiv_get(self, params: dict) -> Optional[str]:
 		"""GET the arXiv API once, with throttling, a descriptive User-Agent,
-		and retry-with-exponential-backoff on 429/503.
+		retry-with-exponential-backoff on 429/503 / network errors, and a
+		process-wide cooldown when retries are exhausted.
 
 		Returns the response body, or ``None`` if every attempt failed (the
 		caller treats that as "no results" and carries on).
@@ -134,35 +188,39 @@ class ArxivClient:
 			return None
 
 		headers = {"User-Agent": _ARXIV_USER_AGENT}
-		backoff = max(_MIN_REQUEST_INTERVAL, self.fetch_config.request_delay)
 
 		for attempt in range(1, _MAX_RETRIES + 1):
-			# Always wait out the polite interval before sending — including
-			# before the very first request and between topics.
+			# Always wait out the polite interval (and any active cooldown)
+			# before sending — including before the very first request.
 			self._throttle()
 			try:
 				response = requests.get(
-					_ARXIV_API_URL, params=params, headers=headers, timeout=30
+					_ARXIV_API_URL,
+					params=params,
+					headers=headers,
+					timeout=_REQUEST_TIMEOUT,
 				)
 			except Exception as exc:
-				wait = backoff * (2 ** (attempt - 1))
 				print(
 					f"[WARN] arXiv API request errored (attempt {attempt}/{_MAX_RETRIES}): {exc}"
 				)
 				if attempt < _MAX_RETRIES:
+					wait = self._backoff_seconds(attempt)
 					print(f"[INFO] retrying in {wait:.0f}s ...")
 					sleep(wait)
 					continue
+				self._enter_cooldown("network errors persisted")
 				return None
 
 			# 429 = rate limited, 503 = arXiv asking us to back off. Both are
-			# transient: honour Retry-After if given, else exponential backoff.
+			# transient: honour Retry-After if given (capped), else jittered
+			# exponential backoff.
 			if response.status_code in (429, 503):
-				retry_after = response.headers.get("Retry-After", "")
-				if retry_after.strip().isdigit():
-					wait = float(retry_after.strip())
+				retry_after = response.headers.get("Retry-After", "").strip()
+				if retry_after.isdigit():
+					wait = min(_MAX_RETRY_AFTER, float(retry_after))
 				else:
-					wait = backoff * (2 ** (attempt - 1))
+					wait = self._backoff_seconds(attempt)
 				print(
 					f"[WARN] arXiv API returned {response.status_code} "
 					f"(attempt {attempt}/{_MAX_RETRIES})"
@@ -172,6 +230,7 @@ class ArxivClient:
 					sleep(wait)
 					continue
 				print("[WARN] arXiv API rate limit persisted; giving up on this request.")
+				self._enter_cooldown("rate limit persisted")
 				return None
 
 			try:
