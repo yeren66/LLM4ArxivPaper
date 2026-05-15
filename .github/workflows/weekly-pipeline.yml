@@ -2,51 +2,113 @@ name: Weekly LLM4ArxivPaper Pipeline
 
 on:
   schedule:
-    - cron: '0 2 * * 1'  # Every Monday at 2 AM UTC
-  workflow_dispatch:      # Allow manual trigger
+    - cron: '0 2 * * 1'  # Every Monday at 02:00 UTC. Edit this to reschedule.
+  workflow_dispatch:      # Allow manual trigger from the Actions tab.
 
 jobs:
-  build-and-deploy:
+  run:
     runs-on: ubuntu-latest
-    
-    # Official GitHub Pages deployment requires these permissions
+
+    # contents:write lets us commit the freshly generated data/ files and a
+    # heartbeat back to the default branch. The heartbeat keeps the repo
+    # "active" so GitHub does not auto-disable this scheduled workflow after
+    # 60 days of inactivity.
     permissions:
-      contents: read
-      pages: write
-      id-token: write
-    
-    # Ensure only one deployment runs at a time
+      contents: write
+
+    # Only one run at a time — concurrent runs would race on the data/ commit.
     concurrency:
-      group: "pages"
+      group: "weekly-pipeline"
       cancel-in-progress: false
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: 'pip'
-          
+
       - name: Install dependencies
         run: pip install -r requirements.txt
-        
+
       - name: Run LLM4ArxivPaper pipeline
         env:
-          # Required: GitHub Secrets must be explicitly passed as env vars
+          # GitHub Secrets must be explicitly passed as env vars.
           BASE_URL: ${{ secrets.BASE_URL }}
           API_KEY: ${{ secrets.API_KEY }}
           MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
           MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
         run: python src/main.py
-        
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+
+      # ----------------------------------------------------------------------
+      # Commit the freshly generated data/ files (analyses + index) back to
+      # the repo. Vercel watches for these pushes and auto-redeploys, so the
+      # new analyses become readable in the web app within ~30 seconds.
+      # ----------------------------------------------------------------------
+      - name: Commit fresh analyses
+        if: success()
+        run: |
+          if git diff --quiet -- data/; then
+            echo "No data/ changes to commit"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/
+          git commit -m "data: weekly run $(date -u +%FT%TZ) [skip ci]"
+          git push || (git pull --rebase && git push)
+
+      # ----------------------------------------------------------------------
+      # Heartbeat: record this run on the default branch so the repo never
+      # goes 60 days without activity (which would disable the cron trigger).
+      # Also serves as an audit trail of weekly run timestamps.
+      # ----------------------------------------------------------------------
+      - name: Record run heartbeat
+        if: always()
+        run: |
+          mkdir -p .github
+          STATUS="${{ job.status }}"
+          if [ -z "$STATUS" ]; then STATUS="unknown"; fi
+          cat > .github/last_run.json <<EOF
+          {
+            "last_run_utc": "$(date -u +%FT%TZ)",
+            "run_id": "${{ github.run_id }}",
+            "run_number": "${{ github.run_number }}",
+            "status": "$STATUS",
+            "trigger": "${{ github.event_name }}"
+          }
+          EOF
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/last_run.json
+          # [skip ci] keeps this commit from triggering another workflow run.
+          git commit -m "chore: pipeline heartbeat $(date -u +%FT%TZ) [skip ci]" || echo "no changes to commit"
+          git push || (git pull --rebase && git push)
+
+      # ----------------------------------------------------------------------
+      # Notify by email on failure so silent breakage doesn't go unnoticed.
+      # Requires the MAIL_USERNAME + MAIL_PASSWORD secrets (Tier 3).
+      # ----------------------------------------------------------------------
+      - name: Notify on failure
+        if: failure()
+        uses: dawidd6/action-send-mail@v3
         with:
-          path: site
-          
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: "[LLM4ArxivPaper] Weekly pipeline FAILED — run #${{ github.run_number }}"
+          to: ${{ secrets.MAIL_USERNAME }}
+          from: LLM4ArxivPaper Bot <${{ secrets.MAIL_USERNAME }}>
+          body: |
+            The weekly pipeline run failed.
+
+            Run URL : ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            Commit  : ${{ github.sha }}
+            Trigger : ${{ github.event_name }}
+
+            Check the run logs for the failing step.

@@ -148,55 +148,55 @@ class ConfigValidator:
 				))
 	
 	def _check_email_requirements(self) -> None:
-		"""Check requirements for email configuration."""
+		"""Check email configuration.
+
+		Email is optional infrastructure: the pipeline analyses papers and
+		writes ``data/`` regardless, and :class:`EmailDigest` already skips
+		sending (with a clear runtime warning) when anything is missing. So a
+		half-configured email block must NOT abort the run — otherwise a new
+		user can't even do the Tier 1 self-check without setting up SMTP
+		first. Missing pieces are therefore warnings, not errors.
+		"""
 		email_config = self.expanded_dict.get("email", {})
 		enabled = email_config.get("enabled", False)
-		
+
 		if not enabled:
 			return
-		
-		# Check sender
+
+		# Check sender / username
 		sender = email_config.get("sender")
-		if not sender or sender.startswith("${"):
-			self.errors.append(ValidationError(
-				field_path="email.sender",
-				message="MAIL_USERNAME environment variable is required when email is enabled. Please set it with: export MAIL_USERNAME='your-email@example.com'",
-				severity="error"
-			))
-		
-		# Check username
 		username = email_config.get("username")
-		if not username or username.startswith("${"):
-			self.errors.append(ValidationError(
-				field_path="email.username",
-				message="MAIL_USERNAME environment variable is required when email is enabled.",
-				severity="error"
+		if (not sender or sender.startswith("${")) or (not username or username.startswith("${")):
+			self.warnings.append(ValidationError(
+				field_path="email.sender",
+				message="MAIL_USERNAME is not set; email digest will be skipped. Set it with: export MAIL_USERNAME='your-email@example.com'",
+				severity="warning"
 			))
-		
+
 		# Check password
 		password = email_config.get("password")
 		if not password or password.startswith("${"):
-			self.errors.append(ValidationError(
+			self.warnings.append(ValidationError(
 				field_path="email.password",
-				message="MAIL_PASSWORD environment variable is required when email is enabled. Please set it with: export MAIL_PASSWORD='your-password'",
-				severity="error"
+				message="MAIL_PASSWORD is not set; email digest will be skipped. Set it with: export MAIL_PASSWORD='your-password'",
+				severity="warning"
 			))
-		
+
 		# Check SMTP host
 		smtp_host = email_config.get("smtp_host")
 		if not smtp_host:
-			self.errors.append(ValidationError(
+			self.warnings.append(ValidationError(
 				field_path="email.smtp_host",
-				message="SMTP host must be configured when email is enabled.",
-				severity="error"
+				message="SMTP host is not configured; email digest will be skipped.",
+				severity="warning"
 			))
-		
+
 		# Check recipients
 		recipients = email_config.get("recipients", [])
 		if not recipients:
 			self.warnings.append(ValidationError(
 				field_path="email.recipients",
-				message="No email recipients configured. Email will not be sent.",
+				message="No email recipients configured; email digest will be skipped.",
 				severity="warning"
 			))
 	

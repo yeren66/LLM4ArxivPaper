@@ -6,6 +6,7 @@ import json
 import re
 from typing import List
 
+from core.llm_json import chat_json
 from core.models import (
 	DimensionScore,
 	OpenAIConfig,
@@ -94,18 +95,15 @@ class RelevanceRanker:
 			"dimensions": dimensions_payload,
 		}
 
-		response = self._client.chat.completions.create(  # type: ignore[attr-defined]
-			model=self.openai_config.relevance_model,
-			temperature=self.openai_config.temperature,
-			response_format={"type": "json_object"},
-			messages=[
+		data = chat_json(
+			self._client,
+			self.openai_config.relevance_model,
+			[
 				{"role": "system", "content": instructions},
 				{"role": "user", "content": json.dumps(user_content, ensure_ascii=False)},
 			],
+			temperature=self.openai_config.temperature,
 		)
-
-		content = response.choices[0].message.content  # type: ignore[index]
-		data = json.loads(content or "{}")
 
 		dimension_scores: List[DimensionScore] = []
 		for dim in self.relevance_config.dimensions:

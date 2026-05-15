@@ -1,0 +1,116 @@
+name: Backfill arXiv Papers
+
+# Use this workflow to crawl + analyse papers from a historical date window
+# (e.g. when the weekly cron was disabled by GitHub for 60 days of inactivity
+# and several months of arXiv submissions were missed).
+#
+# Start with `dry_run=true` once to see how many candidates fall in the
+# window before paying for any LLM analysis.
+
+on:
+  workflow_dispatch:
+    inputs:
+      start_date:
+        description: 'Backfill start date (YYYY-MM-DD, inclusive)'
+        required: true
+        type: string
+      end_date:
+        description: 'Backfill end date (YYYY-MM-DD, exclusive)'
+        required: true
+        type: string
+      chunk_days:
+        description: 'Window slice size in days (smaller = more arxiv API calls but better paged coverage)'
+        required: false
+        default: '7'
+        type: string
+      paper_limit:
+        description: 'Max papers per topic per chunk (controls cost)'
+        required: false
+        default: '50'
+        type: string
+      dry_run:
+        description: 'true = only count candidates, no LLM cost; false = run full pipeline'
+        required: false
+        default: 'true'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+
+    # contents:write so the freshly generated data/ files can be committed.
+    permissions:
+      contents: write
+
+    concurrency:
+      # share with the weekly job — both commit to data/, only one at a time.
+      group: "weekly-pipeline"
+      cancel-in-progress: false
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run backfill
+        env:
+          BASE_URL: ${{ secrets.BASE_URL }}
+          API_KEY: ${{ secrets.API_KEY }}
+          MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+          MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+        run: |
+          ARGS=(--start-date "${{ github.event.inputs.start_date }}"
+                --end-date   "${{ github.event.inputs.end_date }}"
+                --chunk-days "${{ github.event.inputs.chunk_days }}"
+                --paper-limit "${{ github.event.inputs.paper_limit }}"
+                --no-email)
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            ARGS+=(--dry-run)
+          fi
+          echo "Running: python src/main.py ${ARGS[*]}"
+          python src/main.py "${ARGS[@]}"
+
+      # On a real (non dry-run) backfill, commit the new data/ files. Vercel
+      # auto-redeploys and the back-filled papers appear in the web app.
+      - name: Commit backfilled analyses
+        if: ${{ github.event.inputs.dry_run != 'true' && success() }}
+        run: |
+          if git diff --quiet -- data/; then
+            echo "No data/ changes to commit"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/
+          git commit -m "data: backfill ${{ github.event.inputs.start_date }} → ${{ github.event.inputs.end_date }} [skip ci]"
+          git push || (git pull --rebase && git push)
+
+      - name: Notify on failure
+        if: failure()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: "[LLM4ArxivPaper] Backfill FAILED — ${{ github.event.inputs.start_date }} → ${{ github.event.inputs.end_date }}"
+          to: ${{ secrets.MAIL_USERNAME }}
+          from: LLM4ArxivPaper Bot <${{ secrets.MAIL_USERNAME }}>
+          body: |
+            The backfill run failed.
+
+            Window  : ${{ github.event.inputs.start_date }} → ${{ github.event.inputs.end_date }}
+            Dry run : ${{ github.event.inputs.dry_run }}
+            Run URL : ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}

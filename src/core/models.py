@@ -67,6 +67,11 @@ class RelevanceConfig:
 class SummarizationConfig:
 	task_list_size: int
 	max_sections: int
+	# Maximum characters of paper body to send to the LLM for each call. The
+	# previous hard-coded 12000/15000 limits were chosen for short-context
+	# models; for long-context models (e.g. DeepSeek V4 Flash) we can afford
+	# to send substantially more without truncating the conclusion section.
+	max_content_chars: int = 50000
 
 
 @dataclass
@@ -80,7 +85,9 @@ class EmailConfig:
 	enabled: bool = False
 	sender: Optional[str] = None
 	recipients: List[str] = field(default_factory=list)
-	subject_template: str = "Weekly Paper Radar - {run_date}"
+	# Empty means "follow openai.language" — EmailDigest fills in a localised
+	# default. A non-empty value is an explicit user override.
+	subject_template: str = ""
 	smtp_host: Optional[str] = None
 	smtp_port: int = 587
 	username: Optional[str] = None
@@ -162,6 +169,7 @@ class PipelineConfig:
 			summarization=SummarizationConfig(
 				task_list_size=int(summarization_section.get("task_list_size", 5)),
 				max_sections=int(summarization_section.get("max_sections", 4)),
+				max_content_chars=int(summarization_section.get("max_content_chars", 50000)),
 			),
 			site=SiteConfig(
 				output_dir=site_section.get("output_dir", "site"),
@@ -171,7 +179,7 @@ class PipelineConfig:
 				enabled=bool(email_section.get("enabled", False)),
 				sender=email_section.get("sender"),
 				recipients=list(email_section.get("recipients", [])),
-				subject_template=email_section.get("subject_template", "Weekly Paper Radar - {run_date}"),
+				subject_template=email_section.get("subject_template", "") or "",
 				smtp_host=email_section.get("smtp_host"),
 				smtp_port=int(email_section.get("smtp_port", 587)),
 				username=email_section.get("username"),
@@ -254,16 +262,43 @@ class CoreSummary:
 
 
 @dataclass
+class PaperFigure:
+	"""The single most informative figure from the paper's ar5iv rendering
+	(the method / architecture / flow diagram).
+
+	``url`` is an absolute ar5iv image URL (hot-linked, not downloaded).
+	``order`` is the figure's 0-based position in the paper.
+	``reference_text`` is the body paragraph(s) that mention this figure
+	("As shown in Figure 1, ..."), i.e. the paper's own explanation of it —
+	fed into the methodology prompt so the figure gets described in context.
+	"""
+	label: str  # e.g. "Figure 1"
+	caption: str
+	url: str
+	order: int = 0
+	reference_text: str = ""
+
+
+@dataclass
 class PaperSummary:
 	paper: PaperCandidate
 	topic: TopicConfig
-	core_summary: CoreSummary  # Five-aspect summary
+	core_summary: CoreSummary  # Five-aspect summary (5th aspect = findings & summary)
 	task_list: List[TaskItem]
 	findings: List[TaskFinding]
-	overview: str
 	score_details: ScoredPaper
 	markdown: str
 	brief_summary: str = ""  # 1-2 paragraph narrative summary (Why? What? How?)
+	relevance: str = ""  # 1-2 sentence "why this paper matters to YOUR work" note, shown at the top of the page
+	figure: Optional[PaperFigure] = None  # the single method/architecture figure, hot-linked from ar5iv
+	# Analysis is always generated in English (papers are English, LLMs are
+	# strongest there). When openai.language is not "en", a single follow-up
+	# translation call fills this in: a mirror of every text field in the
+	# configured language. None for English-only instances.
+	#   {"core_summary": {problem, solution, methodology, experiments, conclusion},
+	#    "brief_summary": str, "relevance": str,
+	#    "findings": [{question, reason, answer}, ...]}
+	translations: Optional[dict] = None
 
 
 @dataclass

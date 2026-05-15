@@ -19,8 +19,10 @@ class ReportBuilder:
 		core_summary,  # CoreSummary or None
 		task_list: List[TaskItem],
 		findings: List[TaskFinding],
-		overview: str,
 		brief_summary: str = "",
+		relevance: str = "",
+		figure=None,  # Optional[PaperFigure]
+		translations=None,  # Optional[dict] — zh mirror of the text fields
 	) -> PaperSummary:
 		paper = scored_paper.paper
 
@@ -68,25 +70,11 @@ class ReportBuilder:
 			lines.append(core_summary.conclusion)
 			lines.append("")
 
-		lines.append("## 🤔 用户关心的问题")
-		for idx, task in enumerate(task_list, start=1):
-			lines.append(f"{idx}. **{task.question}** - {task.reason}")
-		lines.append("")
-
-		lines.append("## 逐项解答")
+		lines.append("## Questions & Answers")
 		for finding in findings:
 			lines.append(f"### {finding.task.question}")
 			lines.append(finding.answer.strip())
 			lines.append(f"*Confidence: {finding.confidence:.2f}*\n")
-
-		lines.append("## 📝 综合总结")
-		lines.append(overview.strip() or paper.abstract.strip())
-		lines.append("")
-
-		lines.append("## 💡 为什么推荐这篇论文?")
-		recommendation = self._generate_recommendation(topic, scored_paper, findings)
-		lines.append(recommendation)
-		lines.append("")
 
 		lines.append("---")
 		lines.append("*Generated at {timestamp}*".format(timestamp=datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")))
@@ -99,10 +87,12 @@ class ReportBuilder:
 			core_summary=core_summary,
 			task_list=task_list,
 			findings=findings,
-			overview=overview,
 			score_details=scored_paper,
 			markdown=markdown,
 			brief_summary=brief_summary,
+			relevance=relevance,
+			figure=figure,
+			translations=translations,
 		)
 
 	@staticmethod

@@ -1,0 +1,102 @@
+name: Analyse One arXiv Paper
+
+# Triggered on-demand from the Vercel front-end (POST /api/papers/ingest)
+# or manually from the Actions tab. Fetches a single arXiv paper, runs
+# TaskReader.analyse, and writes the result to data/analyses/<id>.json so
+# the webapp can render it on next deploy.
+
+on:
+  workflow_dispatch:
+    inputs:
+      arxiv_id:
+        description: 'arXiv ID, e.g. 2401.12345 (no version suffix needed)'
+        required: true
+        type: string
+      topic:
+        description: 'Topic name from config/pipeline.yaml (optional)'
+        required: false
+        type: string
+        default: ''
+
+jobs:
+  analyse:
+    runs-on: ubuntu-latest
+
+    permissions:
+      # contents:write so we can commit data/analyses/<id>.json back to main
+      contents: write
+
+    # Avoid running multiple analyse-one in parallel for the same paper —
+    # the second would just overwrite the first.
+    concurrency:
+      group: "analyse-one-${{ github.event.inputs.arxiv_id }}"
+      cancel-in-progress: false
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run analyse-one
+        env:
+          BASE_URL: ${{ secrets.BASE_URL }}
+          API_KEY: ${{ secrets.API_KEY }}
+        run: |
+          ARGS=(analyse-one
+                --arxiv-id "${{ github.event.inputs.arxiv_id }}"
+                --write-db
+                --out json
+                --output-file analyse-one-result.json)
+          if [ -n "${{ github.event.inputs.topic }}" ]; then
+            ARGS+=(--topic "${{ github.event.inputs.topic }}")
+          fi
+          python src/main.py "${ARGS[@]}"
+
+      - name: Commit fresh analysis
+        if: success()
+        run: |
+          if git diff --quiet -- data/; then
+            echo "No data/ changes to commit"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/
+          git commit -m "data: analyse-one ${{ github.event.inputs.arxiv_id }} [skip ci]"
+          git push || (git pull --rebase && git push)
+
+      - name: Upload result artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: analyse-one-${{ github.event.inputs.arxiv_id }}
+          path: analyse-one-result.json
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Notify on failure
+        if: failure()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: "[LLM4ArxivPaper] analyse-one FAILED — ${{ github.event.inputs.arxiv_id }}"
+          to: ${{ secrets.MAIL_USERNAME }}
+          from: LLM4ArxivPaper Bot <${{ secrets.MAIL_USERNAME }}>
+          body: |
+            On-demand analyse-one run failed.
+
+            arXiv ID : ${{ github.event.inputs.arxiv_id }}
+            Topic    : ${{ github.event.inputs.topic }}
+            Run URL  : ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}

@@ -1,0 +1,65 @@
+{
+  "papers": [
+    {
+      "arxiv_id": "2605.12270",
+      "topic": "Automated Program Repair",
+      "topic_label": "Automated Program Repair",
+      "title": "Characterizing the Failure Modes of LLMs in Resolving Real-World GitHub Issues",
+      "authors": [
+        "Yanjie Jiang",
+        "Yian Huang",
+        "Guancheng Wang",
+        "Junjie Chen",
+        "Hui Liu",
+        "Lionel Briand"
+      ],
+      "score": 83.75,
+      "published": "2026-05-12",
+      "generated_at": "2026-05-14T14:50:17Z"
+    },
+    {
+      "arxiv_id": "2605.12925",
+      "topic": "Automated Program Repair",
+      "topic_label": "Automated Program Repair",
+      "title": "AgentLens: Revealing The Lucky Pass Problem in SWE-Agent Evaluation",
+      "authors": [
+        "Priyam Sahoo",
+        "Gaurav Mittal",
+        "Xiaomin Li",
+        "Shengjie Ma",
+        "Benjamin Steenhoek",
+        "Pingping Lin"
+      ],
+      "score": 81.25,
+      "published": "2026-05-13",
+      "generated_at": "2026-05-14T14:48:16Z"
+    },
+    {
+      "arxiv_id": "2605.13357",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": "AI Harness Engineering: A Runtime Substrate for Foundation-Model Software Agents",
+      "authors": [
+        "Hailin Zhong",
+        "Shengxin Zhu"
+      ],
+      "score": 70.0,
+      "published": "2026-05-13",
+      "generated_at": "2026-05-14T14:46:32Z"
+    },
+    {
+      "arxiv_id": "2605.03117",
+      "topic": "Automated Program Repair",
+      "topic_label": "Automated Program Repair",
+      "title": "ARISE: A Repository-level Graph Representation and Toolset for Agentic Fault Localization and Program Repair",
+      "authors": [
+        "Shahd Seddik",
+        "Fatemeh Fard"
+      ],
+      "score": 88.75,
+      "published": "2026-05-04",
+      "generated_at": "2026-05-14T14:40:43Z"
+    }
+  ],
+  "updated_at": "2026-05-14T14:54:28Z"
+}

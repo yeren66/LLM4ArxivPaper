@@ -14,11 +14,11 @@ openai:
   # ✅ If using Azure/OpenAI compatible service, specify `base_url`; leave empty for default official address
   base_url: "${BASE_URL}"
 
-  # ✅ Model for relevance scoring (recommended to use lightweight model, e.g. gpt-4o-mini)
-  relevance_model: "gpt-4o-mini"
+  # ✅ Model for relevance scoring (lightweight, runs once per candidate)
+  relevance_model: "deepseek-v4-flash"
 
-  # ✅ Model for TODO planning and item-by-item Q&A (can be same as above or use stronger model)
-  summarization_model: "gpt-4o"
+  # ✅ Model for core summary, interest-question generation and Q&A with quotes
+  summarization_model: "deepseek-v4-flash"
 
   # ✅ Global temperature, controls generation randomness (0~1, lower = more stable)
   temperature: 0.2
@@ -38,31 +38,41 @@ fetch:
 
 topics:
   # ✅ Each Topic represents a focus area, can be added/removed anytime
-  - name: "Software Testing"            # Unique identifier (for filenames/directories)
-    label: "Software Testing"                   # User-visible label (can be Chinese for prompts)
+  - name: "LLM for Code Generation"            # Unique identifier (for filenames/directories)
+    label: "LLM for Code Generation"                   # User-visible label (can be Chinese for prompts)
 
     query:
       # ✅ arXiv category filter, fill in official subject code
-      categories: ["cs.SE", "cs.AI"]
+      categories: ["cs.SE", "cs.AI", "cs.PL", "cs.LG"]
 
       # ✅ Keywords expected in title/abstract, supports phrases
-      include: ["software testing", "test generation", "test update"]
+      include: ["code generation", "code completion", "program synthesis", "repository-level"]
 
       # ✅ Keywords to exclude, prevent noise
-      exclude: ["quantum", "biomedical"]
+      exclude: ["protein", "molecular", "chemistry", "speech"]
 
     # ✅ User's interest description for this field, passed to LLM for reference
     interest_prompt: |
-      I am interested in test case generation and test update. I want to understand how LLMs and Static Analysis can be effectively combined to improve software testing efficiency and effectiveness.
+      I am interested in how large language models generate, complete, and synthesize source code.
+      My focus is on repository-level generation, long-context handling, and post-training techniques
+      (SFT, RLHF/RLAIF, preference learning, RL with execution feedback) that improve correctness
+      on real-world software engineering tasks. I also care about new benchmarks and evaluation
+      methodologies that go beyond pass@k on isolated functions — for example, those that measure
+      compilation, execution, integration with existing codebases, or human-in-the-loop usage.
 
-  - name: "Code Agent"
-    label: "Code Agent"
+  - name: "Automated Program Repair"
+    label: "Automated Program Repair"
     query:
-      categories: ["cs.AI", "cs.SE"]
-      include: ["software development", "program analysis"]
-      exclude: []
+      categories: ["cs.SE", "cs.AI"]
+      include: ["program repair", "bug fixing", "patch generation", "fault localization", "SWE-bench"]
+      exclude: ["hardware", "circuit", "network repair", "self-healing material"]
     interest_prompt: |
-      I am interested in how code agents can assist in software development and program analysis. I want to explore the capabilities and limitations of current code agents in real-world software engineering tasks.
+      I follow automated program repair (APR), covering both classical search-based / template-based
+      approaches and modern LLM-driven agents. I am especially interested in how systems handle
+      fault localization, patch generation, and patch validation, and how they avoid plausible but
+      incorrect (overfitting) patches. Empirical studies, benchmark releases (Defects4J, SWE-bench,
+      Bugs.jar, etc.), and reports on industrial deployment are highly relevant. Cross-cutting work
+      that connects APR with testing, static analysis, or formal verification is also of interest.
 
 relevance:
   # ✅ Dimension definitions for paper relevance, can add/remove/adjust weights based on interests
@@ -91,11 +101,12 @@ summarization:
   max_sections: 4
 
 site:
-  # ✅ Static site output directory, recommend adding to .gitignore
+  # Kept for backwards compatibility; no longer used (there is no static site).
   output_dir: "site"
 
-  # ✅ External access base URL, update to actual address after GitHub Pages publishing
-  base_url: "https://yeren66.github.io/LLM4ArxivPaper"
+  # ✅ Your Vercel app URL. Used to build "view full report" links inside the
+  #    weekly email digest. Leave blank if you only use Tier 1.
+  base_url: "https://your-instance.vercel.app"
 
 email:
   # ✅ Whether to enable email push (false = disabled)
@@ -104,8 +115,8 @@ email:
   # ✅ Sender email (must support SMTP), recommend using app-specific password
   sender: "${MAIL_USERNAME}"
 
-  # ✅ Recipient list
-  recipients: ["syeren@foxmail.com"]
+  # ✅ Recipient list — change this to your own address
+  recipients: ["you@example.com"]
 
   # ✅ SMTP server settings (recommend injecting sensitive info via environment variables)
   smtp_host: "smtp.gmail.com"
@@ -116,8 +127,10 @@ email:
   use_ssl: true
   timeout: 30
 
-  # ✅ Email subject template, can use {run_date}, {paper_count} placeholders
-  subject_template: "📑 Weekly Paper Reading - {run_date}"
+  # ✅ Email subject template. Leave empty to follow openai.language (so the
+  #    subject matches the body). To override, write your own, optionally
+  #    using {run_date} and {paper_count} placeholders.
+  subject_template: ""
 
 runtime:
   # ✅ Run mode:

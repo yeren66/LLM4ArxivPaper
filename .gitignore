@@ -34,8 +34,6 @@ MANIFEST
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
-summaries/*
-source/*
 
 # Unit test / coverage reports
 htmlcov/
@@ -148,3 +146,12 @@ logs/
 # OS
 .DS_Store
 Thumbs.db
+
+# Next.js / Vercel front-end (web/)
+web/node_modules/
+web/.next/
+web/out/
+web/.vercel/
+web/.env.local
+web/next-env.d.ts
+web/tsconfig.tsbuildinfo

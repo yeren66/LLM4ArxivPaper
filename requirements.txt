@@ -31,9 +31,21 @@ arxiv==1.4.8
 html2text==2020.1.16
 markdownify==0.11.6
 
+# PDF figure extraction — renders the method/architecture figure straight
+# from the PDF when ar5iv has not rendered the paper yet (the common case
+# for freshly published papers). Pillow re-encodes the render as WebP, which
+# is ~3x smaller than PNG inside the analysis JSON.
+PyMuPDF>=1.24,<2
+Pillow>=10,<12
+
 # Email parsing
 email-validator==2.1.0
 
 # Async support
 aiohttp==3.9.1
 asyncio==3.4.3
+
+# YAML round-tripping that preserves comments — used by the interest-evolve
+# workflow when editing config/pipeline.yaml without losing the heavy
+# user-facing comment annotations.
+ruamel.yaml>=0.18,<1
