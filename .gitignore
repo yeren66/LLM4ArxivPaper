@@ -14,8 +14,10 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
-lib64/
+# Anchor to repo root so this only matches the Python distutils build
+# artifact lib/ at the top, not unrelated web/lib/ or similar subdirs.
+/lib/
+/lib64/
 parts/
 sdist/
 var/
