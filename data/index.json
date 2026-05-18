@@ -1,6 +1,209 @@
 {
   "papers": [
     {
+      "arxiv_id": "2605.11235",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": "Internalizing Curriculum Judgment for LLM Reinforcement Fine-Tuning",
+      "authors": [
+        "Han Zheng",
+        "Yining Ma",
+        "Karthick Gunasekaran",
+        "Bharathan Balaji",
+        "Zheng Du",
+        "Shiv Vitaladevuni"
+      ],
+      "score": 66.5,
+      "published": "2026-05-11",
+      "generated_at": "2026-05-18T07:36:16Z"
+    },
+    {
+      "arxiv_id": "2605.11299",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": "Primal Generation, Dual Judgment: Self-Training from Test-Time Scaling",
+      "authors": [
+        "Yizhu Jiao",
+        "Ruixiang Zhang",
+        "Richard Bai",
+        "Jiawei Han",
+        "Ronan Collobert",
+        "Yizhe Zhang"
+      ],
+      "score": 81.75,
+      "published": "2026-05-11",
+      "generated_at": "2026-05-18T07:33:10Z"
+    },
+    {
+      "arxiv_id": "2605.11922",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": "StepCodeReasoner: Aligning Code Reasoning with Stepwise Execution Traces via Reinforcement Learning",
+      "authors": [
+        "Hao Wang",
+        "Rui Li",
+        "Lei Sha",
+        "Jie M. Zhang"
+      ],
+      "score": 83.75,
+      "published": "2026-05-12",
+      "generated_at": "2026-05-18T07:29:41Z"
+    },
+    {
+      "arxiv_id": "2605.12857",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": "ChipMATE: Multi-Agent Training via Reinforcement Learning for Enhanced RTL Generation",
+      "authors": [
+        "Zhongkai Yu",
+        "Yichen Lin",
+        "Chenyang Zhou",
+        "Yuwei Zhang",
+        "Kun Zhou",
+        "Junxia Cui"
+      ],
+      "score": 67.25,
+      "published": "2026-05-13",
+      "generated_at": "2026-05-18T07:20:09Z"
+    },
+    {
+      "arxiv_id": "2605.12925",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": "AgentLens: Revealing The Lucky Pass Problem in SWE-Agent Evaluation",
+      "authors": [
+        "Priyam Sahoo",
+        "Gaurav Mittal",
+        "Xiaomin Li",
+        "Shengjie Ma",
+        "Benjamin Steenhoek",
+        "Pingping Lin"
+      ],
+      "score": 63.75000000000001,
+      "published": "2026-05-13",
+      "generated_at": "2026-05-18T07:17:08Z"
+    },
+    {
+      "arxiv_id": "2605.13935",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": "Beyond Mode-Seeking RL: Trajectory-Balance Post-Training for Diffusion Language Models",
+      "authors": [
+        "Saba Ahmadi",
+        "Prasanna Parthasarathi",
+        "Yufei Cui"
+      ],
+      "score": 82.5,
+      "published": "2026-05-13",
+      "generated_at": "2026-05-18T07:09:46Z"
+    },
+    {
+      "arxiv_id": "2605.14084",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": "CRANE: Constrained Reasoning Injection for Code Agents via Nullspace Editing",
+      "authors": [
+        "Mingzhi Zhu",
+        "Michele Merler",
+        "Raju Pavuluri",
+        "Stacy Patterson"
+      ],
+      "score": 68.25,
+      "published": "2026-05-13",
+      "generated_at": "2026-05-18T07:05:04Z"
+    },
+    {
+      "arxiv_id": "2605.14362",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": "Correctness-Aware Repository Filtering Under Maximum Effective Context Window Constraints",
+      "authors": [
+        "Shweta Mishra"
+      ],
+      "score": 63.24999999999999,
+      "published": "2026-05-14",
+      "generated_at": "2026-05-18T06:58:21Z"
+    },
+    {
+      "arxiv_id": "2605.14478",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": "When Retrieval Hurts Code Completion: A Diagnostic Study of Stale Repository Context",
+      "authors": [
+        "Haojun Weng",
+        "Qianqian Yang",
+        "Hao Fu",
+        "Haobin Pan",
+        "Xinwei Lv"
+      ],
+      "score": 67.0,
+      "published": "2026-05-14",
+      "generated_at": "2026-05-18T06:53:41Z"
+    },
+    {
+      "arxiv_id": "2605.14503",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": "Not All RAGs Are Created Equal: A Component-Wise Empirical Study for Software Engineering Tasks",
+      "authors": [
+        "Qiang Ke",
+        "Yanjie Zhao",
+        "Hongjin Leng",
+        "Shengming Zhao",
+        "Haoyu Wang"
+      ],
+      "score": 68.25,
+      "published": "2026-05-14",
+      "generated_at": "2026-05-18T06:49:43Z"
+    },
+    {
+      "arxiv_id": "2605.15113",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": "Learning from Language Feedback via Variational Policy Distillation",
+      "authors": [
+        "Yang Li",
+        "Erik Nijkamp",
+        "Semih Yavuz",
+        "Shafiq Rayhan Joty"
+      ],
+      "score": 74.25,
+      "published": "2026-05-14",
+      "generated_at": "2026-05-18T06:44:44Z"
+    },
+    {
+      "arxiv_id": "2605.15301",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": "Solvita: Enhancing Large Language Models for Competitive Programming via Agentic Evolution",
+      "authors": [
+        "Han Li",
+        "Jinyu Tian",
+        "Rili Feng",
+        "Yuqiao Du",
+        "Chong Zheng",
+        "Chenyu Wang"
+      ],
+      "score": 66.25,
+      "published": "2026-05-14",
+      "generated_at": "2026-05-18T06:37:38Z"
+    },
+    {
+      "arxiv_id": "2605.15607",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": "Syntax Without Semantics: Teaching Large Language Models to Code in an Unseen Language",
+      "authors": [
+        "Vinayshekhar Bannihatti Kumar",
+        "Disha Makhija",
+        "Manoj Ghuhan Arivazhagan",
+        "Rashmi Gangadharaiah"
+      ],
+      "score": 64.5,
+      "published": "2026-05-15",
+      "generated_at": "2026-05-18T06:32:00Z"
+    },
+    {
       "arxiv_id": "2605.12270",
       "topic": "Automated Program Repair",
       "topic_label": "Automated Program Repair",
@@ -16,23 +219,6 @@
       "score": 83.75,
       "published": "2026-05-12",
       "generated_at": "2026-05-14T14:50:17Z"
-    },
-    {
-      "arxiv_id": "2605.12925",
-      "topic": "Automated Program Repair",
-      "topic_label": "Automated Program Repair",
-      "title": "AgentLens: Revealing The Lucky Pass Problem in SWE-Agent Evaluation",
-      "authors": [
-        "Priyam Sahoo",
-        "Gaurav Mittal",
-        "Xiaomin Li",
-        "Shengjie Ma",
-        "Benjamin Steenhoek",
-        "Pingping Lin"
-      ],
-      "score": 81.25,
-      "published": "2026-05-13",
-      "generated_at": "2026-05-14T14:48:16Z"
     },
     {
       "arxiv_id": "2605.13357",
@@ -61,5 +247,5 @@
       "generated_at": "2026-05-14T14:40:43Z"
     }
   ],
-  "updated_at": "2026-05-14T14:54:28Z"
+  "updated_at": "2026-05-18T07:36:16Z"
 }

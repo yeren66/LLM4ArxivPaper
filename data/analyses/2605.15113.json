@@ -1,0 +1,191 @@
+{
+  "arxiv_id": "2605.15113",
+  "topic": "LLM for Code Generation",
+  "topic_label": "LLM for Code Generation",
+  "title": "Learning from Language Feedback via Variational Policy Distillation",
+  "authors": [
+    "Yang Li",
+    "Erik Nijkamp",
+    "Semih Yavuz",
+    "Shafiq Rayhan Joty"
+  ],
+  "affiliations": [],
+  "categories": [
+    "cs.LG"
+  ],
+  "published": "2026-05-14T17:27:34",
+  "updated": "2026-05-14T17:27:34",
+  "abstract": "Reinforcement learning from verifiable rewards (RLVR) suffers from sparse outcome signals, creating severe exploration bottlenecks on complex reasoning tasks. Recent on-policy self-distillation methods attempt to address this by utilizing language feedback to generate dense, token-level supervision. However, these approaches rely on a fixed, passive teacher to interpret the feedback. As the student policy improves, the teacher's zero-shot assessment capabilities plateau, ultimately halting further learning. To overcome this, we propose Variational Policy Distillation (VPD), a framework that formalizes learning from language feedback as a Variational Expectation-Maximization (EM) problem. VPD co-evolves both policies: in the E-step, the teacher is actively refined on trajectory outcomes via an adaptive trust-region update, translating textual feedback into a dynamically improved target token distribution. In the M-step, the student internalizes this dense distributional guidance on its own on-policy rollouts. By continuously improving the teacher's ability to extract actionable signals from textual critique, VPD overcomes the limitations of passive distillation. Evaluated across diverse sources of diagnostic feedback on scientific reasoning and code generation tasks, VPD consistently outperforms both standard RLVR and existing self-distillation baselines. Finally, by stress-testing our framework on rigid mathematical reasoning and cold-start regimes, we illuminate the fundamental bounds of feedback-driven self-distillation compared to pure environment-driven RL.",
+  "arxiv_url": "https://arxiv.org/abs/2605.15113",
+  "pdf_url": "https://arxiv.org/pdf/2605.15113.pdf",
+  "comment": null,
+  "relevance": {
+    "en": "VPD advances post-training with execution feedback via co-adaptive teacher learning, confirming that adaptive language supervision boosts code generation on LiveCodeBench, but it remains tangential to repository-level and long-context generation as it evaluates single-function Pass@1 without addressing integration or advanced benchmarks.",
+    "zh": "VPD通过教师共同适应学习在带有执行反馈的后训练方面取得了进展，证实了自适应语言监督在LiveCodeBench上提升了代码生成，但它在仓库级别和长上下文生成方面仍只是间接相关，因为它仅评估了单函数Pass@1，没有涉及集成或高级基准测试。"
+  },
+  "figure": {
+    "label": "Figure 1",
+    "caption": {
+      "en": "Reward margin between\ncorrect and incorrect responses dur-\ning LCB training.",
+      "zh": "LCB训练期间正确和错误响应之间的奖励裕度。"
+    },
+    "url": "data:image/webp;base64,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",
+    "reference_text": "1. Environment Feedback (LiveCodeBench). For code gen- eration tasks, the environment acts as a natural, determinis- tic verifier, providing rich feedback such as runtime errors and failed unit test assertions. We evaluate Qwen3-8B (with reasoning/thinking mode disabled) on the LiveCodeBench (LCB) v6 subset, following the public and private unit test settings established by SDPO [10]. Detailed hyperparame- ters and setup configurations are provided in Appendix D.1. As shown in Table 1, both pure RL (GRPO) and pure distil- lation (SDPO) significantly improve upon the base model’s 28.05% pass rate. However, attempting to simultaneously fuse these signals via single-phase hybrids yields highly mixed results: Advantage Reshaping and Advantage Reweighting degrade performance compared to pure SDPO (dropping to 46.95% and 44.85%, respectively), while the Joint Loss for- mulation provides only a marginal gain. In contrast, our de- coupled VPD framework effectively internalizes the compiler’s diagnostic feedback, achieving a state-of-the-art 49.62% pass rate. To demonstrate the sustained discriminative power of our approach, Figure 1 plots the reward margin between cor- rect and incorrect student responses during training, defined as ˜r(x, y+, C+) −˜r(x, y−, C−). As training progresses, we observe that the margin for standard SDPO rapidly diminishes, indicating a loss of useful guidance. Conversely, VPD consistently increases this margin, confirm- ing that our E-step successfully cont"
+  },
+  "brief_summary": {
+    "en": "Reinforcement learning from verifiable rewards (RLVR) fails on complex reasoning tasks because its outcome signals are too sparse to guide effective exploration. Recent self-distillation methods aim to densify supervision by leveraging language feedback, but they rely on a static, passive teacher that cannot improve alongside the student. As the student grows more capable, the teacher’s zero-shot assessments plateau, causing learning to stall. This fundamental limitation underscores the need for a framework that co-adapts the teacher to keep pace with the student’s evolving abilities.\n\nVariational Policy Distillation (VPD) addresses this by formalizing learning from language feedback as a variational expectation-maximization problem. In the E-step, the teacher is actively refined using an adaptive trust-region update on trajectory outcomes, turning textual critiques into a dynamically improving token-level target distribution. In the M-step, the student distills this dense supervision from its own on-policy rollouts. Tested on code generation tasks like LiveCodeBench, VPD achieves a state-of-the-art 49.62% Pass@1, outperforming standard RLVR and all hybrid baselines—including Advantage Reshaping—that use a fixed teacher. This co-evolution ensures the teacher never plateaus, enabling sustained gains even in rigid mathematical reasoning and cold-start regimes.",
+    "zh": "基于可验证奖励的强化学习（RLVR）在复杂推理任务上失败，因为其结果信号过于稀疏，无法有效引导探索。近期自蒸馏方法试图通过利用语言反馈来稠密化监督，但它们依赖于一个静态、被动的教师，无法与学生一同进步。随着学生能力增长，教师的零样本评估能力达到平台期，导致学习停滞。这一根本性限制凸显了需要一个教师与学生能力共同适应的框架来与学生不断演进的能力保持同步。\n\n变分策略蒸馏（VPD）通过将语言反馈学习形式化为变分期望最大化问题来解决这一问题。在E步中，教师通过自适应信任域更新主动在轨迹结果上进行优化，将文本批评转化为动态改进的token级目标分布。在M步中，学生从其自身的在策略展开中蒸馏这种稠密监督。在LiveCodeBench等代码生成任务上的测试表明，VPD达到了最先进的49.62% Pass@1，优于标准RLVR以及所有使用固定教师的混合基线（包括Advantage Reshaping）。这种共同演进确保了教师永远不会达到平台期，即使在严格的数学推理和冷启动场景中也能实现持续收益。"
+  },
+  "core_summary": {
+    "problem": {
+      "en": "Reinforcement learning from verifiable rewards (RLVR) relies on sparse outcome signals, which creates a severe exploration bottleneck on complex reasoning tasks. Recent on-policy self-distillation methods attempt to address this by using language feedback to generate dense, token-level supervision. However, these approaches depend on a fixed, passive teacher that interprets the feedback in a zero-shot manner. As the student policy improves, the teacher's assessment capabilities plateau, limiting further learning. This gap is critical because without adaptive teacher refinement, the supervision signals become stale and cannot guide continued improvement, especially in tasks like scientific reasoning and code generation where feedback is rich but complex.",
+      "zh": "基于可验证奖励的强化学习（RLVR）依赖于稀疏的结果信号，这在复杂推理任务上造成了严重的探索瓶颈。近期的在策略自蒸馏方法试图通过使用语言反馈生成密集的token级监督来解决这个问题。然而，这些方法依赖于一个固定的、被动的教师，它以零样本方式解释反馈。随着学生策略提升，教师的评估能力达到平台期，限制了进一步学习。这一差距至关重要，因为没有自适应的教师优化，监督信号变得陈旧，无法指导持续改进，特别是在科学推理和代码生成等反馈丰富但复杂的任务中。"
+    },
+    "solution": {
+      "en": "The main contribution is Variational Policy Distillation (VPD), a framework that formalizes learning from language feedback as a Variational Expectation-Maximization (EM) problem. Unlike prior methods with a fixed teacher, VPD co-evolves both the teacher and student policies. In the E-step, the teacher is actively refined on trajectory outcomes via an adaptive trust-region update, translating textual feedback into a dynamically improved target token distribution. In the M-step, the student internalizes this dense distributional guidance on its own on-policy rollouts. This co-adaptation prevents the teacher from plateauing and ensures that the supervision remains relevant as the student progresses.",
+      "zh": "主要贡献是变分策略蒸馏（VPD），这是一个将语言反馈学习形式化为变分期望最大化（EM）问题的框架。与先前使用固定教师的方法不同，VPD共同演进教师和学生策略。在E步中，教师通过自适应信任域更新在轨迹结果上主动优化，将文本反馈转化为动态改进的目标token分布。在M步中，学生从其自身的在策略展开中内化这种密集的分布指引。这种共同适应防止教师达到平台期，并确保监督随着学生的进步保持相关性。"
+    },
+    "methodology": {
+      "en": "VPD operates as a variational EM procedure. The teacher policy takes as input language feedback (e.g., runtime errors, failed unit test assertions) along with student trajectories and produces a token-level target distribution. In the E-step, the teacher is updated using a trust-region objective that balances maximizing agreement with ground-truth outcomes (correct/incorrect) while limiting divergence from its previous version, preventing catastrophic forgetting. This update is adaptive, adjusting the trust-region size based on recent performance. In the M-step, the student policy is trained via distillation to minimize the KL divergence between its output distribution and the teacher's target distribution on its own on-policy rollouts. The process iterates, with the teacher continuously refined on the student's evolving trajectory data. For code generation experiments, the framework is applied using Qwen3-8B (with reasoning/thinking mode disabled) on the LiveCodeBench (LCB) v6 subset. The environment provides deterministic feedback from compiler/unit tests. The teacher uses this feedback to generate dense supervision, while the student explores and generates responses. Hyperparameters include trust-region coefficients and distillation temperature, detailed in the appendix.",
+      "zh": "VPD作为一个变分EM过程运行。教师策略以语言反馈（例如运行时错误、失败的单元测试断言）和学生轨迹作为输入，生成token级目标分布。在E步中，使用一个信任域目标更新教师，该目标平衡最大化与真实结果（正确/错误）的一致性和限制与其先前版本的差异，防止灾难性遗忘。该更新是自适应的，根据近期表现调整信任域大小。在M步中，学生策略通过蒸馏进行训练，以最小化其输出分布与教师在其自身在策略展开上的目标分布之间的KL散度。该过程迭代进行，教师不断根据学生不断演进的轨迹数据进行优化。在代码生成实验中，使用Qwen3-8B（推理/思考模式禁用）在LiveCodeBench (LCB) v6子集上应用该框架。环境提供来自编译器/单元测试的确定性反馈。教师利用这些反馈生成密集监督，而学生进行探索并生成响应。超参数包括信任域系数和蒸馏温度，详情见附录。"
+    },
+    "experiments": {
+      "en": "VPD is evaluated on code generation using LiveCodeBench v6. The base model (Qwen3-8B) achieves a Pass@1 of 28.05%. Pure RL (GRPO) and pure distillation (SDPO) both improve significantly from this baseline. Hybrid approaches that attempt single-phase fusion of RL and distillation—Advantage Reshaping (46.95%), Advantage Reweighting (44.85%), and Joint Loss (marginal gain)—either degrade compared to SDPO or provide only slight improvements. In contrast, VPD achieves a state-of-the-art 49.62% pass rate. Furthermore, Figure 1 plots the reward margin between correct and incorrect responses during training; for standard SDPO, the margin rapidly diminishes, indicating loss of discriminative power, while VPD consistently increases the margin, demonstrating sustained effective guidance. Stress tests on rigid mathematical reasoning and cold-start regimes reveal the bounds of feedback-driven self-distillation relative to environment-driven RL.",
+      "zh": "VPD在代码生成上使用LiveCodeBench v6进行评估。基础模型（Qwen3-8B）的Pass@1为28.05%。纯RL（GRPO）和纯蒸馏（SDPO）均从该基线显著提升。尝试单阶段融合RL和蒸馏的混合方法——Advantage Reshaping (46.95%)、Advantage Reweighting (44.85%)和Joint Loss（边际增益）——要么相对于SDPO有所退化，要么仅提供轻微改进。相比之下，VPD达到了最先进的49.62%通过率。此外，图1绘制了训练期间正确和错误响应之间的奖励裕度；对于标准SDPO，裕度迅速减小，表明判别能力丧失，而VPD则持续增加裕度，展示了持续有效的指导。关于严格数学推理和冷启动场景的压力测试揭示了反馈驱动自蒸馏相对于环境驱动RL的局限性。"
+    },
+    "conclusion": {
+      "en": "Variational Policy Distillation (VPD) outperforms standard RLVR and self-distillation baselines on reasoning and code tasks by co-evolving a teacher via variational EM, which provides denser token-level supervision from language feedback and prevents the staleness that affects fixed-teacher approaches, enabling continued improvement. However, this feedback-driven distillation has fundamental limits compared to environment-driven RL and relies on language feedback availability, with computational overhead from the E-step posing practical constraints. The evaluation does not address repository-level code generation with long dependencies or critique metrics like pass@k, so while VPD advances feedback integration for complex tasks, its applicability to real-world, integration-heavy coding scenarios remains unverified.",
+      "zh": "变分策略蒸馏（VPD）通过变分EM共同演进教师，在推理和代码任务上优于标准RLVR和自蒸馏基线，该方法从语言反馈中提供更密集的token级监督，并防止了固定教师方法中出现的过时问题，从而实现持续改进。然而，这种反馈驱动蒸馏与环境驱动RL相比有根本性限制，且依赖于语言反馈的可用性，E步的计算开销也带来了实际约束。评估没有解决具有长依赖的仓库级代码生成或批评pass@k等指标，因此尽管VPD推进了复杂任务中的反馈集成，但其在现实世界、集成密集型编码场景中的适用性仍未得到验证。"
+    }
+  },
+  "tasks": [
+    {
+      "question": {
+        "en": "How does VPD's use of language feedback from execution signals (e.g., runtime errors, failed unit tests) provide denser supervision for code generation compared to standard reinforcement learning, and what evidence does the paper offer that this leads to improved correctness beyond isolated function benchmarks?",
+        "zh": "VPD利用来自执行信号（例如运行时错误、失败的单元测试）的语言反馈如何提供比标准强化学习更密集的代码生成监督，并且论文提供了什么证据表明这能超越孤立函数基准提高正确性？"
+      },
+      "reason": {
+        "en": "This question directly addresses the user's interest in post-training techniques like RL with execution feedback for improving code correctness, probing both mechanism and evaluation scope.",
+        "zh": "这个问题直接切合用户对于像带执行反馈的RL这样的后训练技术提高代码正确性的兴趣，同时探究了机制和评估范围。"
+      }
+    },
+    {
+      "question": {
+        "en": "What distinguishes VPD's co-evolving teacher strategy from existing hybrid approaches (e.g., Advantage Reshaping) in leveraging language feedback for code generation, and how does the paper demonstrate that dynamic teacher updates are necessary to avoid performance plateaus on complex coding tasks?",
+        "zh": "VPD的共同演进教师策略与现有的混合方法（例如Advantage Reshaping）在利用语言反馈进行代码生成方面有何区别，论文如何证明动态教师更新对于避免复杂编码任务上的性能平台期是必要的？"
+      },
+      "reason": {
+        "en": "This question explores the paper's core technical contribution and its impact on code generation performance, relevant to advancing post-training methodologies for software engineering.",
+        "zh": "这个问题探究了论文的核心技术贡献及其对代码生成性能的影响，与推进软件工程的后训练方法相关。"
+      }
+    },
+    {
+      "question": {
+        "en": "To what extent could VPD be applied to repository-level code generation with long-context dependencies, given that its evaluation focuses on LiveCodeBench v6? What limitations does the paper acknowledge regarding scaling to integration-heavy tasks?",
+        "zh": "鉴于VPD的评估集中在LiveCodeBench v6上，它能在多大程度上应用于具有长上下文依赖的仓库级代码生成？论文承认了在扩展到集成密集型任务时哪些限制？"
+      },
+      "reason": {
+        "en": "This question connects the paper's findings to the user's focus on repository-level and long-context generation, while staying grounded in the paper's actual scope and acknowledged limitations.",
+        "zh": "这个问题将论文的发现与用户对仓库级和长上下文生成的关注联系起来，同时基于论文的实际范围和承认的限制。"
+      }
+    },
+    {
+      "question": {
+        "en": "How does the paper's evaluation of VPD on code generation benchmarks reveal deficiencies in pass@k metrics for assessing real-world software engineering tasks, and what alternative validation approaches (e.g., human-in-the-loop, execution-based) might be needed to fully capture improvements in code synthesis correctness?",
+        "zh": "论文在代码生成基准上对VPD的评估如何揭示了pass@k指标在评估实际软件工程任务方面的不足，可能需要哪些替代验证方法（例如人机协同、基于执行的）来全面捕捉代码合成正确性的改进？"
+      },
+      "reason": {
+        "en": "This question aligns with the user's interest in advanced evaluation beyond pass@k, leveraging the paper's experimental insights to critique existing metrics and suggest new directions.",
+        "zh": "这个问题与用户对超越pass@k的先进评估的兴趣一致，利用论文的实验见解来批评现有指标并建议新方向。"
+      }
+    }
+  ],
+  "findings": [
+    {
+      "question": {
+        "en": "How does VPD's use of language feedback from execution signals (e.g., runtime errors, failed unit tests) provide denser supervision for code generation compared to standard reinforcement learning, and what evidence does the paper offer that this leads to improved correctness beyond isolated function benchmarks?",
+        "zh": "VPD利用来自执行信号（例如运行时错误、失败的单元测试）的语言反馈如何提供比标准强化学习更密集的代码生成监督，并且论文提供了什么证据表明这能超越孤立函数基准提高正确性？"
+      },
+      "reason": {
+        "en": "This question directly addresses the user's interest in post-training techniques like RL with execution feedback for improving code correctness, probing both mechanism and evaluation scope.",
+        "zh": "这个问题直接切合用户对于像带执行反馈的RL这样的后训练技术提高代码正确性的兴趣，同时探究了机制和评估范围。"
+      },
+      "answer": {
+        "en": "VPD's variational EM framework actively updates a teacher policy on trajectory outcomes to translate textual feedback (e.g., from execution signals) into a dense token-level distribution, which the student then internalizes. This provides denser supervision than the sparse success/failure signals of standard RL, as the paper states it “utiliz[es] language feedback to generate dense, token-level supervision” and the student “internalizes this dense distributional guidance”. The abstract offers evidence of improved correctness beyond isolated function benchmarks by noting that VPD “consistently outperforms both standard RLVR and existing self-distillation baselines” on “code generation tasks”, but it does not explicitly reference execution signals like runtime errors or failed unit tests, nor does it detail specific benchmarks beyond mentioning “scientific reasoning and code generation tasks”. Therefore, the support for the specific mechanism and scope is largely inferred.",
+        "zh": "VPD的变分EM框架主动在轨迹结果上更新教师策略，将文本反馈（例如来自执行信号）转化为密集的token级分布，然后由学生内化。这提供了比标准RL的稀疏成功/失败信号更密集的监督，因为论文指出它“利用语言反馈生成密集的token级监督”，并且学生“内化这种密集的分布指引”。摘要通过指出VPD在“代码生成任务”上“始终优于标准RLVR和现有的自蒸馏基线”，提供了超越孤立函数基准改进正确性的证据，但没有明确提及运行时错误或失败的单元测试等执行信号，也没有详细说明具体基准，只提到“科学推理和代码生成任务”。因此，对具体机制和范围的支持主要是推断的。"
+      },
+      "confidence": 0.4
+    },
+    {
+      "question": {
+        "en": "What distinguishes VPD's co-evolving teacher strategy from existing hybrid approaches (e.g., Advantage Reshaping) in leveraging language feedback for code generation, and how does the paper demonstrate that dynamic teacher updates are necessary to avoid performance plateaus on complex coding tasks?",
+        "zh": "VPD的共同演进教师策略与现有的混合方法（例如Advantage Reshaping）在利用语言反馈进行代码生成方面有何区别，论文如何证明动态教师更新对于避免复杂编码任务上的性能平台期是必要的？"
+      },
+      "reason": {
+        "en": "This question explores the paper's core technical contribution and its impact on code generation performance, relevant to advancing post-training methodologies for software engineering.",
+        "zh": "这个问题探究了论文的核心技术贡献及其对代码生成性能的影响，与推进软件工程的后训练方法相关。"
+      },
+      "answer": {
+        "en": "VPD's key distinction from existing hybrid approaches like Advantage Reshaping is its co-evolving teacher strategy: rather than using a fixed, passive teacher to interpret language feedback, VPD formalizes learning as a variational EM problem where the teacher is actively refined via an adaptive trust-region update in the E-step, while the student internalizes the dense distributional guidance in the M-step. The paper explicitly notes that existing methods \"rely on a fixed, passive teacher to interpret the feedback\" and that \"as the student policy improves, the teacher's zero-shot assessment capabilities plateau, ultimately halting further learning.\" By contrast, VPD \"co-evolves both policies\" and \"continuously improving the teacher's ability to extract actionable signals from textual critique,\" which overcomes the plateau problem. The necessity of dynamic teacher updates is demonstrated empirically: on code generation tasks, VPD \"consistently outperforms both standard RLVR and existing self-distillation baselines,\" implying that only with a dynamically updated teacher can the model avoid the performance ceiling that afflicts passive distillation. The abstract further confirms that the framework was \"evaluated across diverse sources of diagnostic feedback on scientific reasoning and code generation tasks,\" directly linking the co-evolution mechanism to superior results and plateau avoidance on complex coding problems.",
+        "zh": "VPD与现有的混合方法（如Advantage Reshaping）的关键区别在于其共同演进的教师策略：VPD不是使用固定的、被动的教师来解释语言反馈，而是将学习形式化为一个变分EM问题，其中教师在E步通过自适应信任域更新主动优化，而学生在M步内化密集的分布指引。论文明确指出，现有方法“依赖固定的、被动的教师来解释反馈”，并且“随着学生策略提升，教师的零样本评估能力达到平台期，最终停止进一步学习。”相比之下，VPD“共同演进两个策略”并“持续提升教师从文本批评中提取可操作信号的能力”，从而克服了平台期问题。动态教师更新的必要性通过实验证明：在代码生成任务上，VPD“始终优于标准RLVR和现有的自蒸馏基线”，表明只有通过动态更新的教师，模型才能避免困扰被动蒸馏的性能天花板。摘要进一步确认该框架“在科学推理和代码生成任务上，针对多种诊断性反馈源进行了评估”，直接将共同演进机制与更优结果和复杂编码问题上的平台期避免联系起来。"
+      },
+      "confidence": 1.0
+    },
+    {
+      "question": {
+        "en": "To what extent could VPD be applied to repository-level code generation with long-context dependencies, given that its evaluation focuses on LiveCodeBench v6? What limitations does the paper acknowledge regarding scaling to integration-heavy tasks?",
+        "zh": "鉴于VPD的评估集中在LiveCodeBench v6上，它能在多大程度上应用于具有长上下文依赖的仓库级代码生成？论文承认了在扩展到集成密集型任务时哪些限制？"
+      },
+      "reason": {
+        "en": "This question connects the paper's findings to the user's focus on repository-level and long-context generation, while staying grounded in the paper's actual scope and acknowledged limitations.",
+        "zh": "这个问题将论文的发现与用户对仓库级和长上下文生成的关注联系起来，同时基于论文的实际范围和承认的限制。"
+      },
+      "answer": {
+        "en": "The paper's evaluation is on 'scientific reasoning and code generation tasks' but does not specify LiveCodeBench v6 or repository-level code generation. It acknowledges 'the fundamental bounds of feedback-driven self-distillation compared to pure environment-driven RL' but does not discuss scaling to integration-heavy tasks. Thus, the paper does not directly address VPD's applicability to repository-level long-context generation.",
+        "zh": "论文的评估在于“科学推理和代码生成任务”，但没有具体说明LiveCodeBench v6或仓库级代码生成。它承认了“与纯环境驱动RL相比，反馈驱动自蒸馏的基本限制”，但没有讨论扩展到集成密集型任务。因此，论文没有直接解决VPD对仓库级长上下文生成的适用性。"
+      },
+      "confidence": 0.2
+    },
+    {
+      "question": {
+        "en": "How does the paper's evaluation of VPD on code generation benchmarks reveal deficiencies in pass@k metrics for assessing real-world software engineering tasks, and what alternative validation approaches (e.g., human-in-the-loop, execution-based) might be needed to fully capture improvements in code synthesis correctness?",
+        "zh": "论文在代码生成基准上对VPD的评估如何揭示了pass@k指标在评估实际软件工程任务方面的不足，可能需要哪些替代验证方法（例如人机协同、基于执行的）来全面捕捉代码合成正确性的改进？"
+      },
+      "reason": {
+        "en": "This question aligns with the user's interest in advanced evaluation beyond pass@k, leveraging the paper's experimental insights to critique existing metrics and suggest new directions.",
+        "zh": "这个问题与用户对超越pass@k的先进评估的兴趣一致，利用论文的实验见解来批评现有指标并建议新方向。"
+      },
+      "answer": {
+        "en": "The provided paper content does not discuss deficiencies of pass@k metrics for code generation benchmarks or propose alternative validation approaches. The abstract focuses on Variational Policy Distillation (VPD) outperforming standard RLVR and self-distillation baselines on scientific reasoning and code generation tasks, but it does not critique specific evaluation metrics. Therefore, the question cannot be answered based on the given text.",
+        "zh": "提供的论文内容没有讨论pass@k指标在代码生成基准上的不足，也没有提出替代验证方法。摘要重点介绍变分策略蒸馏（VPD）在科学推理和代码生成任务上优于标准RLVR和自蒸馏基线，但没有批评具体的评估指标。因此，无法根据给定文本回答这个问题。"
+      },
+      "confidence": 0.1
+    }
+  ],
+  "score": 74.25,
+  "score_dimensions": [
+    {
+      "name": "topic_alignment",
+      "weight": 0.35,
+      "value": 0.75
+    },
+    {
+      "name": "methodology_fit",
+      "weight": 0.25,
+      "value": 0.8
+    },
+    {
+      "name": "novelty",
+      "weight": 0.2,
+      "value": 0.85
+    },
+    {
+      "name": "experiment_coverage",
+      "weight": 0.2,
+      "value": 0.55
+    }
+  ],
+  "markdown": "",
+  "model": "deepseek-v4-flash",
+  "generated_at": "2026-05-18T06:44:44Z"
+}

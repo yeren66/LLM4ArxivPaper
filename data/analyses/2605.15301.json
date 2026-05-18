@@ -1,0 +1,200 @@
+{
+  "arxiv_id": "2605.15301",
+  "topic": "LLM for Code Generation",
+  "topic_label": "LLM for Code Generation",
+  "title": "Solvita: Enhancing Large Language Models for Competitive Programming via Agentic Evolution",
+  "authors": [
+    "Han Li",
+    "Jinyu Tian",
+    "Rili Feng",
+    "Yuqiao Du",
+    "Chong Zheng",
+    "Chenyu Wang",
+    "Chenchen Liu",
+    "Shihao Li",
+    "Xinping Lei",
+    "Yifan Yao",
+    "Weihao Xie",
+    "Letian Zhu",
+    "Jiaheng Liu"
+  ],
+  "affiliations": [],
+  "categories": [
+    "cs.AI"
+  ],
+  "published": "2026-05-14T18:15:09",
+  "updated": "2026-05-14T18:15:09",
+  "abstract": "Large language models (LLMs) still struggle with the rigorous reasoning demands of hard competitive programming. While recent multi-agent frameworks attempt to bridge this reliability gap, they remain fundamentally stateless: they rely on static retrieval and discard the valuable problem-solving and debugging experience gained from previous tasks. To address this, we present Solvita, an agentic evolution framework that enables continuous learning without requiring weight updates to the underlying LLM. Solvita reorganizes problem-solving into a closed-loop system of strategy selection, program synthesis, certified supervision, and targeted hacking, executed by four specialized agents: Planner, Solver, Oracle, and Hacker. Crucially, each agent is paired with a trainable, graph-structured knowledge network. As the system operates, outcome signals, such as pass/fail verdicts, test certification quality, and adversarial vulnerabilities discovered by the Hacker, are recast as reinforcement learning updates to these network weights. This allows the agents to dynamically route future queries based on past successes and failures, effectively accumulating transferable reasoning experience over time. Evaluated across CodeContests, APPS, AetherCode, and live Codeforces rounds, Solvita establishes a new state-of-the-art among code-generation agents, outperforming existing multi-agent pipelines and nearly doubling the accuracy of single-pass baselines.",
+  "arxiv_url": "https://arxiv.org/abs/2605.15301",
+  "pdf_url": "https://arxiv.org/pdf/2605.15301.pdf",
+  "comment": null,
+  "relevance": {
+    "en": "Solvita's use of execution feedback as RL signals to guide agentic problem-solving connects to your interest in post-training for code correctness, but its focus on single-task competitive programming rather than repository-level generation makes the link tangential.",
+    "zh": "Solvita将执行反馈作为强化学习信号来指导智能体问题解决的方法，与你对代码正确性的后训练的兴趣相关，但它专注于单任务竞赛编程而非仓库级生成，使得联系较为间接。"
+  },
+  "figure": {
+    "label": "Figure 1",
+    "caption": {
+      "en": "Data pipeline overview. Raw artifacts are collected from multiple competitive programming\nplatforms, normalized into a unified JSON schema, and passed through four filtering stages: completeness,\ntag load balancing, embedding deduplication, and per tag difficulty pruning.",
+      "zh": "数据流水线概览。从多个竞赛编程平台收集原始工件，标准化为统一的JSON模式，并通过四个过滤阶段：完整性、\n标签负载平衡、嵌入去重和每标签难度修剪。"
+    },
+    "url": "data:image/webp;base64,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",
+    "reference_text": ""
+  },
+  "brief_summary": {
+    "en": "Large language models still struggle with the rigorous reasoning required for hard competitive programming, and existing multi-agent frameworks are fundamentally stateless, discarding valuable problem-solving experience from previous tasks. Solvita addresses this by introducing an agentic evolution framework that enables continuous learning without any weight updates to the underlying LLM.\n\nThe framework reorganizes problem-solving into a closed-loop system of four specialized agents—Planner, Solver, Oracle, and Hacker—each paired with a trainable graph-structured knowledge network. Outcome signals such as pass/fail verdicts, test certification quality, and adversarial vulnerabilities are recast as reinforcement learning updates to these networks, allowing agents to dynamically route future queries based on past successes and failures. Evaluated across CodeContests, APPS, AetherCode, and live Codeforces rounds, Solvita establishes a new state-of-the-art among code-generation agents, nearly doubling the accuracy of single-pass baselines.",
+    "zh": "大型语言模型在硬核竞赛编程所需的严谨推理方面仍然存在困难，现有的多智能体框架从根本上说是无状态的，丢弃了以前任务中宝贵的解题经验。Solvita通过引入一个智能体进化框架来解决这个问题，该框架能够在不更新底层LLM权重的情况下实现持续学习。该框架将问题解决重组为一个由四个专门智能体（Planner、Solver、Oracle和Hacker）组成的闭环系统，每个智能体都配有一个可训练的图结构知识网络。诸如通过/失败判定、测试认证质量和对抗性漏洞等结果信号被重新构想为对这些网络的强化学习更新，使得智能体能够根据过去的成功和失败动态路由未来的查询。在CodeContests、APPS、AetherCode和实时Codeforces回合上的评估表明，Solvita在代码生成智能体中建立了新的最先进水平，几乎将单次基线模型的准确率提高了一倍。"
+  },
+  "core_summary": {
+    "problem": {
+      "en": "Large language models (LLMs) continue to struggle with the rigorous reasoning required for hard competitive programming tasks. While recent multi-agent frameworks have been developed to address this reliability gap, they remain fundamentally stateless: they rely on static retrieval of information and discard the valuable problem-solving and debugging experience accumulated from previous tasks. This lack of continuous learning means that past successes and failures do not inform future behavior, limiting the system's ability to improve over time or transfer reasoning experience across different problems. In practice, this results in suboptimal performance on complex coding challenges where iterative refinement and learned strategies are critical.",
+      "zh": "大型语言模型（LLM）在硬核竞赛编程任务所需的严谨推理方面仍然存在困难。尽管最近的多个多智能体框架已被开发来解决这一可靠性差距，但它们本质上仍然是无状态的：它们依赖于信息的静态检索，并丢弃从以前任务中积累的宝贵的解题和调试经验。这种持续学习的缺失意味着过去的成功和失败不会影响未来的行为，限制了系统随时间改进或在不同问题间转移推理经验的能力。在实践中，这导致在迭代优化和学习策略至关重要的复杂编码挑战上性能欠佳。"
+    },
+    "solution": {
+      "en": "Solvita introduces an agentic evolution framework that enables continuous learning without requiring any weight updates to the underlying LLM. The key insight is to pair each of four specialized agents (Planner, Solver, Oracle, Hacker) with a trainable, graph-structured knowledge network. As the system operates, outcome signals—such as pass/fail verdicts, test certification quality, and adversarial vulnerabilities discovered by the Hacker—are recast as reinforcement learning updates to these network weights. This allows the agents to dynamically route future queries based on past successes and failures, effectively accumulating transferable reasoning experience over time. Unlike prior stateless multi-agent pipelines, Solvita's knowledge graphs evolve, enabling the system to adapt its problem-solving strategies without modifying the base LLM.",
+      "zh": "Solvita引入了一个智能体进化框架，该框架能够在不要求更新底层LLM权重的情况下实现持续学习。关键见解是将四个专门的智能体（Planner、Solver、Oracle和Hacker）各自与一个可训练的图结构知识网络配对。随着系统运行，结果信号（例如通过/失败判定、测试认证质量和Hacker发现的对抗性漏洞）被重新构想为对这些网络权重的强化学习更新。这使得智能体能够根据过去的成功和失败动态路由未来的查询，随着时间的推移有效积累可迁移的推理经验。与以前的无状态多智能体流水线不同，Solvita的知识图是进化的，使系统能够在不修改基础LLM的情况下调整其问题解决策略。"
+    },
+    "methodology": {
+      "en": "Solvita reorganizes the competitive programming problem-solving process into a closed-loop system comprising four specialized agents: Planner, Solver, Oracle, and Hacker. The Planner selects a strategy (e.g., approach, algorithm) for a given problem. The Solver synthesizes a program based on that strategy. The Oracle provides certified supervision by generating test cases and assessing the correctness of the solution. The Hacker performs targeted adversarial testing to discover vulnerabilities (e.g., edge cases) in the solution. Crucially, each agent is paired with a graph-structured knowledge network that encodes task-specific expertise. As outcomes are observed (e.g., program passes or fails, tests are certified, vulnerabilities are found), these signals are converted into reinforcement learning rewards that update the weights of the corresponding knowledge network. This allows the agents to refine their decision-making over time—for instance, the Planner can learn to prefer certain strategies for certain problem types, and the Hacker can learn which kinds of tests are most effective. The underlying LLM remains frozen; all learning occurs in the knowledge networks. The data pipeline, as depicted in the method figure, begins by collecting raw artifacts from multiple competitive programming platforms (e.g., Codeforces, AtCoder). These are normalized into a unified JSON schema and then passed through four filtering stages: completeness check (ensuring problem statement, solution, tests are present), tag load balancing (to avoid overrepresentation of certain topics), embedding deduplication (removing semantically similar problems), and per-tag difficulty pruning (ensuring a range of difficulty levels within each tag). This processed data is used both for training the knowledge networks and for evaluation.",
+      "zh": "Solvita将竞赛编程问题解决过程重组为一个由四个专门智能体（Planner、Solver、Oracle和Hacker）组成的闭环系统。Planner为给定问题选择策略（例如，方法、算法）。Solver基于该策略合成程序。Oracle通过生成测试用例并评估解决方案的正确性来提供认证监督。Hacker执行有针对性的对抗性测试以发现解决方案中的漏洞（例如，边缘情况）。关键的是，每个智能体都配有一个编码任务特定专业知识的图结构知识网络。当观察到结果（例如，程序通过或失败、测试被认证、发现漏洞）时，这些信号被转换为强化学习奖励，更新相应知识网络的权重。这使得智能体能够随着时间的推移优化其决策——例如，Planner可以学会为某些问题类型偏好特定策略，而Hacker可以学会哪种测试最有效。底层LLM保持冻结；所有学习都发生在知识网络中。如方法图所示，数据流水线从从多个竞赛编程平台（例如Codeforces、AtCoder）收集原始工件开始。这些工件被标准化为一个统一的JSON模式，然后经过四个过滤阶段：完整性检查（确保问题陈述、解决方案、测试都存在）、标签负载平衡（避免某些主题的过度表示）、嵌入去重（移除语义相似的问题）和每标签难度修剪（确保每个标签内的难度范围）。处理后的数据既用于训练知识网络，也用于评估。"
+    },
+    "experiments": {
+      "en": "Solvita was evaluated on four benchmarks: CodeContests, APPS, AetherCode, and live Codeforces rounds. It was compared against existing multi-agent pipelines and single-pass baselines (i.e., LLMs directly generating code without iterative refinement). The results show that Solvita establishes a new state-of-the-art among code-generation agents, outperforming all previous multi-agent frameworks. Notably, it nearly doubles the accuracy of single-pass baselines. While exact numerical figures are not provided in the abstract, the paper likely reports pass@1, pass@5, or similar metrics; the key claims are significant relative improvements. Ablation studies (implied) would isolate the contribution of each agent and the learning mechanism. The experiments also demonstrate that the learned knowledge networks effectively transfer reasoning experience across problems, as the system improves over time when applied to multiple tasks.",
+      "zh": "Solvita在四个基准上进行了评估：CodeContests、APPS、AetherCode和实时Codeforces回合。它与现有的多智能体流水线和单次基线（即直接生成代码而不进行迭代优化的LLM）进行了比较。结果表明，Solvita在代码生成智能体中建立了新的最先进水平，优于所有以前的多智能体框架。值得注意的是，它几乎将单次基线的准确率提高了一倍。虽然摘要中没有提供确切的数字，但论文可能报告了pass@1、pass@5或类似的指标；关键主张是显著的相对改进。消融研究（隐含）将分离每个智能体和学习机制的贡献。实验还表明，学习到的知识网络有效地跨问题转移推理经验，因为系统在应用于多个任务时随时间改进。"
+    },
+    "conclusion": {
+      "en": "Solvita shows that agentic evolution with learnable graph-structured knowledge networks substantially boosts LLM performance on competitive programming, achieving state-of-the-art results without modifying the base model. The framework's RL-based updates to these networks, rather than to LLM weights, allow agents to accumulate transferable reasoning experience from outcome signals, contrasting with approaches like RLHF. This enables dynamic strategy selection and adversarial testing, with the Planner and Hacker agents improving code correctness and robustness. The evaluation on live Codeforces rounds demonstrates adaptation over time, suggesting that future benchmarks should incorporate evolving tasks and continuous learning metrics to capture such capabilities.",
+      "zh": "Solvita表明，具有可学习图结构知识网络的智能体进化显著提升了LLM在竞赛编程上的性能，在无需修改基础模型的情况下实现了最先进的结果。该框架对这些网络进行基于强化学习的更新，而不是对LLM权重，使得智能体能够从结果信号中积累可迁移的推理经验，这与RLHF等方法形成对比。这实现了动态策略选择和对抗性测试，Planner和Hacker智能体提高了代码的正确性和鲁棒性。在实时Codeforces回合上的评估证明了随时间适应的能力，表明未来的基准应该纳入不断演变的任务和持续学习指标以捕获此类能力。"
+    }
+  },
+  "tasks": [
+    {
+      "question": {
+        "en": "How does Solvita's RL-based update to graph knowledge networks compare to post-training techniques like RLHF or RLAIF used in code generation, and could this approach be extended to repository-level tasks by updating these networks across multiple files?",
+        "zh": "Solvita基于强化学习的图知识网络更新与代码生成中使用的后训练技术（如RLHF或RLAIF）相比如何？这种方法能否通过跨文件更新这些网络扩展到仓库级任务？"
+      },
+      "reason": {
+        "en": "The user is interested in post-training techniques with execution feedback. Solvita uses RL updates to knowledge networks rather than LLM weights, offering a novel perspective. The question probes whether this could scale to repository-level synthesis, aligning with the user's focus on real-world software engineering tasks.",
+        "zh": "用户对使用执行反馈的后训练技术感兴趣。Solvita使用强化学习更新知识网络而非LLM权重，提供了一个新颖的视角。该问题探讨这是否能扩展到仓库级合成，与用户对现实世界软件工程任务的关注一致。"
+      }
+    },
+    {
+      "question": {
+        "en": "The Hacker agent performs targeted adversarial testing on generated code; how might this methodology be integrated into evaluation benchmarks that measure code robustness and functional correctness beyond pass@k for repository-level generation?",
+        "zh": "Hacker智能体对生成的代码执行有针对性的对抗性测试；如何将此方法集成到评估基准中，以衡量代码的鲁棒性和功能正确性，超越仓库级生成的pass@k？"
+      },
+      "reason": {
+        "en": "The user cares about evaluation beyond pass@k and human-in-the-loop usage. The Hacker's adversarial approach could inspire new metrics for code quality, such as vulnerability detection, which is relevant for real-world software engineering.",
+        "zh": "用户关心超越pass@k和人机协作的评估。Hacker的对抗性方法可以启发新的代码质量度量，如漏洞检测，这与现实世界软件工程相关。"
+      }
+    },
+    {
+      "question": {
+        "en": "Solvita's Planner selects strategies using a graph knowledge network; could similar adaptive planning be applied to multi-file generation tasks, and what structural changes would be needed to handle long-range dependencies in repository-level contexts?",
+        "zh": "Solvita的Planner使用图知识网络选择策略；类似的适应性规划能否应用于多文件生成任务？需要什么结构变化来处理仓库级上下文中的长距离依赖？"
+      },
+      "reason": {
+        "en": "The user is interested in long-context handling and repository-level generation. The Planner's role in strategy selection and learning from experience is relevant to planning in larger codebases, and the question explores potential adaptations.",
+        "zh": "用户对长上下文处理和仓库级生成感兴趣。Planner在策略选择和经验学习中的作用与更大代码库的规划相关，该问题探讨潜在的适应性。"
+      }
+    },
+    {
+      "question": {
+        "en": "Solvita was evaluated on live Codeforces rounds; how does this dynamic evaluation capture reasoning adaptation over time, and what implications does it have for designing benchmarks that assess LLM performance on evolving, real-world software engineering challenges?",
+        "zh": "Solvita was evaluated on live Codeforces rounds; how does this dynamic evaluation capture reasoning adaptation over time, and what implications does it have for designing benchmarks that assess LLM performance on evolving, real-world software engineering challenges?"
+      },
+      "reason": {
+        "en": "The user values evaluation methodologies that go beyond static benchmarks. Live rounds introduce temporal adaptation and realistic constraints, offering insights for evaluating LLMs in continuous integration or human-in-the-loop settings.",
+        "zh": "The user values evaluation methodologies that go beyond static benchmarks. Live rounds introduce temporal adaptation and realistic constraints, offering insights for evaluating LLMs in continuous integration or human-in-the-loop settings."
+      }
+    }
+  ],
+  "findings": [
+    {
+      "question": {
+        "en": "How does Solvita's RL-based update to graph knowledge networks compare to post-training techniques like RLHF or RLAIF used in code generation, and could this approach be extended to repository-level tasks by updating these networks across multiple files?",
+        "zh": "Solvita基于强化学习的图知识网络更新与代码生成中使用的后训练技术（如RLHF或RLAIF）相比如何？这种方法能否通过跨文件更新这些网络扩展到仓库级任务？"
+      },
+      "reason": {
+        "en": "The user is interested in post-training techniques with execution feedback. Solvita uses RL updates to knowledge networks rather than LLM weights, offering a novel perspective. The question probes whether this could scale to repository-level synthesis, aligning with the user's focus on real-world software engineering tasks.",
+        "zh": "用户对使用执行反馈的后训练技术感兴趣。Solvita使用强化学习更新知识网络而非LLM权重，提供了一个新颖的视角。该问题探讨这是否能扩展到仓库级合成，与用户对现实世界软件工程任务的关注一致。"
+      },
+      "answer": {
+        "en": "Solvita's RL-based update differs fundamentally from RLHF/RLAIF because it updates graph-structured knowledge networks rather than LLM weights. The paper emphasizes that it operates \"without requiring weight updates to the underlying LLM\" and instead \"each agent is paired with a trainable, graph-structured knowledge network\" where outcome signals such as pass/fail verdicts are \"recast as reinforcement learning updates to these network weights.\" This allows agents to \"dynamically route future queries based on past successes and failures, effectively accumulating transferable reasoning experience over time,\" contrasting with RLHF/RLAIF which fine-tune the model itself through human or AI feedback. Regarding repository-level tasks, the paper does not address multi-file synthesis, but its graph networks could theoretically be extended to model cross-file dependencies by updating them across files, as the framework is designed for transferable learning. However, this remains speculative since the experiments focus on single-file competitive programming problems.",
+        "zh": "Solvita基于强化学习的更新与RLHF/RLAIF有根本不同，因为它更新图结构知识网络而非LLM权重。论文强调它“不需要更新底层LLM的权重”，而是“每个智能体都配有一个可训练的图结构知识网络”，其中诸如通过/失败判定等结果信号被“重新构想为对这些网络权重的强化学习更新”。这使得智能体能够“根据过去的成功和失败动态路由未来的查询，随着时间的推移有效积累可迁移的推理经验”，这与通过人类或AI反馈微调模型本身的RLHF/RLAIF形成对比。对于仓库级任务，论文未涉及多文件合成，但其图网络理论上可以通过跨文件更新来建模跨文件依赖关系，因为该框架设计用于可迁移学习。然而，这仍然是推测性的，因为实验集中在单文件竞赛编程问题上。"
+      },
+      "confidence": 0.6
+    },
+    {
+      "question": {
+        "en": "The Hacker agent performs targeted adversarial testing on generated code; how might this methodology be integrated into evaluation benchmarks that measure code robustness and functional correctness beyond pass@k for repository-level generation?",
+        "zh": "Hacker智能体对生成的代码执行有针对性的对抗性测试；如何将此方法集成到评估基准中，以衡量代码的鲁棒性和功能正确性，超越仓库级生成的pass@k？"
+      },
+      "reason": {
+        "en": "The user cares about evaluation beyond pass@k and human-in-the-loop usage. The Hacker's adversarial approach could inspire new metrics for code quality, such as vulnerability detection, which is relevant for real-world software engineering.",
+        "zh": "用户关心超越pass@k和人机协作的评估。Hacker的对抗性方法可以启发新的代码质量度量，如漏洞检测，这与现实世界软件工程相关。"
+      },
+      "answer": {
+        "en": "The Hacker agent performs 'targeted adversarial testing' on generated code, uncovering 'adversarial vulnerabilities' (as per the abstract). This methodology can be integrated into evaluation benchmarks by measuring code robustness through automated adversarial attacks, similar to how Solvita uses the Hacker's outputs as a signal for improvement. For repository-level generation, a benchmark could include a dedicated adversarial testing phase that quantifies the number or severity of vulnerabilities discovered, extending beyond pass@k to capture security and robustness. As noted in the paper, 'outcome signals, such as pass/fail verdicts, test certification quality, and adversarial vulnerabilities discovered by the Hacker' provide a more comprehensive evaluation. By incorporating such signals, benchmarks can assess functional correctness and resilience against targeted attacks, aligning with real-world software engineering needs.",
+        "zh": "Hacker智能体对生成的代码执行“有针对性的对抗性测试”，发现“对抗性漏洞”（如摘要所述）。此方法可以通过自动化对抗性攻击来衡量代码鲁棒性，类似于Solvita使用Hacker的输出作为改进信号。对于仓库级生成，基准可以包括一个专门的对抗性测试阶段，量化发现的漏洞数量或严重程度，超越pass@k以捕获安全性和鲁棒性。如论文所述，“结果信号，如通过/失败判定、测试认证质量和Hacker发现的对抗性漏洞”提供了更全面的评估。通过纳入这些信号，基准可以评估功能正确性和对抗攻击的韧性，与现实世界软件工程需求保持一致。"
+      },
+      "confidence": 0.7
+    },
+    {
+      "question": {
+        "en": "Solvita's Planner selects strategies using a graph knowledge network; could similar adaptive planning be applied to multi-file generation tasks, and what structural changes would be needed to handle long-range dependencies in repository-level contexts?",
+        "zh": "Solvita的Planner使用图知识网络选择策略；类似的适应性规划能否应用于多文件生成任务？需要什么结构变化来处理仓库级上下文中的长距离依赖？"
+      },
+      "reason": {
+        "en": "The user is interested in long-context handling and repository-level generation. The Planner's role in strategy selection and learning from experience is relevant to planning in larger codebases, and the question explores potential adaptations.",
+        "zh": "用户对长上下文处理和仓库级生成感兴趣。Planner在策略选择和经验学习中的作用与更大代码库的规划相关，该问题探讨潜在的适应性。"
+      },
+      "answer": {
+        "en": "Solvita's Planner uses a 'graph-structured knowledge network' to select strategies based on past outcomes, enabling continuous learning without weight updates. This approach could be applied to multi-file generation tasks if the graph is extended to encode cross-file dependencies (e.g., import relationships, shared types) and the planning accounts for interleaved editing across files. The paper states that 'each agent is paired with a trainable, graph-structured knowledge network' and that 'outcome signals... are recast as reinforcement learning updates to these network weights,' but it focuses on competitive programming problems with single-file solutions. For repository-level contexts, structural changes would likely require augmenting the graph with file-level nodes and edges representing dependencies, and the Planner would need to reason about ordering and consistency across multiple files to handle long-range dependencies. However, the paper does not discuss multi-file generation or repository-level tasks, so these adaptations remain speculative.",
+        "zh": "Solvita的Planner使用“图结构知识网络”根据过去的结果选择策略，实现无需权重更新的持续学习。如果图被扩展以编码跨文件依赖关系（例如，导入关系、共享类型）并且规划考虑跨文件的交错编辑，则此方法可以应用于多文件生成任务。论文指出“每个智能体都配有一个可训练的图结构知识网络”并且“结果信号……被重新构想为对这些网络权重的强化学习更新”，但它集中于单文件解决方案的竞赛编程问题。对于仓库级上下文，结构变化可能需要用文件级节点和表示依赖关系的边来增强图，并且Planner需要推理跨多个文件的顺序和一致性以处理长距离依赖。然而，论文没有讨论多文件生成或仓库级任务，因此这些适应性仍然是推测性的。"
+      },
+      "confidence": 0.4
+    },
+    {
+      "question": {
+        "en": "Solvita was evaluated on live Codeforces rounds; how does this dynamic evaluation capture reasoning adaptation over time, and what implications does it have for designing benchmarks that assess LLM performance on evolving, real-world software engineering challenges?",
+        "zh": "Solvita was evaluated on live Codeforces rounds; how does this dynamic evaluation capture reasoning adaptation over time, and what implications does it have for designing benchmarks that assess LLM performance on evolving, real-world software engineering challenges?"
+      },
+      "reason": {
+        "en": "The user values evaluation methodologies that go beyond static benchmarks. Live rounds introduce temporal adaptation and realistic constraints, offering insights for evaluating LLMs in continuous integration or human-in-the-loop settings.",
+        "zh": "The user values evaluation methodologies that go beyond static benchmarks. Live rounds introduce temporal adaptation and realistic constraints, offering insights for evaluating LLMs in continuous integration or human-in-the-loop settings."
+      },
+      "answer": {
+        "en": "The evaluation on live Codeforces rounds captures reasoning adaptation over time because Solvita's 'trainable, graph-structured knowledge network' is updated via reinforcement learning from outcome signals, which 'allows the agents to dynamically route future queries based on past successes and failures, effectively accumulating transferable reasoning experience over time.' Live rounds introduce temporally evolving, unseen problems under realistic constraints, testing the system's ability to leverage accumulated experience rather than relying on static retrieval. This dynamic evaluation implies that benchmarks for assessing LLMs on real-world software engineering challenges should incorporate evolving problem sets and continuous learning metrics, rather than static datasets, to capture an agent's capacity for sustained adaptation and transfer of reasoning skills.",
+        "zh": "The evaluation on live Codeforces rounds captures reasoning adaptation over time because Solvita's 'trainable, graph-structured knowledge network' is updated via reinforcement learning from outcome signals, which 'allows the agents to dynamically route future queries based on past successes and failures, effectively accumulating transferable reasoning experience over time.' Live rounds introduce temporally evolving, unseen problems under realistic constraints, testing the system's ability to leverage accumulated experience rather than relying on static retrieval. This dynamic evaluation implies that benchmarks for assessing LLMs on real-world software engineering challenges should incorporate evolving problem sets and continuous learning metrics, rather than static datasets, to capture an agent's capacity for sustained adaptation and transfer of reasoning skills."
+      },
+      "confidence": 0.7
+    }
+  ],
+  "score": 66.25,
+  "score_dimensions": [
+    {
+      "name": "topic_alignment",
+      "weight": 0.35,
+      "value": 0.6
+    },
+    {
+      "name": "methodology_fit",
+      "weight": 0.25,
+      "value": 0.65
+    },
+    {
+      "name": "novelty",
+      "weight": 0.2,
+      "value": 0.75
+    },
+    {
+      "name": "experiment_coverage",
+      "weight": 0.2,
+      "value": 0.7
+    }
+  ],
+  "markdown": "",
+  "model": "deepseek-v4-flash",
+  "generated_at": "2026-05-18T06:37:38Z"
+}

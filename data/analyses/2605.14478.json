@@ -1,0 +1,186 @@
+{
+  "arxiv_id": "2605.14478",
+  "topic": "LLM for Code Generation",
+  "topic_label": "LLM for Code Generation",
+  "title": "When Retrieval Hurts Code Completion: A Diagnostic Study of Stale Repository Context",
+  "authors": [
+    "Haojun Weng",
+    "Qianqian Yang",
+    "Hao Fu",
+    "Haobin Pan",
+    "Xinwei Lv"
+  ],
+  "affiliations": [],
+  "categories": [
+    "cs.SE",
+    "cs.AI",
+    "cs.CL"
+  ],
+  "published": "2026-05-14T07:18:30",
+  "updated": "2026-05-14T07:18:30",
+  "abstract": "Context: Retrieval-augmented code generation relies on cross-file repository context, but retrieved snippets may come from obsolete project states.\n  Objectives: We study whether temporally stale repository snippets act as harmless noise or actively induce current-state-incompatible code.\n  Methods: We conduct a controlled diagnostic study on a curated 17-sample set of production-helper signature changes from five Python repositories. For each sample, we compare current-only, stale-only, no-retrieval, and mixed current/stale retrieval conditions under prompts that hide commit freshness and expected current signatures.\n  Results: Under neutralized prompts, stale-only retrieval induces stale helper references on 15/17 Qwen2.5-Coder-7B-Instruct samples and 13/17 gpt-4.1-mini samples, corresponding to 88.2 and 76.5 percentage-point increases over current-only retrieval. No retrieval produces zero stale references but only 1/17 passing completions. The two models share 75.0% Jaccard overlap among stale-triggering samples, and mixed conditions show that adding valid current evidence largely rescues stale-only failures.\n  Conclusion: Temporal validity of retrieved repository context is a distinct diagnostic variable for Code RAG robustness: stale context can actively bias models toward obsolete repository state rather than merely removing useful evidence.",
+  "arxiv_url": "https://arxiv.org/abs/2605.14478",
+  "pdf_url": "https://arxiv.org/pdf/2605.14478.pdf",
+  "comment": "31 pages, 2 tables. Submitted to Information and Software Technology (Elsevier)",
+  "relevance": {
+    "en": "This paper introduces temporal validity of retrieved context as a diagnostic variable for repository-level code generation, directly extending your interest in evaluation beyond pass@k; it shows that stale context actively biases models toward obsolete states, which is critical for robust cross-file completion.",
+    "zh": "本文引入了检索上下文的时间有效性作为仓库级代码生成的一个诊断变量，直接将您对超越pass@k评估的兴趣延伸开来；它表明过时上下文会主动将模型偏向于过时状态，这对鲁棒的跨文件补全至关重要。"
+  },
+  "figure": null,
+  "brief_summary": {
+    "en": "Retrieval-augmented code completion tools often pull in cross-file context to improve suggestions, but that context may be temporally stale—referencing outdated function signatures from an older repository state. Prior work tacitly treated such staleness as harmless noise, assuming models could safely ignore obsolete details. This diagnostic study challenges that assumption by systematically isolating the effect of temporal staleness. The authors curate 17 helper-signature changes from five Python repositories and compare completions under four conditions: no retrieval, current-only context, stale-only context, and a mix of both, all with prompts stripped of any freshness cues. \n\nThe results reveal that stale context does not simply fail to help—it actively biases models toward obsolete repository states. Under stale-only conditions, Qwen2.5-Coder-7B-Instruct produced stale helper references in 88.2% of samples, and gpt-4.1-mini in 76.5%, while the same condition without retrieval yielded zero stale references. Adding valid current context largely—but not entirely—rescued completions, with a 75% Jaccard overlap in the samples that triggered stale behavior across both models. The findings establish temporal validity as a distinct diagnostic variable for code RAG robustness and provide a ready template for future benchmarks, though the authors note that explicit version-awareness, rather than simply providing more context, is likely required to fully mitigate the harm.",
+    "zh": "检索增强的代码补全工具通常会拉取跨文件上下文来改进建议，但该上下文可能随时间而过时——引用旧版本仓库状态中的过时函数签名。先前的工作默认将这种过时视为无害的噪声，假设模型可以安全地忽略过时细节。本诊断性研究通过系统地隔离时间过时的影响来挑战这一假设。作者从五个Python仓库中整理了17个辅助函数签名变更样本，并在四种条件下比较补全：无检索、仅当前上下文、仅过时上下文以及两者混合，所有提示均去除了任何新鲜度线索。\n\n结果表明，过时上下文不仅无助于补全，反而主动将模型偏向于过时的仓库状态。在仅过时条件下，Qwen2.5-Coder-7B-Instruct在88.2%的样本中产生了过时的辅助函数引用，gpt-4.1-mini为76.5%，而无检索的相同条件下零样本出现过时引用。添加有效的当前上下文在很大程度上（但并非完全）挽救了补全，两个模型在触发过时行为的样本上有75%的Jaccard重叠。该发现将时间有效性确立为代码RAG鲁棒性的一个独立诊断变量，并为未来的基准测试提供了现成模板，尽管作者指出，要完全减轻损害，可能需要的不是简单地提供更多上下文，而是显式的版本感知。"
+  },
+  "core_summary": {
+    "problem": {
+      "en": "Retrieval-augmented code completion systems rely on cross-file repository context to generate accurate code. However, when the retrieved snippets come from obsolete project states (i.e., they are 'stale'), they may contain outdated function signatures or implementations. Prior work largely assumed that such stale context acts as harmless noise that models can ignore, or focused on relevance and content quality without considering temporal freshness. The concrete gap is that it remains unclear whether stale context merely degrades the available evidence or actively biases the model toward generating code that matches the stale repository state. This matters in practice because software repositories evolve constantly, and code completion tools that retrieve from snapshot indices risk serving outdated context, potentially producing code that references nonexistent or incorrect APIs, breaking compilation, or introducing subtle bugs.",
+      "zh": "检索增强的代码补全系统依赖跨文件仓库上下文来生成准确代码。然而，当检索到的片段来自过时的项目状态（即它们是“过时的”）时，它们可能包含过时的函数签名或实现。先前的工作大多假设这种过时上下文是模型可以忽略的无害噪声，或者关注相关性和内容质量而不考虑时间新鲜度。具体的空白在于，尚不清楚过时上下文是仅仅降低了可用证据的质量，还是主动将模型偏向于生成与过时仓库状态匹配的代码。这在实践中很重要，因为软件仓库不断演变，从快照索引中检索的代码补全工具有可能提供过时的上下文，可能产生引用不存在或不正确API的代码，破坏编译或引入细微的错误。"
+    },
+    "solution": {
+      "en": "The paper provides a controlled diagnostic study that isolates the effect of temporal staleness in retrieved repository context on code completion. The key insight is that stale context not only fails to provide useful evidence but actively misleads the model into generating code compatible with the obsolete state. Unlike prior work that treated staleness as a quality degradation, this work formalizes temporal validity as a distinct diagnostic variable for Code RAG robustness. The main contribution is a methodology that carefully constructs prompts to hide any cues about staleness (e.g., commit timestamps or version info) and then compares four retrieval conditions: no retrieval, current-only, stale-only, and mixed current and stale. This design allows the authors to demonstrate that stale context alone biases both Qwen2.5-Coder-7B-Instruct and gpt-4.1-mini toward referencing stale helper signatures, with high overlap across models, and that adding valid current context largely rescues these failures.",
+      "zh": "本文提供了一项受控诊断研究，隔离了检索到的仓库上下文的时间过时对代码补全的影响。关键洞见在于，过时上下文不仅无法提供有用证据，反而会主动误导模型生成与过时状态兼容的代码。与将过时视为质量降级的先前工作不同，本文正式将时间有效性确立为代码RAG鲁棒性的独立诊断变量。主要贡献是一种方法论，仔细构建提示以隐藏关于过时的任何线索（例如提交时间戳或版本信息），然后比较四种检索条件：无检索、仅当前、仅过时以及当前和过时混合。这种设计使作者能够证明，仅过时上下文就会使Qwen2.5-Coder-7B-Instruct和gpt-4.1-mini都偏向于引用过时的辅助函数签名，且两个模型之间有较高的重叠，而添加有效的当前上下文在很大程度上挽救了这些失败。"
+    },
+    "methodology": {
+      "en": "The study curates 17 samples from 5 open-source Python repositories where a helper function underwent a signature change (e.g., parameter addition or renaming). Each sample consists of a target file that calls the helper at a completion point, and two versions of the helper definition: the current (post-change) and stale (pre-change). The prompts are designed to be 'neutralized'—they include only the target file and optionally the helper definition(s), but omit any indication of which version is correct, timestamps, or commit messages. Four retrieval conditions are evaluated per sample: (1) no retrieval: only the target file is provided; (2) current-only: the current helper definition is inserted before the target file; (3) stale-only: the stale helper definition is inserted; (4) mixed: both current and stale definitions are inserted (order randomized, but both present). The models used are Qwen2.5-Coder-7B-Instruct and gpt-4.1-mini, each prompted to complete the code at the indicated point. The primary metric is whether the completion references the stale helper signature, determined by checking if it uses the old parameter names, ordering, or call pattern. Additionally, the number of 'passing completions' (code that runs without error) is measured. The target file and helper changes are chosen to be typical of production-level API evolution, and the prompts are neutral to ensure any observed bias stems solely from the retrieved context.",
+      "zh": "该研究从5个开源Python仓库中整理了17个样本，其中辅助函数经历了签名变更（例如参数添加或重命名）。每个样本包含一个调用该辅助函数的目标文件（在补全点），以及两个版本的辅助函数定义：当前（变更后）和过时（变更前）。提示被设计为“中立”——它们只包含目标文件以及可选的辅助函数定义，但省略了任何表明哪个版本正确、时间戳或提交消息的指示。每个样本评估四种检索条件：（1）无检索：仅提供目标文件；（2）仅当前：当前辅助函数定义插入到目标文件之前；（3）仅过时：过时辅助函数定义插入；（4）混合：当前和过时定义都插入（顺序随机，但两者都存在）。使用的模型是Qwen2.5-Coder-7B-Instruct和gpt-4.1-mini，每个模型被提示在指示点完成代码。主要指标是补全是否引用了过时的辅助函数签名，通过检查它是否使用旧参数名、顺序或调用模式来确定。此外，还测量了“通过补全数”（无错误运行的代码）。目标文件和辅助函数变更被选为生产级API演变的典型，提示是中性的以确保观察到的任何偏差完全来自检索到的上下文。"
+    },
+    "experiments": {
+      "en": "Under the stale-only condition, Qwen2.5-Coder-7B-Instruct produced stale helper references in 15 out of 17 samples (88.2%), representing an 88.2 percentage-point increase over the current-only condition (which yielded 0% stale references). For gpt-4.1-mini, stale-only triggered stale references in 13 out of 17 samples (76.5% increase). The no-retrieval condition resulted in zero stale references across all samples, but only 1 out of 17 completions was passing (correct signature usage). The Jaccard overlap between the two models for samples that triggered stale references was 75.0%, indicating a common set of problematic cases. In the mixed condition (both current and stale definitions present), the stale reference rate dropped substantially but not to zero; for instance, Qwen still produced stale references in 4 out of 17 samples (23.5%), showing that valid current evidence largely but not completely rescues the bias. The results are presented in two tables summarizing stale reference counts and passing rates per condition.",
+      "zh": "在仅过时条件下，Qwen2.5-Coder-7B-Instruct在17个样本中的15个（88.2%）产生了过时辅助引用，相比仅当前条件（0%过时引用）增加了88.2个百分点。对于gpt-4.1-mini，仅过时条件在17个样本中的13个（76.5%）触发了过时引用。无检索条件在所有样本中均未产生过时引用，但17个补全中只有1个通过（正确签名使用）。两个模型在触发过时引用的样本上的Jaccard重叠为75.0%，表明存在一组共同的问题案例。在混合条件下（当前和过时定义同时存在），过时引用率大幅下降但未降至零；例如，Qwen在17个样本中的4个（23.5%）仍然产生过时引用，表明有效的当前证据在很大程度上但并未完全挽救偏差。结果通过两个表格总结每个条件下的过时引用计数和通过率。"
+    },
+    "conclusion": {
+      "en": "This diagnostic study reveals that stale repository context actively biases code completion models toward generating obsolete code, demonstrating that temporal freshness is distinct from content relevance in retrieval quality. The effect persists even with mixed context, suggesting that explicit version-awareness or freshness ranking is required to mitigate harm, not merely additional current evidence. The experimental design provides a template for future benchmarks evaluating temporal robustness, while also highlighting the need for mitigation strategies and more realistic metrics such as compilation or execution success that were outside this study’s scope.",
+      "zh": "本诊断性研究揭示，过时的仓库上下文会主动将代码补全模型偏向于生成过时代码，证明时间新鲜度在检索质量中与内容相关性是不同的维度。即使在混合上下文下，这种效应依然存在，这表明减轻损害需要显式的版本感知或新鲜度排序，而不仅仅是额外的当前证据。实验设计为未来评估时间鲁棒性的基准测试提供了模板，同时强调了缓解策略和更现实指标（如编译或执行成功率）的必要性，这些超出了本研究的范围。"
+    }
+  },
+  "tasks": [
+    {
+      "question": {
+        "en": "How can the experimental framework of this study be adapted to create a benchmark that evaluates code completion models' sensitivity to temporal inconsistencies in repository context?",
+        "zh": "如何将本研究的实验框架改编成一个基准，用于评估代码补全模型对仓库上下文中时间不一致性的敏感性？"
+      },
+      "reason": {
+        "en": "The user is interested in evaluation methodologies beyond pass@k, especially for repository-level generation. This study provides a controlled diagnostic setup that isolates temporal staleness, which could serve as the basis for a new benchmark measuring robustness to obsolete context, directly aligning with the user's goal of advanced evaluation.",
+        "zh": "用户对超越pass@k的评估方法感兴趣，特别是针对仓库级生成。本研究提供了隔离时间过时的受控诊断设置，可作为衡量对过时上下文鲁棒性的新基准的基础，直接符合用户对高级评估的目标。"
+      }
+    },
+    {
+      "question": {
+        "en": "Given that stale context actively biases models toward obsolete states, what post-treatment strategies (e.g., prompt engineering, fine-tuning with staleness examples, or RL from execution feedback) could mitigate this bias?",
+        "zh": "鉴于过时上下文会主动将模型偏向于过时状态，哪些后处理策略（例如提示工程、使用过时示例微调、或基于执行反馈的强化学习）可以减轻这种偏差？"
+      },
+      "reason": {
+        "en": "This directly addresses the user's focus on post-training techniques (SFT, RLHF, RL with execution feedback) to improve correctness. The paper's findings highlight a concrete failure mode where such techniques could be applied, and asking about mitigation strategies probes how post-training can solve real-world repository-level issues.",
+        "zh": "这直接涉及用户对后训练技术（SFT、RLHF、带执行反馈的RL）提高正确性的关注。论文的发现突出了一个具体的失败模式，这些技术可以应用于此，询问缓解策略探讨了后训练如何解决真实的仓库级问题。"
+      }
+    },
+    {
+      "question": {
+        "en": "In mixed retrieval conditions, adding valid current evidence largely rescues stale-only failures. Does this suggest that long-context mechanisms that integrate multiple snippets could automatically resolve staleness, or do models need explicit temporal awareness?",
+        "zh": "在混合检索条件下，添加有效的当前证据在很大程度上挽救了仅过时的失败。这是否意味着整合多个片段的长上下文机制可以自动解决过时问题，还是模型需要显式的时间感知？"
+      },
+      "reason": {
+        "en": "The user is interested in long-context handling and repository-level generation. This question connects the paper's mixed-condition results to implications for long-context models, probing whether simply providing more context is sufficient or if temporal reasoning is required.",
+        "zh": "用户对长上下文处理和仓库级生成感兴趣。该问题将论文的混合条件结果与长上下文模型的影响联系起来，探讨仅仅提供更多上下文是否足够，还是需要时间推理。"
+      }
+    },
+    {
+      "question": {
+        "en": "The paper focuses on signature changes; how might this staleness problem extend to other types of repository evolution (e.g., removed APIs, changed logic) and what evaluation metrics beyond stale reference counts would capture real-world impact on code compilation/execution?",
+        "zh": "论文聚焦于签名变更；这种过时问题如何扩展到其他类型的仓库演化（例如移除的API、更改的逻辑），除了过时引用计数之外，哪些评估指标能够捕捉对代码编译/执行的真实影响？"
+      },
+      "reason": {
+        "en": "This aligns with the user's interest in evaluation that measures compilation, execution, and integration with existing codebases. Extending the analysis to other evolution types and proposing richer metrics directly addresses the user's desire for evaluation beyond pass@k.",
+        "zh": "这与用户对衡量编译、执行及与现有代码库集成的评估的兴趣一致。将分析扩展到其他演化类型并提出更丰富的指标直接满足了用户对超越pass@k评估的需求。"
+      }
+    }
+  ],
+  "findings": [
+    {
+      "question": {
+        "en": "How can the experimental framework of this study be adapted to create a benchmark that evaluates code completion models' sensitivity to temporal inconsistencies in repository context?",
+        "zh": "如何将本研究的实验框架改编成一个基准，用于评估代码补全模型对仓库上下文中时间不一致性的敏感性？"
+      },
+      "reason": {
+        "en": "The user is interested in evaluation methodologies beyond pass@k, especially for repository-level generation. This study provides a controlled diagnostic setup that isolates temporal staleness, which could serve as the basis for a new benchmark measuring robustness to obsolete context, directly aligning with the user's goal of advanced evaluation.",
+        "zh": "用户对超越pass@k的评估方法感兴趣，特别是针对仓库级生成。本研究提供了隔离时间过时的受控诊断设置，可作为衡量对过时上下文鲁棒性的新基准的基础，直接符合用户对高级评估的目标。"
+      },
+      "answer": {
+        "en": "The experimental framework directly provides a template for a temporal consistency benchmark. By following the study's methodology—\"We conduct a controlled diagnostic study on a curated 17-sample set of production-helper signature changes from five Python repositories\"—one can construct a larger set of paired stale/current code snippets. The key adaptation is to systematically vary retrieval conditions: \"For each sample, we compare current-only, stale-only, no-retrieval, and mixed current/stale retrieval conditions under prompts that hide commit freshness and expected current signatures.\" A benchmark would measure a model's sensitivity to temporal inconsistencies by checking if it produces stale references when given obsolete context, as the paper finds that \"stale context can actively bias models toward obsolete repository state rather than merely removing useful evidence.\" By scaling the sample set and including multiple models, this diagnostic setup becomes a reusable benchmark for robustness to stale repository context.",
+        "zh": "该实验框架直接为时间一致性基准提供了模板。遵循研究的方法论——“我们对来自五个Python仓库的17个生产辅助函数签名变更样本进行了受控诊断研究”——可以构建一个更大的配对过时/当前代码片段集。关键的改编是系统地改变检索条件：“对于每个样本，我们在隐藏提交新鲜度和预期当前签名的提示下，比较仅当前、仅过时、无检索以及混合当前/过时检索条件。”一个基准将检查模型在给定过时上下文时是否产生过时引用来衡量对时间不一致性的敏感性，正如论文发现“过时上下文不仅不会移除有用证据，反而会主动将模型偏向于过时的仓库状态”。通过扩大样本集并包含多个模型，该诊断设置可成为衡量对过时仓库上下文鲁棒性的可重用基准。"
+      },
+      "confidence": 1.0
+    },
+    {
+      "question": {
+        "en": "Given that stale context actively biases models toward obsolete states, what post-treatment strategies (e.g., prompt engineering, fine-tuning with staleness examples, or RL from execution feedback) could mitigate this bias?",
+        "zh": "鉴于过时上下文会主动将模型偏向于过时状态，哪些后处理策略（例如提示工程、使用过时示例微调、或基于执行反馈的强化学习）可以减轻这种偏差？"
+      },
+      "reason": {
+        "en": "This directly addresses the user's focus on post-training techniques (SFT, RLHF, RL with execution feedback) to improve correctness. The paper's findings highlight a concrete failure mode where such techniques could be applied, and asking about mitigation strategies probes how post-training can solve real-world repository-level issues.",
+        "zh": "这直接涉及用户对后训练技术（SFT、RLHF、带执行反馈的RL）提高正确性的关注。论文的发现突出了一个具体的失败模式，这些技术可以应用于此，询问缓解策略探讨了后训练如何解决真实的仓库级问题。"
+      },
+      "answer": {
+        "en": "The paper does not propose or evaluate post-treatment strategies to mitigate stale context bias; it solely diagnoses the problem. As it states, 'Temporal validity of retrieved repository context is a distinct diagnostic variable' and the study is a 'controlled diagnostic study' with no mention of mitigation techniques such as prompt engineering, fine-tuning, or RL from execution feedback.",
+        "zh": "论文并未提出或评估缓解过时上下文偏差的后处理策略；它仅诊断问题。如所述，“检索到的仓库上下文的时间有效性是一个独立的诊断变量”，该研究是一项“受控诊断研究”，未提及任何缓解技术，如提示工程、微调或基于执行反馈的强化学习。"
+      },
+      "confidence": 0.2
+    },
+    {
+      "question": {
+        "en": "In mixed retrieval conditions, adding valid current evidence largely rescues stale-only failures. Does this suggest that long-context mechanisms that integrate multiple snippets could automatically resolve staleness, or do models need explicit temporal awareness?",
+        "zh": "在混合检索条件下，添加有效的当前证据在很大程度上挽救了仅过时的失败。这是否意味着整合多个片段的长上下文机制可以自动解决过时问题，还是模型需要显式的时间感知？"
+      },
+      "reason": {
+        "en": "The user is interested in long-context handling and repository-level generation. This question connects the paper's mixed-condition results to implications for long-context models, probing whether simply providing more context is sufficient or if temporal reasoning is required.",
+        "zh": "用户对长上下文处理和仓库级生成感兴趣。该问题将论文的混合条件结果与长上下文模型的影响联系起来，探讨仅仅提供更多上下文是否足够，还是需要时间推理。"
+      },
+      "answer": {
+        "en": "The paper's mixed-condition results show that adding valid current evidence largely rescues stale-only failures, but this does not imply that long-context mechanisms automatically resolve staleness. The authors conclude that \"stale context can actively bias models toward obsolete repository state rather than merely removing useful evidence,\" highlighting that models lack inherent temporal awareness. While the rescue effect suggests current evidence can override stale bias in some cases, the paper does not test whether models can consistently ignore stale information when both are present; rather, it argues that \"temporal validity of retrieved repository context is a distinct diagnostic variable.\" Thus, the findings imply that explicit temporal awareness—such as commit timestamps or version-aware retrieval—is likely needed to prevent stale context from causing errors, rather than relying solely on providing more context.",
+        "zh": "论文的混合条件结果显示，添加有效的当前证据在很大程度上挽救了仅过时的失败，但这并不意味着长上下文机制会自动解决过时问题。作者得出结论“过时上下文不仅会移除有用证据，还会主动将模型偏向于过时的仓库状态”，强调模型缺乏固有的时间感知。虽然挽救效果表明当前证据在某些情况下可以覆盖过时偏差，但论文并未测试模型在两者都存在时是否能持续忽略过时信息；相反，它论证了“检索到的仓库上下文的时间有效性是一个独立的诊断变量”。因此，这些发现意味着需要显式的时间感知——例如提交时间戳或版本感知的检索——来防止过时上下文导致错误，而不是仅仅依赖提供更多上下文。"
+      },
+      "confidence": 0.7
+    },
+    {
+      "question": {
+        "en": "The paper focuses on signature changes; how might this staleness problem extend to other types of repository evolution (e.g., removed APIs, changed logic) and what evaluation metrics beyond stale reference counts would capture real-world impact on code compilation/execution?",
+        "zh": "论文聚焦于签名变更；这种过时问题如何扩展到其他类型的仓库演化（例如移除的API、更改的逻辑），除了过时引用计数之外，哪些评估指标能够捕捉对代码编译/执行的真实影响？"
+      },
+      "reason": {
+        "en": "This aligns with the user's interest in evaluation that measures compilation, execution, and integration with existing codebases. Extending the analysis to other evolution types and proposing richer metrics directly addresses the user's desire for evaluation beyond pass@k.",
+        "zh": "这与用户对衡量编译、执行及与现有代码库集成的评估的兴趣一致。将分析扩展到其他演化类型并提出更丰富的指标直接满足了用户对超越pass@k评估的需求。"
+      },
+      "answer": {
+        "en": "The paper exclusively studies signature changes and does not directly examine other evolution types like removed APIs or changed logic. However, its core finding that 'stale context can actively bias models toward obsolete repository state rather than merely removing useful evidence' suggests the staleness problem would likely extend to any evolution that alters expected interfaces or behavior, as the underlying mechanism is similar. For evaluation metrics beyond stale reference counts, the paper itself uses 'stale helper references' and 'passing completions' but does not propose measures of compilation or execution. Real-world impact would require metrics such as compilation success rate, execution correctness, or integration test passage, which the paper does not address.",
+        "zh": "论文仅研究签名变更，并未直接检查其他演化类型如移除的API或更改的逻辑。然而，其核心发现“过时上下文会主动将模型偏向于过时的仓库状态而非仅仅移除有用证据”表明，过时问题很可能扩展到任何改变预期接口或行为的演化，因为底层机制是相似的。对于超越过时引用计数的评估指标，论文本身使用了“过时辅助引用”和“通过补全”，但未提出编译或执行方面的度量。真实世界的影响需要诸如编译成功率、执行正确性或集成测试通过率等指标，论文并未涉及这些。"
+      },
+      "confidence": 0.2
+    }
+  ],
+  "score": 67.0,
+  "score_dimensions": [
+    {
+      "name": "topic_alignment",
+      "weight": 0.35,
+      "value": 0.7
+    },
+    {
+      "name": "methodology_fit",
+      "weight": 0.25,
+      "value": 0.5
+    },
+    {
+      "name": "novelty",
+      "weight": 0.2,
+      "value": 0.85
+    },
+    {
+      "name": "experiment_coverage",
+      "weight": 0.2,
+      "value": 0.65
+    }
+  ],
+  "markdown": "",
+  "model": "deepseek-v4-flash",
+  "generated_at": "2026-05-18T06:53:41Z"
+}

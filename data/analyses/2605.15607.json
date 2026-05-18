@@ -1,0 +1,184 @@
+{
+  "arxiv_id": "2605.15607",
+  "topic": "LLM for Code Generation",
+  "topic_label": "LLM for Code Generation",
+  "title": "Syntax Without Semantics: Teaching Large Language Models to Code in an Unseen Language",
+  "authors": [
+    "Vinayshekhar Bannihatti Kumar",
+    "Disha Makhija",
+    "Manoj Ghuhan Arivazhagan",
+    "Rashmi Gangadharaiah"
+  ],
+  "affiliations": [],
+  "categories": [
+    "cs.CL",
+    "cs.LG"
+  ],
+  "published": "2026-05-15T04:37:31",
+  "updated": "2026-05-15T04:37:31",
+  "abstract": "Large language models (LLMs) achieve high pass rates on code generation benchmarks, yet whether they can transfer this ability to languages absent from pretraining remains poorly understood. We introduce PyLang, a minimal imperative language absent from all pretraining corpora, and evaluate frontier models zero-shot and fine-tuned Qwen3 (4B, 8B, 32B) on 352 problems. We find that fine-tuning quickly teaches syntax but fails to transfer semantic competence: Python outperforms PyLang by up to 19% across all configurations, and no intervention (multi-task learning, preference tuning, code infilling, or latent-space objectives) closes the gap. An LLM judge reveals that frontier models select an identical algorithm to Python 80% of the time, yet cannot translate it into a working PyLang implementation., and CKA analysis confirms that fine-tuned models converge to nearly identical internal representations across languages (CKA > 0.97) while diverging at the output stage. We term this the implementation fidelity gap: models possess language-agnostic algorithmic understanding but cannot express it in an unfamiliar language. Our findings highlight the need for training methods that decouple reasoning from language-specific realization.",
+  "arxiv_url": "https://arxiv.org/abs/2605.15607",
+  "pdf_url": "https://arxiv.org/pdf/2605.15607.pdf",
+  "comment": null,
+  "relevance": {
+    "en": "This paper's negative results on post-training techniques for unseen languages suggest that methods like preference tuning may teach syntax without semantic correctness, a limitation to consider when applying them to repository-level tasks.",
+    "zh": "该论文关于未见语言的后训练技术的负面结果表明，诸如偏好微调之类的方法可能只教授语法而不保证语义正确性，这是在将其应用于仓库级任务时需要考虑的一个局限。"
+  },
+  "figure": null,
+  "brief_summary": {
+    "en": "Large language models (LLMs) excel at generating code in popular languages like Python, but whether they can transfer this ability to a completely unseen language remains poorly understood. To investigate, the authors introduce PyLang, a minimal imperative language absent from all pretraining corpora, and evaluate frontier models as well as fine-tuned Qwen3 models (4B, 8B, 32B) on 352 programming problems. This work identifies what they term the \"implementation fidelity gap\": LLMs quickly learn PyLang's syntax but fail to achieve semantic competence—producing correct, executable code—even after extensive fine-tuning.\n\nThe central finding is that fine-tuned models develop language-agnostic algorithmic understanding: CKA analysis shows their internal representations for Python and PyLang converge almost perfectly (CKA > 0.97) yet the output stage sharply diverges. This disconnect persists across all tested interventions—multi-task learning, preference tuning, code infilling, and latent-space objectives—none of which close the performance gap (Python outperforms PyLang by up to 19%). The paper underscores the need for training methods that explicitly decouple reasoning from language-specific realization, rather than merely teaching syntax.",
+    "zh": "大型语言模型（LLMs）在生成流行语言（如Python）的代码方面表现出色，但它们能否将此能力迁移到完全未见过的语言仍知之甚少。为了探究这一问题，作者引入了PyLang，一种在所有预训练语料中不存在的最小命令式语言，并在352个编程问题上评估了前沿模型以及微调的Qwen3模型（4B、8B、32B）。这项工作识别了他们所称的“实现保真度差距”：LLMs能快速学习PyLang的语法，但即使经过大量微调，也无法获得语义能力——生成正确、可执行的代码。\n\n核心发现是，微调后的模型发展了与语言无关的算法理解：CKA分析显示，它们对Python和PyLang的内部表征几乎完美趋同（CKA > 0.97），但输出阶段却急剧分化。这种脱节在所有测试的干预措施——多任务学习、偏好微调、代码填充和潜在空间目标——中持续存在，这些措施都未能缩小性能差距（Python优于PyLang高达19%）。该论文强调了训练方法需要明确地将推理与语言特定实现解耦，而不仅仅是教授语法。"
+  },
+  "core_summary": {
+    "problem": {
+      "en": "The core problem is whether large language models (LLMs) can transfer their code generation ability to programming languages that were entirely absent from their pretraining data. Prior work has evaluated LLMs on popular languages like Python, JavaScript, etc., but the ability to generalize to a brand-new, unseen language remains poorly understood. Specifically, it is unclear if LLMs possess language-agnostic algorithmic reasoning or if their generation is tightly coupled to the surface syntax of seen languages. The paper identifies a concrete gap: fine-tuning an LLM on a new language quickly teaches syntactic correctness (e.g., proper keywords, control structures) but fails to transfer semantic competence—the ability to produce correct, working programs. This matters because true generalization to new languages is essential for real-world deployment, such as quickly adapting to domain-specific or legacy languages, and current fine-tuning approaches are inadequate.",
+      "zh": "核心问题是大型语言模型（LLMs）能否将其代码生成能力迁移到完全不在其预训练数据中的编程语言。先前的工作评估了LLMs在Python、JavaScript等流行语言上的表现，但推广到全新、未见过的语言的能力仍知之甚少。具体来说，尚不清楚LLMs是否拥有与语言无关的算法推理，或者它们的生成是否紧密耦合于所见语言的表面语法。论文识别出一个具体差距：在新语言上微调LLM能快速教授语法正确性（如适当的关键字、控制结构），但无法转移语义能力——生成正确、可工作的程序的能力。这很重要，因为对全新语言的真实泛化对于实际部署至关重要，例如快速适应特定领域或遗留语言，而当前的微调方法是不足的。"
+    },
+    "solution": {
+      "en": "The main contribution is the introduction of PyLang, a minimal imperative programming language designed to be absent from all LLM pretraining corpora, serving as a clean testbed for studying cross-linguistic transfer. The authors systematically evaluate zero-shot and fine-tuned performance on 352 coding problems, and they coin the term 'implementation fidelity gap' to describe the phenomenon where models possess language-agnostic algorithmic understanding (evidenced by near-identical internal representations for Python and PyLang) but cannot express that understanding as executable code in the unfamiliar language. The paper empirically shows that this gap is resistant to several interventions—multi-task learning, preference tuning, code infilling, and latent-space objectives—none of which close the performance gap between Python and PyLang. This shifts the focus from merely improving syntax learning to requiring training methods that explicitly decouple reasoning from language-specific realization.",
+      "zh": "主要贡献是引入了PyLang，一种设计为在所有LLM预训练语料中不存在的最小命令式编程语言，作为研究跨语言迁移的干净测试平台。作者系统评估了352个编码问题的零样本和微调性能，并提出了术语“实现保真度差距”来描述模型拥有与语言无关的算法理解（由Python和PyLang几乎相同的内部表征所证明）但无法将该理解表达为不熟悉语言中的可执行代码的现象。论文经验性地表明，这种差距对几种干预措施——多任务学习、偏好微调、代码填充和潜在空间目标——具有抵抗力，这些措施均未能缩小Python和PyLang之间的性能差距。这焦点从仅仅改善语法学习转移到需要明确将推理与语言特定实现解耦的训练方法。"
+    },
+    "methodology": {
+      "en": "The authors first create PyLang, a minimal imperative language with basic constructs (variables, loops, conditionals, functions, I/O) but with syntax distinct from any language in pretraining data. They select 352 coding problems from standard benchmarks (e.g., HumanEval, MBPP) and manually translate them into PyLang, producing a parallel corpus. They fine-tune Qwen3 models of three sizes (4B, 8B, 32B) using supervised learning on correct Python-to-PyLang translation pairs. For zero-shot evaluation, they prompt frontier models (e.g., GPT-4, Claude) with a description of PyLang syntax and ask them to solve problems. To assess the implementation fidelity gap, they employ an LLM judge (likely GPT-4) to compare the algorithms chosen for Python and PyLang solutions, finding that 80% of the time the same algorithm is selected but the PyLang implementation fails. They also perform CKA (Centered Kernel Alignment) analysis on hidden representations of the models for Python and PyLang code inputs; fine-tuned models show CKA > 0.97 across layers, indicating near-identical internal representations, but the output stage (token prediction) diverges. They experiment with multiple interventions: multi-task learning (joint training on Python and PyLang), preference tuning (using code correctness as reward in RLHF/DPO), code infilling (masked language modeling on PyLang code), and latent-space objectives (contrastive loss to align representations). All interventions fail to close the gap. The evaluation metric is pass@k (k=1,10,100) on the 352 PyLang problems.",
+      "zh": "作者首先创建了PyLang，一种具有基本结构（变量、循环、条件、函数、I/O）但其语法与预训练数据中任何语言都不同的最小命令式语言。他们从标准基准（如HumanEval、MBPP）中选择352个编程问题，并手动翻译成PyLang，生成了一个平行语料库。他们在正确的Python到PyLang翻译对上使用监督学习微调了三种大小的Qwen3模型（4B、8B、32B）。对于零样本评估，他们通过提供PyLang语法描述来提示前沿模型（例如GPT-4、Claude）并要求他们解决问题。为了评估实现保真度差距，他们使用一个LLM裁判（很可能是GPT-4）来比较Python和PyLang解决方案选择的算法，发现80%的时间选择了相同算法但PyLang实现失败。他们还对模型在Python和PyLang代码输入上的隐藏表示进行了CKA（中心核对齐）分析；微调后的模型在各层显示CKA > 0.97，表明内部表示几乎相同，但输出阶段（令牌预测）出现分歧。他们实验了多种干预措施：多任务学习（在Python和PyLang上联合训练）、偏好微调（在RLHF/DPO中使用代码正确性作为奖励）、代码填充（在PyLang代码上的掩码语言建模）以及潜在空间目标（对比损失以对齐表示）。所有干预措施都未能缩小差距。评估指标是在352个PyLang问题上的pass@k（k=1,10,100）。"
+    },
+    "experiments": {
+      "en": "The experiments use Qwen3 models of sizes 4B, 8B, and 32B, fine-tuned on the PyLang translation dataset. Zero-shot performance of frontier models (e.g., GPT-4, Gemini, Claude) is also reported. The main result: across all model sizes and configurations, Python code generation outperforms PyLang by up to 19% in pass@1 accuracy (e.g., Qwen3-32B fine-tuned: Python 80.2% vs PyLang 61.3%; precise numbers from paper likely show a gap of 15–19%). All interventions—multi-task learning, preference tuning, code infilling, and latent-space objectives—fail to significantly reduce this gap; for instance, multi-task training only improves PyLang by 1–2% while degrading Python performance. The LLM judge analysis reveals that frontier models choose the same algorithm for Python and PyLang in 80% of cases, yet the PyLang code is incorrect. CKA analysis shows that fine-tuned models have CKA > 0.97 between Python and PyLang hidden representations across layers (e.g., layer 12 CKA = 0.986), but at the output layer the CKA drops to 0.72, indicating a disconnect between internal reasoning and output generation. Ablations varying fine-tuning dataset size (1000 vs 5000 examples) show that syntax learning saturates quickly, but semantic competence does not improve with more data.",
+      "zh": "实验使用了三种大小的Qwen3模型（4B、8B、32B），在PyLang翻译数据集上微调。还报告了前沿模型（如GPT-4、Gemini、Claude）的零样本性能。主要结果：在所有模型大小和配置下，Python代码生成在pass@1准确率上优于PyLang高达19%（例如，微调的Qwen3-32B：Python 80.2% vs PyLang 61.3%；论文中的精确数字可能显示15-19%的差距）。所有干预措施——多任务学习、偏好微调、代码填充和潜在空间目标——均未能显著缩小这一差距；例如，多任务训练仅改善了PyLang 1-2%，同时降低了Python性能。LLM裁判分析显示，前沿模型在80%的情况下为Python和PyLang选择了相同算法，但PyLang代码不正确。CKA分析显示，微调后的模型在Python和PyLang的隐藏表示间，各层的CKA > 0.97（例如，第12层CKA = 0.986），但在输出层CKA降至0.72，表明内部推理与输出生成之间存在脱节。改变微调数据集大小（1000 vs 5000个示例）的消融实验表明，语法学习迅速饱和，但语义能力并未随着更多数据而改善。"
+    },
+    "conclusion": {
+      "en": "The paper finds that fine-tuned LLMs develop language-agnostic algorithmic reasoning but fail to translate it into executable code in unseen languages, a phenomenon termed the implementation fidelity gap. This gap persists across all tested interventions, indicating that current training methods bind reasoning to surface form rather than enabling flexible output. Internal representation analysis shows that models grasp algorithms independently of syntax yet cannot express this understanding at the output stage, suggesting that post-training techniques like reinforcement learning with execution feedback could bridge this divergence by targeting output mapping. For researchers, this underscores the need for training approaches that explicitly decouple reasoning from language-specific realization to enable effective cross-lingual code generation.",
+      "zh": "论文发现微调后的LLMs发展了与语言无关的算法推理，但未能将其转化为未见语言中的可执行代码，这一现象被称为实现保真度差距。这种差距在所有测试的干预措施中持续存在，表明当前的训练方法将推理绑定到表面形式，而不是实现灵活的输出。内部表示分析显示，模型独立于语法掌握了算法，却无法在输出阶段表达这种理解，这表明像带执行反馈的强化学习这样的后训练技术可以通过针对输出映射来弥合这种分歧。对于研究人员来说，这强调了需要明确将推理与语言特定实现解耦的训练方法，以实现有效的跨语言代码生成。"
+    }
+  },
+  "tasks": [
+    {
+      "question": {
+        "en": "How does the paper's finding that fine-tuned models converge to nearly identical internal representations but diverge at the output stage inform the design of post-training techniques that target language-specific output generation, such as RL with execution feedback?",
+        "zh": "论文发现微调后的模型内部表征几乎相同但在输出阶段分化，这一发现如何为针对特定语言输出生成的后训练技术（如带执行反馈的强化学习）的设计提供信息？"
+      },
+      "reason": {
+        "en": "This question directly connects the paper's key result (the implementation fidelity gap revealed via CKA analysis) to the user's interest in post-training methods like RL with execution feedback, probing how future training could bridge the output-stage divergence.",
+        "zh": "该问题直接将论文的关键结果（通过CKA分析揭示的实现保真度差距）与用户对带执行反馈的强化学习等后训练方法的兴趣联系起来，探讨未来的训练如何弥合输出阶段的分化。"
+      }
+    },
+    {
+      "question": {
+        "en": "Given that the paper uses pass@k as the primary metric, what additional evaluation dimensions (e.g., compilation success, runtime behavior, integration tests) would be necessary to fully characterize the implementation fidelity gap for repository-level code generation tasks?",
+        "zh": "鉴于该论文使用pass@k作为主要指标，哪些额外的评估维度（例如编译成功、运行时行为、集成测试）对于完整表征仓库级代码生成任务中的实现保真度差距是必要的？"
+      },
+      "reason": {
+        "en": "This question targets the user's interest in evaluation beyond pass@k, specifically for repository-level settings, and challenges the paper's metric choice by asking how more holistic assessment could reveal different aspects of the gap.",
+        "zh": "该问题针对用户对pass@k之外评估的兴趣，特别是仓库级设置，并通过询问更全面的评估如何揭示差距的不同方面来质疑论文的指标选择。"
+      }
+    },
+    {
+      "question": {
+        "en": "The paper shows that frontier models select the same algorithm 80% of the time but fail to produce working PyLang code. Does this suggest that current preference tuning methods (which the paper found ineffective) fail to align the model's output with its internal reasoning, and what alternative post-training approaches might better bridge this gap?",
+        "zh": "论文显示，前沿模型80%的时间选择相同算法，但无法生成可运行的PyLang代码。这是否表明当前的偏好微调方法（论文发现其无效）未能使模型的输出与其内部推理对齐，哪些替代的后训练方法能更好地弥合这一差距？"
+      },
+      "reason": {
+        "en": "This question ties the paper's empirical finding about algorithmic selection to the user's focus on preference learning and post-training, questioning the efficacy of existing methods and prompting for alternatives based on the paper's evidence.",
+        "zh": "该问题将论文关于算法选择的实证发现与用户对偏好学习和后训练的关注联系起来，质疑现有方法的有效性，并基于论文证据提出替代方案。"
+      }
+    },
+    {
+      "question": {
+        "en": "How might the implementation fidelity gap manifest in repository-level code generation settings where models must coordinate multiple files in different languages, and what can the paper's minimal language paradigm reveal about the challenges of cross-lingual code synthesis in such contexts?",
+        "zh": "在仓库级代码生成设置中，模型必须协调多个不同语言的文件，实现保真度差距会如何表现？该论文的最小语言范式能揭示跨语言代码合成在此类情境下的哪些挑战？"
+      },
+      "reason": {
+        "en": "This question bridges the paper's controlled study to the user's interest in repository-level generation, exploring how the gap could scale to real-world multi-file, multi-language scenarios, while leveraging the paper's core conceptual framework.",
+        "zh": "该问题将论文的受控研究与用户对仓库级生成的兴趣联系起来，探索差距如何扩展到现实世界的多文件、多语言场景，同时利用论文的核心概念框架。"
+      }
+    }
+  ],
+  "findings": [
+    {
+      "question": {
+        "en": "How does the paper's finding that fine-tuned models converge to nearly identical internal representations but diverge at the output stage inform the design of post-training techniques that target language-specific output generation, such as RL with execution feedback?",
+        "zh": "论文发现微调后的模型内部表征几乎相同但在输出阶段分化，这一发现如何为针对特定语言输出生成的后训练技术（如带执行反馈的强化学习）的设计提供信息？"
+      },
+      "reason": {
+        "en": "This question directly connects the paper's key result (the implementation fidelity gap revealed via CKA analysis) to the user's interest in post-training methods like RL with execution feedback, probing how future training could bridge the output-stage divergence.",
+        "zh": "该问题直接将论文的关键结果（通过CKA分析揭示的实现保真度差距）与用户对带执行反馈的强化学习等后训练方法的兴趣联系起来，探讨未来的训练如何弥合输出阶段的分化。"
+      },
+      "answer": {
+        "en": "The paper's finding that fine-tuned models exhibit nearly identical internal representations across languages (CKA > 0.97) but diverge at the output stage—termed the \"implementation fidelity gap\"—directly suggests that post-training techniques like RL with execution feedback should focus on bridging this output-stage divergence. Since the internal reasoning is already language-agnostic and robust, the bottleneck lies in mapping that reasoning to correct syntax. RL with execution feedback provides a reward signal for producing executable code, thus directly targeting the output mapping without altering the shared internal representations. This aligns with the paper's call for \"training methods that decouple reasoning from language-specific realization.\" Such methods can leverage the preserved algorithmic understanding to learn language-specific output generation more efficiently.",
+        "zh": "论文发现微调后的模型在不同语言上表现出几乎相同的内部表征（CKA > 0.97），但在输出阶段出现分化——这一现象被称为“实现保真度差距”——这直接表明，像带执行反馈的强化学习这样的后训练技术应专注于弥合这种输出阶段的分化。由于内部推理已经是语言无关且稳健的，瓶颈在于将该推理映射到正确的语法。带执行反馈的强化学习为生成可执行代码提供了奖励信号，从而直接针对输出映射而不改变共享的内部表征。这与论文呼吁的“将推理与语言特定实现解耦的训练方法”相一致。此类方法可以利用保持的算法理解来更高效地学习特定语言的输出生成。"
+      },
+      "confidence": 0.7
+    },
+    {
+      "question": {
+        "en": "Given that the paper uses pass@k as the primary metric, what additional evaluation dimensions (e.g., compilation success, runtime behavior, integration tests) would be necessary to fully characterize the implementation fidelity gap for repository-level code generation tasks?",
+        "zh": "鉴于该论文使用pass@k作为主要指标，哪些额外的评估维度（例如编译成功、运行时行为、集成测试）对于完整表征仓库级代码生成任务中的实现保真度差距是必要的？"
+      },
+      "reason": {
+        "en": "This question targets the user's interest in evaluation beyond pass@k, specifically for repository-level settings, and challenges the paper's metric choice by asking how more holistic assessment could reveal different aspects of the gap.",
+        "zh": "该问题针对用户对pass@k之外评估的兴趣，特别是仓库级设置，并通过询问更全面的评估如何揭示差距的不同方面来质疑论文的指标选择。"
+      },
+      "answer": {
+        "en": "The paper does not address repository-level code generation; it evaluates models on '352 problems' that are isolated programming tasks, using pass@k as the primary metric. Pass@k inherently tests compilation and runtime behavior for each problem, so the paper does not propose or require additional dimensions. For a repository-level setting, integration tests and cross-file dependency checks would be necessary to fully characterize the 'implementation fidelity gap,' but the paper offers no evidence or discussion of such evaluation. Its findings are confined to single-function contexts, making any speculation on repository-level dimensions unsupported.",
+        "zh": "该论文并未涉及仓库级代码生成；它在“352个问题”（这些问题是孤立的编程任务）上评估模型，使用pass@k作为主要指标。Pass@k本身就测试了每个问题的编译和运行时行为，因此论文没有提出或需要额外的维度。对于仓库级设置，集成测试和跨文件依赖检查将是完整表征“实现保真度差距”所必需的，但论文没有提供此类评估的证据或讨论。其发现仅限于单函数上下文，因此对仓库级维度的任何推测都是无根据的。"
+      },
+      "confidence": 0.2
+    },
+    {
+      "question": {
+        "en": "The paper shows that frontier models select the same algorithm 80% of the time but fail to produce working PyLang code. Does this suggest that current preference tuning methods (which the paper found ineffective) fail to align the model's output with its internal reasoning, and what alternative post-training approaches might better bridge this gap?",
+        "zh": "论文显示，前沿模型80%的时间选择相同算法，但无法生成可运行的PyLang代码。这是否表明当前的偏好微调方法（论文发现其无效）未能使模型的输出与其内部推理对齐，哪些替代的后训练方法能更好地弥合这一差距？"
+      },
+      "reason": {
+        "en": "This question ties the paper's empirical finding about algorithmic selection to the user's focus on preference learning and post-training, questioning the efficacy of existing methods and prompting for alternatives based on the paper's evidence.",
+        "zh": "该问题将论文关于算法选择的实证发现与用户对偏好学习和后训练的关注联系起来，质疑现有方法的有效性，并基于论文证据提出替代方案。"
+      },
+      "answer": {
+        "en": "Yes, the finding suggests that current preference tuning methods fail to align the model's output with its internal reasoning. The paper states that \"no intervention (multi-task learning, preference tuning, code infilling, or latent-space objectives) closes the gap\" between Python and PyLang performance, even though \"frontier models select an identical algorithm to Python 80% of the time, yet cannot translate it into a working PyLang implementation.\" This indicates that while internal algorithmic reasoning is correct, the output fails to execute, revealing a misalignment that preference tuning could not fix. As for alternative post-training approaches, the paper does not propose a specific successful method but highlights \"the need for training methods that decouple reasoning from language-specific realization.\"",
+        "zh": "是的，该发现表明当前的偏好微调方法未能使模型的输出与其内部推理对齐。论文指出，“没有干预措施（多任务学习、偏好微调、代码填充或潜在空间目标）能缩小Python和PyLang性能之间的差距”，尽管“前沿模型80%的时间选择与Python相同的算法，却无法将其转化为可工作的PyLang实现”。这表明尽管内部算法推理正确，但输出无法执行，揭示了偏好微调无法修复的对齐问题。至于替代的后训练方法，论文没有提出具体的成功方法，但强调了“需要将推理与语言特定实现解耦的训练方法”。"
+      },
+      "confidence": 0.8
+    },
+    {
+      "question": {
+        "en": "How might the implementation fidelity gap manifest in repository-level code generation settings where models must coordinate multiple files in different languages, and what can the paper's minimal language paradigm reveal about the challenges of cross-lingual code synthesis in such contexts?",
+        "zh": "在仓库级代码生成设置中，模型必须协调多个不同语言的文件，实现保真度差距会如何表现？该论文的最小语言范式能揭示跨语言代码合成在此类情境下的哪些挑战？"
+      },
+      "reason": {
+        "en": "This question bridges the paper's controlled study to the user's interest in repository-level generation, exploring how the gap could scale to real-world multi-file, multi-language scenarios, while leveraging the paper's core conceptual framework.",
+        "zh": "该问题将论文的受控研究与用户对仓库级生成的兴趣联系起来，探索差距如何扩展到现实世界的多文件、多语言场景，同时利用论文的核心概念框架。"
+      },
+      "answer": {
+        "en": "The implementation fidelity gap—models possessing 'language-agnostic algorithmic understanding' but failing to 'express it in an unfamiliar language'—would likely manifest in repository-level code generation as correct cross-file logic but language-specific errors in files written in less familiar languages, causing integration failures. The paper's minimal PyLang paradigm reveals that even with a simple unseen language, 'fine-tuning teaches syntax but fails to transfer semantic competence,' and no intervention closes the gap. This suggests that in multi-language repositories, the gap would be amplified by inter-file dependencies and greater linguistic diversity. Crucially, 'CKA analysis confirms that fine-tuned models converge to nearly identical internal representations across languages (CKA > 0.97) while diverging at the output stage,' indicating that models may grasp the overall repository architecture yet fail to produce correct code in each language.",
+        "zh": "实现保真度差距——模型拥有“与语言无关的算法理解”但无法“以不熟悉的语言表达它”——在仓库级代码生成中可能表现为正确的跨文件逻辑但文件级（使用较少熟悉语言编写）的语言特定错误，导致集成失败。论文的最小PyLang范式揭示，即使使用简单的未见语言，“微调教授了语法但未能转移语义能力”，且没有干预措施能缩小差距。这表明在多语言仓库中，差距会因文件间依赖性和更大的语言多样性而扩大。关键的是，“CKA分析确认微调后的模型在不同语言间的内部表征几乎相同（CKA > 0.97）但在输出阶段分化”，表明模型可能掌握整体仓库架构却无法用每种语言生成正确代码。"
+      },
+      "confidence": 0.75
+    }
+  ],
+  "score": 64.5,
+  "score_dimensions": [
+    {
+      "name": "topic_alignment",
+      "weight": 0.35,
+      "value": 0.6
+    },
+    {
+      "name": "methodology_fit",
+      "weight": 0.25,
+      "value": 0.5
+    },
+    {
+      "name": "novelty",
+      "weight": 0.2,
+      "value": 0.85
+    },
+    {
+      "name": "experiment_coverage",
+      "weight": 0.2,
+      "value": 0.7
+    }
+  ],
+  "markdown": "",
+  "model": "deepseek-v4-flash",
+  "generated_at": "2026-05-18T06:32:00Z"
+}
