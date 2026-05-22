@@ -423,7 +423,7 @@ def _summary_to_payload(summary: PaperSummary, markdown: str) -> dict:
 		"arxiv_id": paper.arxiv_id,
 		"topic": summary.topic.name,
 		"topic_label": summary.topic.label,
-		"title": paper.title,
+		"title": _bi(paper.title, tr.get("title")),
 		"authors": list(paper.authors or []),
 		"affiliations": list(paper.affiliations or []),
 		"categories": list(paper.categories or []),

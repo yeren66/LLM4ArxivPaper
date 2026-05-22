@@ -189,6 +189,7 @@ class TaskReader:
 		target = self._LANGUAGE_NAMES.get(lang, lang)
 
 		bundle: Dict[str, Any] = {
+			"title": paper.title or "",
 			"brief_summary": brief_summary or "",
 			"relevance": relevance or "",
 			"findings": [
@@ -220,9 +221,11 @@ class TaskReader:
 			f"{target} as a researcher would write it. Keep technical terms, "
 			"proper nouns, model/benchmark/metric names and numbers intact "
 			"(e.g. BLEU, SWE-bench, Pass@1, F1, GPU) — translate around them. "
-			"Do NOT summarise, expand, reorder or omit anything. Return a JSON "
-			"object with EXACTLY the same keys and the same array lengths as "
-			"the input; only the string values change."
+			"For the 'title' field, produce a faithful translation suitable "
+			"as the displayed paper title (no quotation marks, no trailing "
+			"period). Do NOT summarise, expand, reorder or omit anything. "
+			"Return a JSON object with EXACTLY the same keys and the same "
+			"array lengths as the input; only the string values change."
 		)
 		user_prompt = (
 			f"Translate the string values of this JSON into {target}, keeping "
@@ -247,6 +250,7 @@ class TaskReader:
 		# Validate shape; fall back to English per-field on any mismatch so a
 		# sloppy translation can never blank out content.
 		result: Dict[str, Any] = {}
+		result["title"] = str(data.get("title") or paper.title or "").strip()
 		result["brief_summary"] = str(data.get("brief_summary") or brief_summary or "").strip()
 		result["relevance"] = str(data.get("relevance") or relevance or "").strip()
 

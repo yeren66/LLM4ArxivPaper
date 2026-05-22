@@ -95,13 +95,15 @@ class GitFileStore:
 		path = self._analysis_path(summary.paper.arxiv_id)
 		self._write_json(path, {**payload, "model": model, "generated_at": _now_iso()})
 
-		# 2. Slim index entry
+		# 2. Slim index entry. The payload's title is bilingual ({en, zh});
+		# carry that into the index so the home page can render in the
+		# user's locale without loading every analysis file.
 		self._update_index(
 			{
 				"arxiv_id": summary.paper.arxiv_id,
 				"topic": summary.topic.name,
 				"topic_label": summary.topic.label,
-				"title": summary.paper.title,
+				"title": payload.get("title") or summary.paper.title,
 				"authors": list(summary.paper.authors or [])[:6],
 				"score": float(payload.get("score", 0.0)),
 				"published": (

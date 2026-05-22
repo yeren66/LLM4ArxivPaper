@@ -29,7 +29,7 @@ export function buildChatSystemPrompt(p: AnalysisPayload): string {
   const en = (t: Parameters<typeof pickLang>[0]) => pickLang(t, "en");
 
   parts.push(`\n--- 论文元数据 ---`);
-  parts.push(`标题：${p.title}`);
+  parts.push(`标题：${en(p.title)}`);
   parts.push(`arXiv ID：${p.arxiv_id}`);
   if (p.authors?.length) parts.push(`作者：${p.authors.join(", ")}`);
   if (p.published) parts.push(`发表日期：${p.published}`);

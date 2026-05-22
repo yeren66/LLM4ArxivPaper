@@ -52,7 +52,9 @@ export type AnalysisPayload = {
   arxiv_id: string;
   topic: string;
   topic_label: string;
-  title: string;
+  // Bilingual since the v2.1 pipeline; older files may still be a plain
+  // string — `pickLang` tolerates both.
+  title: BiText | string;
   authors: string[];
   affiliations: string[];
   categories: string[];
@@ -85,7 +87,9 @@ export type IndexEntry = {
   arxiv_id: string;
   topic: string;
   topic_label: string;
-  title: string;
+  // Bilingual since the v2.1 pipeline; older files may still be a plain
+  // string — `pickLang` tolerates both.
+  title: BiText | string;
   authors: string[];
   score: number;
   published: string | null;

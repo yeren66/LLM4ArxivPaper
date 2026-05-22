@@ -105,7 +105,7 @@ export default async function PaperPage({ params }: Props) {
 
       <article className="paper-article">
         <header>
-          <h1 className="paper-title">{p.title}</h1>
+          <h1 className="paper-title">{pickLang(p.title, locale)}</h1>
           <div className="article-meta">
             {p.authors?.length > 0 && (
               <span>

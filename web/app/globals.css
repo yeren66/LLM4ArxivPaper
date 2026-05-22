@@ -287,6 +287,43 @@ h1, h2, h3, h4 {
 }
 .topic-chip svg { width: 11px; height: 11px; }
 
+/* Topic-filter row on the home page. Reuses the .topic-chip pill look but
+   adds row-container layout, hover, and active states because each chip
+   is an <a> link, not just a decorative label. */
+.topic-chips {
+  display: flex; flex-wrap: wrap; gap: 0.4rem;
+  margin: -0.5rem 0 1.25rem;
+}
+.topic-chips .topic-chip {
+  padding: 0.28rem 0.7rem;
+  font-size: 0.78rem; font-weight: 500;
+  border: 1px solid var(--color-border-soft);
+  cursor: pointer;
+  transition: border-color .12s ease, color .12s ease, background .12s ease;
+}
+.topic-chips .topic-chip:hover {
+  border-color: var(--color-border);
+  color: var(--color-text);
+  text-decoration: none;
+}
+.topic-chips .topic-chip.active {
+  background: var(--color-accent-soft);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+.topic-chip-count {
+  margin-left: 0.35rem;
+  padding: 0.02rem 0.35rem;
+  border-radius: 999px;
+  background: var(--color-bg-elev);
+  color: var(--color-text-dim);
+  font-size: 0.68rem; font-weight: 600;
+}
+.topic-chip.active .topic-chip-count {
+  background: var(--color-bg);
+  color: var(--color-accent);
+}
+
 /* =====================================================================
    Paper view: three-column shell
    --------------------------------------------------------------------- */

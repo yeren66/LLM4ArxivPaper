@@ -10,7 +10,12 @@ import {
   Inbox,
   Info,
 } from "lucide-react";
-import { readIndex, getDateRange, type IndexEntry } from "@/lib/data-reader";
+import {
+  readIndex,
+  getDateRange,
+  pickLang,
+  type IndexEntry,
+} from "@/lib/data-reader";
 import { kvGet } from "@/lib/kv";
 import { getLocale } from "@/lib/locale-server";
 import { t } from "@/lib/i18n";
@@ -23,7 +28,7 @@ export const revalidate = 60;
 type StarsMap = Record<string, { topic?: string; note?: string; starred_at: string }>;
 type HiddenMap = Record<string, { hidden_at: string }>;
 
-type Props = { searchParams?: { filter?: string } };
+type Props = { searchParams?: { filter?: string; topic?: string } };
 
 // A paper counts as "this week" if its analysis was generated within the
 // last 7 days — i.e. it came out of the most recent weekly run.
@@ -37,6 +42,7 @@ function isThisWeek(p: IndexEntry): boolean {
 export default async function HomePage({ searchParams }: Props) {
   const locale = getLocale();
   const filter = searchParams?.filter;
+  const topicFilter = searchParams?.topic || "";
   const starredOnly = filter === "starred";
   const weeklyOnly = filter === "weekly";
   const hiddenOnly = filter === "hidden";
@@ -67,7 +73,10 @@ export default async function HomePage({ searchParams }: Props) {
 
   // Hidden papers surface only in the dedicated tab. The other three tabs
   // filter them out (a hidden paper that was previously starred stays hidden).
-  const rows: IndexEntry[] = hiddenOnly
+  // `rowsBeforeTopic` is what the active tab would show; the topic chip then
+  // narrows it further so the chip counts reflect "if I click this, how many
+  // would I get in this tab".
+  const rowsBeforeTopic: IndexEntry[] = hiddenOnly
     ? papers.filter((p) => hiddenIds.has(p.arxiv_id))
     : starredOnly
       ? visible.filter((p) => starredIds.has(p.arxiv_id))
@@ -75,14 +84,41 @@ export default async function HomePage({ searchParams }: Props) {
         ? weeklyPapers
         : visible;
 
+  const topicOptions = (() => {
+    const counts = new Map<string, { label: string; count: number }>();
+    for (const p of rowsBeforeTopic) {
+      const key = p.topic || "";
+      if (!key) continue;
+      const entry = counts.get(key);
+      if (entry) {
+        entry.count += 1;
+      } else {
+        counts.set(key, { label: p.topic_label || p.topic, count: 1 });
+      }
+    }
+    return [...counts.entries()]
+      .map(([name, v]) => ({ name, label: v.label, count: v.count }))
+      .sort((a, b) => a.label.localeCompare(b.label));
+  })();
+
+  const rows: IndexEntry[] = topicFilter
+    ? rowsBeforeTopic.filter((p) => p.topic === topicFilter)
+    : rowsBeforeTopic;
+
+  const baseFilterIds = hiddenOnly
+    ? hiddenIds
+    : starredOnly
+      ? new Set([...starredIds].filter((id) => !hiddenIds.has(id)))
+      : weeklyOnly
+        ? weeklyIds
+        : new Set(visible.map((p) => p.arxiv_id));
+
+  const rangeFilterIds = topicFilter
+    ? new Set(rows.map((p) => p.arxiv_id))
+    : baseFilterIds;
+
   const range = await getDateRange({
-    filterIds: hiddenOnly
-      ? hiddenIds
-      : starredOnly
-        ? new Set([...starredIds].filter((id) => !hiddenIds.has(id)))
-        : weeklyOnly
-          ? weeklyIds
-          : new Set(visible.map((p) => p.arxiv_id)),
+    filterIds: rangeFilterIds,
   }).catch(() => ({ start: null, end: null, count: rows.length }));
 
   const rangeSuffix = (() => {
@@ -117,7 +153,7 @@ export default async function HomePage({ searchParams }: Props) {
 
       <div className="tabs" role="tablist">
         <a
-          href="/"
+          href={buildHref(null, topicFilter)}
           role="tab"
           aria-selected={!starredOnly && !weeklyOnly && !hiddenOnly}
           className={`tab ${!starredOnly && !weeklyOnly && !hiddenOnly ? "active" : ""}`}
@@ -126,7 +162,7 @@ export default async function HomePage({ searchParams }: Props) {
           {visible.length > 0 && <span className="tab-count">{visible.length}</span>}
         </a>
         <a
-          href="/?filter=weekly"
+          href={buildHref("weekly", topicFilter)}
           role="tab"
           aria-selected={weeklyOnly}
           className={`tab ${weeklyOnly ? "active" : ""}`}
@@ -137,7 +173,7 @@ export default async function HomePage({ searchParams }: Props) {
           )}
         </a>
         <a
-          href="/?filter=starred"
+          href={buildHref("starred", topicFilter)}
           role="tab"
           aria-selected={starredOnly}
           className={`tab ${starredOnly ? "active" : ""}`}
@@ -148,7 +184,7 @@ export default async function HomePage({ searchParams }: Props) {
           )}
         </a>
         <a
-          href="/?filter=hidden"
+          href={buildHref("hidden", topicFilter)}
           role="tab"
           aria-selected={hiddenOnly}
           className={`tab ${hiddenOnly ? "active" : ""}`}
@@ -159,6 +195,32 @@ export default async function HomePage({ searchParams }: Props) {
           )}
         </a>
       </div>
+
+      {topicOptions.length > 1 && (
+        <div className="topic-chips" role="tablist" aria-label="Topic filter">
+          <a
+            href={buildHref(filter ?? null, "")}
+            role="tab"
+            aria-selected={!topicFilter}
+            className={`topic-chip ${!topicFilter ? "active" : ""}`}
+          >
+            <Tag size={11} /> {t(locale, "home.topic.all")}
+            <span className="topic-chip-count">{rowsBeforeTopic.length}</span>
+          </a>
+          {topicOptions.map((opt) => (
+            <a
+              key={opt.name}
+              href={buildHref(filter ?? null, opt.name)}
+              role="tab"
+              aria-selected={topicFilter === opt.name}
+              className={`topic-chip ${topicFilter === opt.name ? "active" : ""}`}
+            >
+              <Tag size={11} /> {opt.label}
+              <span className="topic-chip-count">{opt.count}</span>
+            </a>
+          ))}
+        </div>
+      )}
 
       {dataError && (
         <div className="notice error">
@@ -176,7 +238,9 @@ export default async function HomePage({ searchParams }: Props) {
         <div className="empty-state">
           <Inbox />
           <div>
-            {hiddenOnly ? (
+            {topicFilter ? (
+              t(locale, "home.empty.topic")
+            ) : hiddenOnly ? (
               t(locale, "home.empty.hidden")
             ) : starredOnly ? (
               t(locale, "home.empty.starred")
@@ -202,6 +266,7 @@ export default async function HomePage({ searchParams }: Props) {
               starred={starredIds.has(r.arxiv_id)}
               hidden={hiddenIds.has(r.arxiv_id)}
               etc={t(locale, "common.etc")}
+              title={pickLang(r.title, locale)}
             />
           ))}
         </div>
@@ -210,16 +275,26 @@ export default async function HomePage({ searchParams }: Props) {
   );
 }
 
+function buildHref(filter: string | null, topic: string): string {
+  const qs = new URLSearchParams();
+  if (filter) qs.set("filter", filter);
+  if (topic) qs.set("topic", topic);
+  const s = qs.toString();
+  return s ? `/?${s}` : "/";
+}
+
 function PaperCard({
   row,
   starred,
   hidden,
   etc,
+  title,
 }: {
   row: IndexEntry;
   starred: boolean;
   hidden: boolean;
   etc: string;
+  title: string;
 }) {
   return (
     <article className="paper-card">
@@ -232,7 +307,7 @@ function PaperCard({
             style={{ marginRight: 4, verticalAlign: -2 }}
           />
         )}
-        {row.title}
+        {title}
       </a>
       <div className="paper-card-meta">
         <span className="score-chip">

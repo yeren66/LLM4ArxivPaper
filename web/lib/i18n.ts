@@ -39,6 +39,11 @@ const dict = {
   "home.tab.starred": { zh: "我收藏的", en: "Starred" },
   "home.tab.weekly": { zh: "本周", en: "This Week" },
   "home.tab.hidden": { zh: "已隐藏", en: "Hidden" },
+  "home.topic.all": { zh: "所有分类", en: "All topics" },
+  "home.empty.topic": {
+    zh: "当前分类下没有论文。",
+    en: "No papers in this topic yet.",
+  },
   "home.empty.all": { zh: "还没有论文。", en: "No papers yet." },
   "home.empty.starred": { zh: "还没有收藏的论文。", en: "No starred papers yet." },
   "home.empty.weekly": {
