@@ -11,7 +11,7 @@
  * (driven by `active`) we lazy-load history from /api/chat/history.
  */
 
-import { useEffect, useRef, useState, FormEvent } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, FormEvent } from "react";
 import {
   Sparkles,
   RotateCcw,
@@ -38,8 +38,11 @@ export default function ChatPanel({ arxivId, active }: ChatPanelProps) {
   const [busy, setBusy] = useState(false);
   const [historyError, setHistoryError] = useState<string | null>(null);
   const [historyLoaded, setHistoryLoaded] = useState(false);
-  const endRef = useRef<HTMLDivElement>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  // Track whether the user is "stuck to the bottom" — if they've scrolled up
+  // to read history, we stop auto-following while tokens stream in.
+  const stickToBottomRef = useRef(true);
 
   // Lazy-load history the first time the tab is shown.
   useEffect(() => {
@@ -60,13 +63,31 @@ export default function ChatPanel({ arxivId, active }: ChatPanelProps) {
       .catch((err) => setHistoryError(err.message ?? String(err)));
   }, [active, historyLoaded, arxivId]);
 
-  useEffect(() => {
-    if (active) endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+  // Auto-follow new tokens by pinning the chat body's own scrollTop. We use
+  // scrollTop (not scrollIntoView) deliberately: scrollIntoView walks up to the
+  // nearest scrollable ancestor, and because this panel lives inside a
+  // position:sticky <aside>, the browser sometimes resolves that ancestor to
+  // the document — which made the article on the right jump on every token.
+  useLayoutEffect(() => {
+    if (!active || !stickToBottomRef.current) return;
+    const el = bodyRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
   }, [messages, active]);
 
+  // Focus the textarea when the tab activates without letting the browser
+  // scroll the page (preventScroll) — the old 150ms timeout was the other
+  // culprit in the "click chat → article jumps" bug.
   useEffect(() => {
-    if (active) setTimeout(() => textareaRef.current?.focus(), 150);
+    if (active) textareaRef.current?.focus({ preventScroll: true });
   }, [active]);
+
+  function onBodyScroll() {
+    const el = bodyRef.current;
+    if (!el) return;
+    // Within 40px of the bottom counts as "at bottom" — resume auto-follow.
+    stickToBottomRef.current =
+      el.scrollHeight - el.scrollTop - el.clientHeight < 40;
+  }
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -153,7 +174,7 @@ export default function ChatPanel({ arxivId, active }: ChatPanelProps) {
         </button>
       </div>
 
-      <div className="chat-body">
+      <div className="chat-body" ref={bodyRef} onScroll={onBodyScroll}>
         {historyError && (
           <div className="notice error" style={{ margin: 0 }}>
             {t("chat.historyError")}
@@ -185,7 +206,6 @@ export default function ChatPanel({ arxivId, active }: ChatPanelProps) {
             )}
           </div>
         ))}
-        <div ref={endRef} />
       </div>
 
       <form className="chat-form" onSubmit={onSubmit}>
