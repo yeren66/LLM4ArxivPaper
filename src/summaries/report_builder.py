@@ -5,7 +5,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import List
 
-from core.models import DimensionScore, PaperSummary, ScoredPaper, SummarizationConfig, TaskFinding, TaskItem, TopicConfig
+from core.models import DimensionScore, PaperFigure, PaperSummary, ScoredPaper, SummarizationConfig, TaskFinding, TaskItem, TopicConfig
 
 
 class ReportBuilder:
@@ -21,7 +21,7 @@ class ReportBuilder:
 		findings: List[TaskFinding],
 		brief_summary: str = "",
 		relevance: str = "",
-		figure=None,  # Optional[PaperFigure]
+		figures: List[PaperFigure] = None,  # type: ignore[assignment]
 		translations=None,  # Optional[dict] — zh mirror of the text fields
 	) -> PaperSummary:
 		paper = scored_paper.paper
@@ -81,6 +81,14 @@ class ReportBuilder:
 
 		markdown = "\n".join(lines)
 
+		figures = figures or []
+		# Back-compat: the legacy `figure` slot is the first methodology figure
+		# (or any figure if none was tagged methodology) so old readers still
+		# show *something*.
+		legacy_single = next((f for f in figures if f.stage == "methodology"), None)
+		if legacy_single is None and figures:
+			legacy_single = figures[0]
+
 		return PaperSummary(
 			paper=paper,
 			topic=topic,
@@ -91,7 +99,8 @@ class ReportBuilder:
 			markdown=markdown,
 			brief_summary=brief_summary,
 			relevance=relevance,
-			figure=figure,
+			figures=figures,
+			figure=legacy_single,
 			translations=translations,
 		)
 

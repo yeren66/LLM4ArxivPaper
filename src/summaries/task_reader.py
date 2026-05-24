@@ -11,10 +11,22 @@ from core.models import (
 	CoreSummary,
 	OpenAIConfig,
 	PaperCandidate,
+	PaperFigure,
 	SummarizationConfig,
 	TaskFinding,
 	TaskItem,
 )
+
+
+# How many figures to keep per paper. Each one inflates the summarisation
+# prompt by ~caption + reference_text (~600 chars), so an upper bound keeps
+# token usage predictable on figure-heavy papers.
+_MAX_FIGURES_PER_PAPER = 8
+
+# 5-aspect labels the classifier can assign. "experiments" figures are
+# DROPPED downstream per product decision; "none" means decorative /
+# irrelevant.
+_FIGURE_STAGES = ("problem", "solution", "methodology", "experiments", "conclusion", "none")
 from fetchers.ar5iv_parser import Ar5ivParser
 from fetchers.pdf_figure import PDFFigureExtractor
 from fetchers.pdf_parser import PDFParser
@@ -67,11 +79,11 @@ class TaskReader:
 
 	# ------------------------------------------------------------------
 
-	def analyse(self, paper: PaperCandidate, interest_prompt: str) -> Tuple[Optional[CoreSummary], List[TaskItem], List[TaskFinding], str, str, str, Optional["PaperFigure"], Optional[dict]]:
+	def analyse(self, paper: PaperCandidate, interest_prompt: str) -> Tuple[Optional[CoreSummary], List[TaskItem], List[TaskFinding], str, str, str, List[PaperFigure], Optional[dict]]:
 		"""
 		Pipeline:
-		1. Fetch paper content (ar5iv → pdf → abstract fallback) + the method figure
-		2. Core summary (problem / solution / methodology+figure / experiments)
+		1. Fetch paper content (ar5iv → pdf → abstract fallback) + ALL figures
+		2. Core summary (5 aspects) + per-figure stage assignment in one call
 		3. Interest-driven questions
 		4. Answer each with quoted evidence
 		5. Findings & summary: rewrite the 5th aspect to fold in the answers
@@ -82,39 +94,49 @@ class TaskReader:
 		   single follow-up call translates the whole bundle into it.
 
 		Returns: (core_summary, tasks, findings, brief_summary, markdown,
-		          relevance, figure, translations)
+		          relevance, figures, translations)
+		``figures`` is the list of figures the LLM assigned to a non-dropped
+		stage (problem / solution / methodology / conclusion). Empty list if
+		no usable figures.
 		``translations`` is None for English-only instances.
 		"""
 		# Import here to avoid circular dependency
-		from core.models import CoreSummary, TaskItem, PaperFigure
+		from core.models import CoreSummary, TaskItem
 
-		figure: Optional[PaperFigure] = None
+		figures: List[PaperFigure] = []
 		if paper.arxiv_id.startswith("demo-"):
 			markdown = paper.abstract
 		else:
 			markdown = self.parser.fetch_markdown(paper.arxiv_id)
-			# Pull the single method figure from the same (cached) ar5iv HTML.
-			# Best-effort — failure just means no figure.
+			# Extract every figure on the page; the summariser will sort them
+			# by stage below.
 			try:
-				figure = self.parser.fetch_method_figure(paper.arxiv_id)
+				figures = self.parser.fetch_all_figures(paper.arxiv_id)
 			except Exception as exc:  # pragma: no cover
 				print(f"[WARN] Figure extraction failed ({paper.arxiv_id}): {exc}")
+				figures = []
 			# ar5iv usually has nothing for a just-published paper; fall back
-			# to rendering the figure straight out of the PDF.
-			if figure is None and paper.pdf_url:
-				print(f"[INFO] No ar5iv figure for {paper.arxiv_id}; trying PDF extraction.")
+			# to rendering the figures straight out of the PDF.
+			if not figures and paper.pdf_url:
+				print(f"[INFO] No ar5iv figures for {paper.arxiv_id}; trying PDF extraction.")
 				try:
-					figure = self._pdf_figure.fetch(paper.pdf_url, paper.arxiv_id)
+					figures = self._pdf_figure.fetch_all(paper.pdf_url, paper.arxiv_id)
 				except Exception as exc:  # pragma: no cover
 					print(f"[WARN] PDF figure extraction failed ({paper.arxiv_id}): {exc}")
+					figures = []
+			# Cap to keep the LLM prompt bounded on figure-heavy papers.
+			if len(figures) > _MAX_FIGURES_PER_PAPER:
+				figures = figures[:_MAX_FIGURES_PER_PAPER]
 			if not markdown:
 				markdown = self._fallback_to_pdf(paper)
 			if not markdown:
 				markdown = paper.abstract
 
-		# Step 1: Core summary. The methodology aspect weaves in the method
-		# figure (caption + the paper's own text describing it).
-		core_summary = self._generate_core_summary(paper, markdown, figure)
+		# Step 1: Core summary AND figure classification in one LLM call.
+		# Each figure in ``figures`` gets its ``stage`` populated; figures
+		# the LLM marks "experiments" or "none" are dropped from the list.
+		core_summary = self._generate_core_summary(paper, markdown, figures)
+		figures = [f for f in figures if f.stage and f.stage not in ("experiments", "none")]
 
 		# Step 2: Interest-targeted questions.
 		tasks = self._generate_interest_questions(paper, core_summary, interest_prompt, markdown)
@@ -151,10 +173,10 @@ class TaskReader:
 		# call (it only sees the distilled summary, never the paper body, so
 		# it is cheap and high-fidelity).
 		translations = self._translate_bundle(
-			paper, core_summary, findings, brief_summary, relevance, figure
+			paper, core_summary, findings, brief_summary, relevance, figures
 		)
 
-		return core_summary, tasks, findings, brief_summary, markdown, relevance, figure, translations
+		return core_summary, tasks, findings, brief_summary, markdown, relevance, figures, translations
 
 	# ------------------------------------------------------------------
 
@@ -171,7 +193,7 @@ class TaskReader:
 		findings: List[TaskFinding],
 		brief_summary: str,
 		relevance: str,
-		figure: Optional["PaperFigure"] = None,
+		figures: Optional[List[PaperFigure]] = None,
 	) -> Optional[dict]:
 		"""Translate the whole English analysis bundle into openai.language.
 
@@ -209,11 +231,13 @@ class TaskReader:
 				"experiments": core_summary.experiments,
 				"conclusion": core_summary.conclusion,
 			}
-		# The figure's caption is shown on the paper page, so it should follow
+		# Figure captions are shown on the paper page, so they should follow
 		# the language too. (label / reference_text are not displayed, so they
-		# stay English.)
-		if figure is not None and (figure.caption or "").strip():
-			bundle["figure_caption"] = figure.caption
+		# stay English.) The captions go as a parallel array so the order on
+		# the way back is unambiguous.
+		fig_list = [f for f in (figures or []) if (f.caption or "").strip()]
+		if fig_list:
+			bundle["figure_captions"] = [f.caption for f in fig_list]
 
 		system_prompt = (
 			f"You translate an academic paper analysis from English into {target}. "
@@ -261,10 +285,14 @@ class TaskReader:
 				key: str(tr.get(key) or src[key] or "").strip() for key in src
 			}
 
-		if "figure_caption" in bundle:
-			result["figure_caption"] = str(
-				data.get("figure_caption") or bundle["figure_caption"] or ""
-			).strip()
+		if "figure_captions" in bundle:
+			src = bundle["figure_captions"]
+			tr = data.get("figure_captions")
+			if not isinstance(tr, list) or len(tr) != len(src):
+				# Length mismatch — keep English captions across the board
+				# rather than risk misaligning translations to figures.
+				tr = src
+			result["figure_captions"] = [str(t or s or "").strip() for t, s in zip(tr, src)]
 
 		tr_findings = data.get("findings")
 		out_findings = []
@@ -597,21 +625,56 @@ class TaskReader:
 		self,
 		paper: PaperCandidate,
 		markdown: str,
-		figure: Optional["PaperFigure"] = None,
+		figures: Optional[List[PaperFigure]] = None,
 	) -> Optional[CoreSummary]:
-		"""Generate the 5-aspect core summary.
+		"""Generate the 5-aspect core summary AND classify every figure.
 
-		The methodology aspect weaves in the method figure: when a figure is
-		available, the prompt gets its caption plus the paper's own text
-		describing it, and is told to explain what the diagram depicts as
-		part of the methodology. The 5th aspect (`conclusion`) is a starting
-		point — :meth:`_generate_findings_summary` rewrites it later.
+		When figures are provided, the LLM is asked to (a) produce the
+		standard 5-aspect summary and (b) assign each figure to one of
+		``problem`` / ``solution`` / ``methodology`` / ``experiments`` /
+		``conclusion`` / ``none``. The assignments are written back onto
+		each ``PaperFigure.stage`` in place; the caller filters out
+		"experiments"/"none" because product intent is to drop result &
+		ablation figures from the rendered analysis.
+
+		The 5th aspect (``conclusion``) is a starting point —
+		:meth:`_generate_findings_summary` rewrites it later.
 		"""
 		if self._client is None:
 			return None
 
+		figures = figures or []
+		# Stable identifiers — caption labels can repeat or be empty, so use
+		# the 0-based extraction order.
+		figure_ids = [f"fig_{i}" for i in range(len(figures))]
+
 		try:
 			language_instruction = "Respond in English."
+
+			classify_block = ""
+			if figures:
+				classify_block = (
+					" Additionally, the user prompt lists every figure in this "
+					"paper (id, label, caption, and the paper's own description "
+					"of it). Add a 'figure_assignments' object to your JSON whose "
+					"keys are exactly the figure ids and whose values are one of "
+					"'problem' / 'solution' / 'methodology' / 'experiments' / "
+					"'conclusion' / 'none'. Assign based on what the figure "
+					"DEPICTS, not what aspect of the paper happens to mention it:\n"
+					"  - 'problem' for motivating examples, problem illustrations, "
+					"real-world failure cases, before/after demonstrations of the "
+					"issue;\n"
+					"  - 'solution' for high-level conceptual diagrams that show "
+					"the core idea / contribution at a glance;\n"
+					"  - 'methodology' for architecture, framework, pipeline, "
+					"system, algorithm, or training/inference flow diagrams;\n"
+					"  - 'experiments' for results, ablation, comparison, "
+					"performance, or dataset-statistics figures;\n"
+					"  - 'conclusion' for figures summarising overall takeaways;\n"
+					"  - 'none' for purely decorative / irrelevant figures.\n"
+					"Every figure id MUST appear in figure_assignments exactly "
+					"once. Choose the single best fit for each."
+				)
 
 			system_prompt = (
 				"You are a research analyst. Summarise the paper from 5 angles. "
@@ -625,17 +688,23 @@ class TaskReader:
 				"point across aspects, do not write generic filler sentences. If "
 				"a detail is in the paper, include it; if it genuinely isn't, "
 				"don't invent it. "
-				"Return JSON with keys: problem, solution, methodology, experiments, conclusion. "
-				f"{language_instruction}"
+				"Return JSON with keys: problem, solution, methodology, experiments, conclusion."
+				+ classify_block + " "
+				+ language_instruction
 			)
 
-			figure_block = ""
-			if figure is not None:
-				figure_block = (
-					"\n\nMethod figure (describe what it depicts as part of the "
-					f"methodology aspect):\n- Caption: {figure.caption}\n"
-					f"- The paper's own description of it: {figure.reference_text or '(none)'}"
-				)
+			figures_block = ""
+			if figures:
+				lines = ["", "", "Figures in this paper (classify each by assigning a stage in 'figure_assignments'):"]
+				for fid, f in zip(figure_ids, figures):
+					ref = (f.reference_text or "").strip()
+					ref_excerpt = ref[:400] + ("…" if len(ref) > 400 else "") if ref else "(none)"
+					lines.append(
+						f"- id={fid} | label={f.label or '(none)'}\n"
+						f"  caption: {(f.caption or '').strip() or '(no caption)'}\n"
+						f"  body reference: {ref_excerpt}"
+					)
+				figures_block = "\n".join(lines)
 
 			user_prompt = f"""Summarise this paper from 5 angles. Each should be a
 substantial, self-contained explanation — not a one-liner.
@@ -647,8 +716,8 @@ substantial, self-contained explanation — not a one-liner.
 3. methodology — the full technical approach: the pipeline or framework, the
    algorithm steps, the model/architecture choices, the inputs and outputs,
    any important hyperparameters or design decisions. This is the longest
-   aspect. If a method figure is provided below, explain what it depicts as
-   part of this walkthrough.
+   aspect. If a methodology-classified figure is provided below, explain
+   what it depicts as part of this walkthrough.
 4. experiments — the setup in detail: datasets, baselines compared against,
    metrics, ablations, and the concrete result numbers (state the actual
    figures, not just "outperforms").
@@ -657,9 +726,9 @@ substantial, self-contained explanation — not a one-liner.
 
 Title: {paper.title}
 Abstract: {paper.abstract}
-Content: {markdown[:self.summarization_config.max_content_chars]}{figure_block}
+Content: {markdown[:self.summarization_config.max_content_chars]}{figures_block}
 
-Return JSON with 5 fields: problem, solution, methodology, experiments, conclusion."""
+Return JSON with 5 fields: problem, solution, methodology, experiments, conclusion{', plus figure_assignments (see system prompt)' if figures else ''}."""
 
 			data = chat_json(
 				self._client,
@@ -670,6 +739,16 @@ Return JSON with 5 fields: problem, solution, methodology, experiments, conclusi
 				],
 				temperature=self.openai_config.temperature,
 			)
+
+			# Apply figure classifications onto the in-memory figure list.
+			# Anything missing or unknown defaults to "none" so it's dropped.
+			if figures:
+				assignments = data.get("figure_assignments") or {}
+				if not isinstance(assignments, dict):
+					assignments = {}
+				for fid, f in zip(figure_ids, figures):
+					raw = str(assignments.get(fid) or "").strip().lower()
+					f.stage = raw if raw in _FIGURE_STAGES else "none"
 
 			return CoreSummary(
 				problem=str(data.get("problem", "No relevant information found")).strip(),

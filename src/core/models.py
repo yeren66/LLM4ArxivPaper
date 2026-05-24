@@ -263,20 +263,25 @@ class CoreSummary:
 
 @dataclass
 class PaperFigure:
-	"""The single most informative figure from the paper's ar5iv rendering
-	(the method / architecture / flow diagram).
+	"""One figure extracted from a paper.
 
-	``url`` is an absolute ar5iv image URL (hot-linked, not downloaded).
+	``url`` is either an absolute ar5iv image URL (hot-linked) or a
+	``data:image/webp;base64,...`` URI rendered from the PDF.
 	``order`` is the figure's 0-based position in the paper.
 	``reference_text`` is the body paragraph(s) that mention this figure
 	("As shown in Figure 1, ..."), i.e. the paper's own explanation of it —
-	fed into the methodology prompt so the figure gets described in context.
+	fed to the LLM so the figure gets described and classified in context.
+	``stage`` is the 5-aspect bucket this figure belongs in
+	("problem" / "solution" / "methodology" / "experiments" / "conclusion"),
+	assigned by the summarisation LLM based on the caption. ``None`` means
+	"unclassified" (e.g. legacy single-figure data, or LLM didn't decide).
 	"""
 	label: str  # e.g. "Figure 1"
 	caption: str
 	url: str
 	order: int = 0
 	reference_text: str = ""
+	stage: Optional[str] = None
 
 
 @dataclass
@@ -290,7 +295,14 @@ class PaperSummary:
 	markdown: str
 	brief_summary: str = ""  # 1-2 paragraph narrative summary (Why? What? How?)
 	relevance: str = ""  # 1-2 sentence "why this paper matters to YOUR work" note, shown at the top of the page
-	figure: Optional[PaperFigure] = None  # the single method/architecture figure, hot-linked from ar5iv
+	# All extracted-and-kept figures, each tagged with a 5-aspect ``stage`` so
+	# the web side can render them under the matching section. "experiments"
+	# figures are dropped upstream and never appear here.
+	figures: List[PaperFigure] = field(default_factory=list)
+	# Back-compat: the single methodology figure (first one in `figures` whose
+	# stage == "methodology"), kept so legacy readers and the old JSON schema
+	# don't break.
+	figure: Optional[PaperFigure] = None
 	# Analysis is always generated in English (papers are English, LLMs are
 	# strongest there). When openai.language is not "en", a single follow-up
 	# translation call fills this in: a mirror of every text field in the

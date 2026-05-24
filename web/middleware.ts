@@ -17,6 +17,7 @@ const PROTECTED_API_PREFIXES = [
   "/api/papers/ingest",
   "/api/stars",
   "/api/hide",
+  "/api/annotations",
 ];
 
 export function middleware(req: NextRequest) {
@@ -53,5 +54,6 @@ export const config = {
     "/api/papers/ingest",
     "/api/stars/:path*",
     "/api/hide/:path*",
+    "/api/annotations/:path*",
   ],
 };

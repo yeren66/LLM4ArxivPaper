@@ -178,7 +178,7 @@ def run_pipeline(config_path: str, overrides: Optional[PipelineOverrides] = None
 					f"[INFO] Topic {topic.label}: processing paper {paper_index}/{len(selected)} "
 					f"[{scored_paper.paper.arxiv_id}] {scored_paper.paper.title} — score {normalised_score:.1f}"
 				)
-				core_summary, tasks, findings, brief_summary, _, relevance, figure, translations = reader.analyse(
+				core_summary, tasks, findings, brief_summary, _, relevance, figures, translations = reader.analyse(
 					scored_paper.paper,
 					topic.interest_prompt,
 				)
@@ -190,7 +190,7 @@ def run_pipeline(config_path: str, overrides: Optional[PipelineOverrides] = None
 					findings=findings,
 					brief_summary=brief_summary,
 					relevance=relevance,
-					figure=figure,
+					figures=figures,
 					translations=translations,
 				)
 				summaries.append(summary)
@@ -351,7 +351,7 @@ def run_analyse_one(
 
 	parser = Ar5ivParser()
 	reader = TaskReader(parser, config.openai, config.summarization, mode=config.runtime.mode)
-	core_summary, tasks, findings, brief_summary, markdown, relevance, figure, translations = reader.analyse(
+	core_summary, tasks, findings, brief_summary, markdown, relevance, figures, translations = reader.analyse(
 		paper, topic.interest_prompt
 	)
 
@@ -364,7 +364,7 @@ def run_analyse_one(
 		findings=findings,
 		brief_summary=brief_summary,
 		relevance=relevance,
-		figure=figure,
+		figures=figures,
 		translations=translations,
 	)
 
@@ -404,6 +404,58 @@ def _bi(en_text: str, zh_text: Optional[str]) -> dict:
 	return {"en": en_text, "zh": (zh_text or en_text)}
 
 
+def _figures_payload(summary: PaperSummary, tr: dict) -> list:
+	"""Serialise summary.figures into a JSON list with bilingual captions.
+
+	Translation alignment: ``_translate_bundle`` emits a ``figure_captions``
+	array whose order matches the figures list at translation time (i.e.
+	post-filter, after experiments/none were dropped). We zip them by index
+	here; on length mismatch we fall back to English-only captions, which
+	``_bi`` handles transparently.
+	"""
+	figs = summary.figures or []
+	if not figs:
+		return []
+	tr_caps = tr.get("figure_captions")
+	if not isinstance(tr_caps, list) or len(tr_caps) != len(figs):
+		tr_caps = [None] * len(figs)
+	out: list = []
+	for f, tcap in zip(figs, tr_caps):
+		out.append({
+			"label": f.label,
+			"caption": _bi(f.caption, tcap),
+			"url": f.url,
+			"order": f.order,
+			"stage": f.stage,
+			"reference_text": f.reference_text,
+		})
+	return out
+
+
+def _legacy_figure_payload(summary: PaperSummary, tr: dict) -> Optional[dict]:
+	"""Single-figure dict in the legacy schema. Reuses the translated caption
+	from the figures list when present."""
+	if summary.figure is None:
+		return None
+	# Find the matching entry in the figures list (by label+order) so we can
+	# reuse the same bilingual caption — keeps the two payload fields in
+	# sync without translating the caption twice.
+	tr_caps = tr.get("figure_captions") or []
+	figs = summary.figures or []
+	tcap: Optional[str] = None
+	for i, f in enumerate(figs):
+		if f is summary.figure or (f.label == summary.figure.label and f.order == summary.figure.order):
+			if i < len(tr_caps):
+				tcap = tr_caps[i]
+			break
+	return {
+		"label": summary.figure.label,
+		"caption": _bi(summary.figure.caption, tcap),
+		"url": summary.figure.url,
+		"reference_text": summary.figure.reference_text,
+	}
+
+
 def _summary_to_payload(summary: PaperSummary, markdown: str) -> dict:
 	"""Serialise a PaperSummary into a JSON-friendly dict for storage.
 
@@ -434,15 +486,14 @@ def _summary_to_payload(summary: PaperSummary, markdown: str) -> dict:
 		"pdf_url": paper.pdf_url,
 		"comment": paper.comment,
 		"relevance": _bi(summary.relevance, tr.get("relevance")),
-		"figure": (
-			{
-				"label": summary.figure.label,
-				"caption": _bi(summary.figure.caption, tr.get("figure_caption")),
-				"url": summary.figure.url,
-				"reference_text": summary.figure.reference_text,
-			}
-			if summary.figure else None
-		),
+		# Full per-stage figure list. The Chinese captions come from the
+		# parallel ``figure_captions`` array produced by ``_translate_bundle``;
+		# absent translations fall back to English via ``_bi``.
+		"figures": _figures_payload(summary, tr),
+		# Back-compat single-figure slot for older readers / older JSON
+		# consumers (the legacy ``figure`` field is the first methodology
+		# figure, or the first available figure if none was tagged).
+		"figure": _legacy_figure_payload(summary, tr),
 		"brief_summary": _bi(summary.brief_summary, tr.get("brief_summary")),
 		"core_summary": (
 			{

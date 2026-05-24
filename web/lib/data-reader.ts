@@ -48,6 +48,22 @@ export function pickLang(
   return (locale === "zh" ? t.zh : t.en) || t.en || t.zh || "";
 }
 
+export type FigureStage =
+  | "problem"
+  | "solution"
+  | "methodology"
+  | "experiments"
+  | "conclusion";
+
+export type PaperFigurePayload = {
+  label: string;
+  caption: BiText;
+  url: string;
+  order: number;
+  stage: FigureStage | null;
+  reference_text: string;
+};
+
 export type AnalysisPayload = {
   arxiv_id: string;
   topic: string;
@@ -65,7 +81,15 @@ export type AnalysisPayload = {
   pdf_url: string | null;
   comment: string | null;
   relevance: BiText;
+  // Legacy single-figure slot — first methodology figure, kept for backwards
+  // compatibility with analyses generated before the per-stage figure rework.
   figure: { label: string; caption: BiText; url: string; reference_text: string } | null;
+  // Full per-stage figure list. Each entry has `stage` set to one of the
+  // CoreSummary keys (problem / solution / methodology / conclusion).
+  // Experiment & decorative figures are dropped upstream so they never appear
+  // here. Older analyses won't have this field — code should fall back to
+  // `figure`.
+  figures?: PaperFigurePayload[];
   brief_summary: BiText;
   core_summary: {
     problem: BiText;

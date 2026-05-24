@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { ListTree, MessageSquareText } from "lucide-react";
+import { ListTree, MessageSquareText, StickyNote } from "lucide-react";
 import PaperTOC, { type PaperTOCProps, type CoreAspect } from "./PaperTOC";
 import ChatPanel from "./ChatPanel";
+import AnnotationsTab from "./annotations/AnnotationsTab";
 import { useT } from "./I18nProvider";
 
 export type PaperLeftPanelProps = {
@@ -12,17 +13,20 @@ export type PaperLeftPanelProps = {
   coreAspects: CoreAspect[];
 };
 
+type Tab = "toc" | "chat" | "notes";
+
 /**
- * Left rail of the paper view. Two tabs share the column:
+ * Left rail of the paper view. Three tabs share the column:
  *   - TOC: scroll-spy navigation (default)
  *   - Chat: per-paper LLM conversation
+ *   - Notes: list/edit/delete annotations the user left in the article
  *
- * Both children stay mounted so the chat's session state and TOC's scroll
+ * All children stay mounted so the chat's session state and TOC's scroll
  * listener survive tab switches. The inactive tab is just visually hidden.
  */
 export default function PaperLeftPanel({ arxivId, available, coreAspects }: PaperLeftPanelProps) {
   const t = useT();
-  const [tab, setTab] = useState<"toc" | "chat">("toc");
+  const [tab, setTab] = useState<Tab>("toc");
 
   return (
     <div className="left-panel">
@@ -47,6 +51,16 @@ export default function PaperLeftPanel({ arxivId, available, coreAspects }: Pape
           <MessageSquareText size={14} />
           {t("panel.chat")}
         </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={tab === "notes"}
+          className={tab === "notes" ? "active" : ""}
+          onClick={() => setTab("notes")}
+        >
+          <StickyNote size={14} />
+          {t("panel.notes")}
+        </button>
       </div>
 
       <div className="left-panel-body">
@@ -55,6 +69,9 @@ export default function PaperLeftPanel({ arxivId, available, coreAspects }: Pape
         </div>
         <div hidden={tab !== "chat"} className="left-panel-pane chat-pane">
           <ChatPanel arxivId={arxivId} active={tab === "chat"} />
+        </div>
+        <div hidden={tab !== "notes"} className="left-panel-pane notes-pane">
+          <AnnotationsTab />
         </div>
       </div>
     </div>

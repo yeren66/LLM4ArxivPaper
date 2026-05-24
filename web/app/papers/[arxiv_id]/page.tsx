@@ -12,7 +12,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 
-import { readAnalysis, pickLang } from "@/lib/data-reader";
+import { readAnalysis, pickLang, type PaperFigurePayload, type FigureStage } from "@/lib/data-reader";
 import { kvGet } from "@/lib/kv";
 import { getLocale } from "@/lib/locale-server";
 import { t } from "@/lib/i18n";
@@ -21,6 +21,8 @@ import PaperLeftPanel from "@/components/PaperLeftPanel";
 import type { CoreAspect } from "@/components/PaperTOC";
 import StarButtonClient from "./star-button";
 import HideButton from "@/components/HideButton";
+import { AnnotationsProvider } from "@/components/annotations/AnnotationsProvider";
+import SelectableSection from "@/components/annotations/SelectableSection";
 
 type StarsMap = Record<string, { topic?: string }>;
 type HiddenMap = Record<string, { hidden_at: string }>;
@@ -64,7 +66,28 @@ export default async function PaperPage({ params }: Props) {
     qa: (p.findings?.length ?? 0) > 0,
   };
 
+  // Per-stage figure list. Prefer the new `figures` array; for legacy
+  // analyses that only have a single `figure`, treat it as a methodology
+  // figure so it still renders somewhere.
+  const allFigures: PaperFigurePayload[] =
+    p.figures && p.figures.length > 0
+      ? p.figures
+      : p.figure
+        ? [{
+            label: p.figure.label,
+            caption: p.figure.caption,
+            url: p.figure.url,
+            order: 0,
+            stage: "methodology",
+            reference_text: p.figure.reference_text,
+          }]
+        : [];
+  function figuresForStage(stage: FigureStage): PaperFigurePayload[] {
+    return allFigures.filter((f) => f.stage === stage);
+  }
+
   return (
+    <AnnotationsProvider arxivId={arxivId}>
     <div className="paper-shell">
       <aside className="toc-aside">
         <div className="paper-meta-block" style={{ marginBottom: "1.25rem" }}>
@@ -148,7 +171,9 @@ export default async function PaperPage({ params }: Props) {
               <Target />
               {t(locale, "section.relevance")}
             </div>
-            <p className="relevance-text">{pickLang(p.relevance, locale)}</p>
+            <SelectableSection stage="relevance">
+              <p className="relevance-text">{pickLang(p.relevance, locale)}</p>
+            </SelectableSection>
           </section>
         )}
 
@@ -158,7 +183,9 @@ export default async function PaperPage({ params }: Props) {
               <FileText />
               {t(locale, "section.brief")}
             </div>
-            <MarkdownContent>{pickLang(p.brief_summary, locale)}</MarkdownContent>
+            <SelectableSection stage="brief">
+              <MarkdownContent>{pickLang(p.brief_summary, locale)}</MarkdownContent>
+            </SelectableSection>
           </section>
         )}
 
@@ -171,35 +198,19 @@ export default async function PaperPage({ params }: Props) {
             {ASPECTS.map(({ key, labelKey }, idx) => {
               const body = pickLang((p.core_summary as any)[key], locale).trim();
               if (!body) return null;
+              const stageFigures = figuresForStage(key);
               return (
                 <div key={key} id={`core-${key}`} className="core-aspect">
                   <div className="subhead">
                     <span className="num">{idx + 1}</span>
                     {t(locale, labelKey)}
                   </div>
-                  {/* The method figure is embedded right in the methodology aspect. */}
-                  {key === "methodology" && p.figure && (() => {
-                    const figCaption = pickLang(p.figure.caption, locale);
-                    return (
-                      <figure className="method-figure">
-                        <a href={p.figure.url} target="_blank" rel="noreferrer">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={p.figure.url}
-                            alt={figCaption || p.figure.label}
-                            loading="lazy"
-                          />
-                        </a>
-                        <figcaption>
-                          <strong>{p.figure.label}</strong>
-                          {figCaption && figCaption !== p.figure.label && (
-                            <> — {stripLabelPrefix(figCaption, p.figure.label)}</>
-                          )}
-                        </figcaption>
-                      </figure>
-                    );
-                  })()}
-                  <MarkdownContent>{body}</MarkdownContent>
+                  {stageFigures.map((f) => (
+                    <FigureBlock key={`${f.label}-${f.order}`} figure={f} locale={locale} />
+                  ))}
+                  <SelectableSection stage={key}>
+                    <MarkdownContent>{body}</MarkdownContent>
+                  </SelectableSection>
                 </div>
               );
             })}
@@ -222,7 +233,9 @@ export default async function PaperPage({ params }: Props) {
                       {pickLang(f.question, locale)}
                     </div>
                     {reason && <div className="qa-reason">{reason}</div>}
-                    <MarkdownContent>{pickLang(f.answer, locale)}</MarkdownContent>
+                    <SelectableSection stage="qa">
+                      <MarkdownContent>{pickLang(f.answer, locale)}</MarkdownContent>
+                    </SelectableSection>
                     <span className="qa-confidence">
                       <ShieldCheck size={12} />
                       {t(locale, "paper.confidence")} {f.confidence.toFixed(2)}
@@ -247,6 +260,7 @@ export default async function PaperPage({ params }: Props) {
         )}
       </article>
     </div>
+    </AnnotationsProvider>
   );
 }
 
@@ -260,4 +274,28 @@ function stripLabelPrefix(caption: string, label: string): string {
     return trimmed.slice(label.length).replace(/^[\s:：.-]+/, "").trim();
   }
   return trimmed;
+}
+
+function FigureBlock({
+  figure,
+  locale,
+}: {
+  figure: PaperFigurePayload;
+  locale: "zh" | "en";
+}) {
+  const caption = pickLang(figure.caption, locale);
+  return (
+    <figure className="method-figure">
+      <a href={figure.url} target="_blank" rel="noreferrer">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={figure.url} alt={caption || figure.label} loading="lazy" />
+      </a>
+      <figcaption>
+        <strong>{figure.label}</strong>
+        {caption && caption !== figure.label && (
+          <> — {stripLabelPrefix(caption, figure.label)}</>
+        )}
+      </figcaption>
+    </figure>
+  );
 }

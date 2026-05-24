@@ -107,6 +107,30 @@ class PDFFigureExtractor:
 			if tmp_path:
 				Path(tmp_path).unlink(missing_ok=True)
 
+	def fetch_all(self, pdf_url: str, arxiv_id: str = "") -> List[PaperFigure]:
+		"""Render EVERY figure in the first ``_MAX_PAGES_TO_SCAN`` pages.
+
+		Mirrors :meth:`fetch` but does not pick a "best" one — useful when
+		the caller wants the LLM to classify all of them. Returns ``[]`` on
+		any infrastructure failure.
+		"""
+		if fitz is None or requests is None or not pdf_url:
+			return []
+		tmp_path: Optional[str] = None
+		try:
+			resp = requests.get(pdf_url, timeout=self.timeout)
+			resp.raise_for_status()
+			with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as fh:
+				fh.write(resp.content)
+				tmp_path = fh.name
+			return self._extract_all(tmp_path)
+		except Exception as exc:  # pragma: no cover - network / parse issues
+			print(f"[WARN] PDF figure (full) extraction failed for {arxiv_id or pdf_url}: {exc}")
+			return []
+		finally:
+			if tmp_path:
+				Path(tmp_path).unlink(missing_ok=True)
+
 	# ------------------------------------------------------------------
 
 	def _extract(self, pdf_path: str) -> Optional[PaperFigure]:
@@ -170,6 +194,73 @@ class PDFFigureExtractor:
 				order=order,
 				reference_text=reference_text,
 			)
+		finally:
+			doc.close()
+
+	# ------------------------------------------------------------------
+
+	def _extract_all(self, pdf_path: str) -> List[PaperFigure]:
+		"""Render every locatable figure in the scanned page range.
+
+		Same caption-detection + region-render pipeline as :meth:`_extract`,
+		but instead of picking the single highest-scoring one, we loop over
+		every caption and emit a ``PaperFigure`` for each. Figures whose
+		region we fail to render (e.g. layout heuristics misfire) are
+		silently skipped.
+		"""
+		doc = fitz.open(pdf_path)
+		try:
+			captions: List[Tuple[int, "fitz.Rect", int, str]] = []
+			block_texts: List[str] = []
+			n_pages = min(doc.page_count, _MAX_PAGES_TO_SCAN)
+			for pidx in range(n_pages):
+				page = doc[pidx]
+				for block in page.get_text("blocks"):
+					x0, y0, x1, y1, text = block[0], block[1], block[2], block[3], block[4]
+					text = (text or "").strip()
+					if not text:
+						continue
+					block_texts.append(text)
+					m = _CAPTION_RE.match(text)
+					if m:
+						captions.append((pidx, fitz.Rect(x0, y0, x1, y1), int(m.group(1)), text))
+
+			if not captions:
+				return []
+
+			# De-duplicate captions: a caption block can split across PDF "blocks"
+			# (PyMuPDF's block extractor sometimes returns a header line + body
+			# separately), giving us multiple hits for the same figure. Keep
+			# the first occurrence per (page, figure number).
+			seen: set = set()
+			deduped: List[Tuple[int, "fitz.Rect", int, str]] = []
+			captions.sort(key=lambda c: (c[0], c[1].y0))
+			for c in captions:
+				key = (c[0], c[2])
+				if key in seen:
+					continue
+				seen.add(key)
+				deduped.append(c)
+
+			out: List[PaperFigure] = []
+			for order, (pidx, cbbox, num, ctext) in enumerate(deduped):
+				caption_clean = _CAPTION_RE.sub("", ctext, count=1).strip()
+				page = doc[pidx]
+				region = self._figure_region(page, cbbox)
+				if region is None:
+					continue
+				data_uri = self._render_region(page, region)
+				if not data_uri:
+					continue
+				reference_text = self._reference_text(block_texts, num)
+				out.append(PaperFigure(
+					label=f"Figure {num}",
+					caption=caption_clean,
+					url=data_uri,
+					order=order,
+					reference_text=reference_text,
+				))
+			return out
 		finally:
 			doc.close()
 

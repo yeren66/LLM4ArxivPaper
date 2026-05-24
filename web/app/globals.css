@@ -405,6 +405,12 @@ h1, h2, h3, h4 {
   padding: 0;
   overflow: hidden;
 }
+.left-panel-pane.notes-pane {
+  /* Notes list scrolls inside its own pane (overscroll-behavior keeps wheel
+     events out of the document for the same reason as .chat-body). */
+  padding: 0;
+  overscroll-behavior: contain;
+}
 
 /* chat panel (now embedded inside the left sidebar tab) */
 .chat-panel {
@@ -742,6 +748,9 @@ h1, h2, h3, h4 {
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
+  /* Keep wheel/touch scroll inside the chat body — never bubble up to the
+     document and scroll the article on the right. */
+  overscroll-behavior: contain;
   padding: 0.9rem 0.85rem;
   display: flex; flex-direction: column; gap: 0.75rem;
   background: var(--color-bg);
@@ -919,6 +928,204 @@ h1, h2, h3, h4 {
   color: var(--color-text-dim);
   margin: 0 auto 0.7rem;
   display: block;
+}
+
+/* =====================================================================
+   Annotations
+   --------------------------------------------------------------------- */
+.selectable-section {
+  /* The wrapper itself stays a plain block — only its descendants are
+     decorated. The position:relative is reserved for future inline UI
+     (we currently use position:fixed for popup + editor). */
+  position: relative;
+}
+
+/* Highlight applied over text that already has an annotation. */
+mark.annotation-mark {
+  background: color-mix(in srgb, var(--color-accent) 22%, transparent);
+  color: inherit;
+  padding: 0 1px;
+  border-radius: 2px;
+  cursor: help;
+  transition: background-color 0.3s ease;
+}
+mark.annotation-mark.annotation-mark-flash {
+  background: color-mix(in srgb, var(--color-accent) 55%, transparent);
+}
+
+/* Floating "Annotate" button that appears above a fresh text selection. */
+.annotation-popup-btn {
+  position: fixed;
+  z-index: 60;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--color-bg);
+  background: var(--color-accent, #1f6feb);
+  border: none;
+  border-radius: 6px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  cursor: pointer;
+}
+.annotation-popup-btn:hover {
+  filter: brightness(1.08);
+}
+
+/* Inline note editor anchored under the selection. */
+.annotation-editor {
+  position: fixed;
+  z-index: 70;
+  width: min(340px, calc(100vw - 16px));
+  background: var(--color-bg-elev);
+  border: 1px solid var(--color-border-soft);
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  padding: 0.7rem 0.75rem 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+.annotation-editor-quote {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+  max-height: 4.2em;
+  overflow: hidden;
+  border-left: 3px solid var(--color-accent, #1f6feb);
+  padding: 0.15rem 0.55rem;
+  background: color-mix(in srgb, var(--color-accent) 8%, transparent);
+  border-radius: 3px;
+}
+.annotation-editor textarea {
+  width: 100%;
+  border: 1px solid var(--color-border-soft);
+  background: var(--color-bg);
+  color: var(--color-text);
+  border-radius: 6px;
+  padding: 0.5rem 0.6rem;
+  font: inherit;
+  font-size: 0.85rem;
+  resize: vertical;
+  min-height: 56px;
+}
+.annotation-editor textarea:focus {
+  outline: 2px solid var(--color-accent, #1f6feb);
+  outline-offset: -1px;
+}
+.annotation-editor-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.4rem;
+}
+.annotation-editor-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.78rem;
+  background: transparent;
+  border: 1px solid var(--color-border-soft);
+  border-radius: 5px;
+  color: var(--color-text);
+  cursor: pointer;
+}
+.annotation-editor-actions button.primary {
+  background: var(--color-accent, #1f6feb);
+  border-color: transparent;
+  color: var(--color-bg);
+}
+.annotation-editor-actions button:hover { filter: brightness(1.05); }
+
+/* Notes tab — list of saved annotations. */
+.notes-empty {
+  padding: 1.5rem 1rem;
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  align-items: center;
+}
+.notes-list {
+  list-style: none;
+  margin: 0;
+  padding: 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+.note-card {
+  border: 1px solid var(--color-border-soft);
+  border-radius: 7px;
+  padding: 0.55rem 0.6rem 0.5rem;
+  background: var(--color-bg);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.note-quote {
+  text-align: left;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.note-stage-chip {
+  align-self: flex-start;
+  font-size: 0.68rem;
+  padding: 0.08rem 0.45rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+  color: var(--color-accent, #1f6feb);
+  font-weight: 500;
+}
+.note-quote-text {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  line-height: 1.45;
+  border-left: 3px solid color-mix(in srgb, var(--color-accent) 60%, transparent);
+  padding-left: 0.5rem;
+}
+.note-quote:hover .note-quote-text {
+  color: var(--color-text);
+}
+.note-body {
+  font-size: 0.86rem;
+  color: var(--color-text);
+  line-height: 1.45;
+  white-space: pre-wrap;
+}
+.note-body-empty {
+  color: var(--color-text-dim);
+  font-style: italic;
+}
+.note-card textarea {
+  width: 100%;
+  border: 1px solid var(--color-border-soft);
+  background: var(--color-bg);
+  color: var(--color-text);
+  border-radius: 5px;
+  padding: 0.4rem 0.5rem;
+  font: inherit;
+  font-size: 0.85rem;
+  resize: vertical;
+}
+.note-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.3rem;
+}
+.note-actions .icon-btn.primary {
+  background: var(--color-accent, #1f6feb);
+  color: var(--color-bg);
+  border-color: transparent;
 }
 
 /* =====================================================================

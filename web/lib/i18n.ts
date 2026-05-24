@@ -88,6 +88,24 @@ const dict = {
   // -- left panel tabs --
   "panel.toc": { zh: "目录", en: "Contents" },
   "panel.chat": { zh: "对话", en: "Chat" },
+  "panel.notes": { zh: "批注", en: "Notes" },
+
+  // -- annotations / notes --
+  "notes.addBtn": { zh: "加批注", en: "Annotate" },
+  "notes.placeholder": { zh: "写下你的批注…", en: "Write your note…" },
+  "notes.save": { zh: "保存", en: "Save" },
+  "notes.cancel": { zh: "取消", en: "Cancel" },
+  "notes.edit": { zh: "编辑", en: "Edit" },
+  "notes.delete": { zh: "删除", en: "Delete" },
+  "notes.loading": { zh: "加载中…", en: "Loading…" },
+  "notes.empty": {
+    zh: "还没有批注。在右侧正文里选中一段文字试试。",
+    en: "No notes yet. Highlight any text on the right to add one.",
+  },
+  "notes.noNote": { zh: "（无文字笔记）", en: "(no text)" },
+  "notes.scrollTo": { zh: "跳到原文", en: "Jump to highlight" },
+  "notes.confirmDelete": { zh: "删除这条批注？", en: "Delete this note?" },
+  "notes.errorPrefix": { zh: "加载失败：", en: "Failed to load: " },
 
   // -- star button --
   "star.starred": { zh: "已收藏", en: "Starred" },

@@ -121,6 +121,50 @@ class Ar5ivParser:
 	# ------------------------------------------------------------------
 	# figures
 
+	def fetch_all_figures(self, arxiv_id: str) -> List[PaperFigure]:
+		"""Extract EVERY figure on the ar5iv page.
+
+		Returns a list ordered by appearance, each with ``label``, ``caption``,
+		``url`` (absolute ar5iv link, hot-linked) and ``reference_text``
+		(body paragraphs that cite the figure — the paper's own description).
+		Empty list when ar5iv has nothing usable. ``stage`` is left ``None``
+		— the summariser fills it in based on the caption.
+		"""
+		if BeautifulSoup is None:  # pragma: no cover
+			print("[WARN] beautifulsoup4 not installed; skipping figure extraction.")
+			return []
+		html = self._fetch_html(arxiv_id)
+		if not html:
+			return []
+		try:
+			soup = BeautifulSoup(html, "html.parser")
+		except Exception as exc:  # pragma: no cover
+			print(f"[WARN] Failed to parse ar5iv HTML for {arxiv_id}: {exc}")
+			return []
+
+		page_url = self._page_url(arxiv_id) + "/"
+		figure_nodes = soup.find_all("figure", class_="ltx_figure") or soup.find_all("figure")
+		out: List[PaperFigure] = []
+		for idx, fig in enumerate(figure_nodes):
+			img = fig.find("img")
+			if img is None or not img.get("src"):
+				continue
+			src = urljoin(page_url, img.get("src").strip())
+			caption_node = fig.find("figcaption")
+			caption = ""
+			label = ""
+			if caption_node is not None:
+				tag = caption_node.find("span", class_=re.compile(r"ltx_tag"))
+				if tag is not None:
+					label = tag.get_text(strip=True).rstrip(":：").strip()
+				caption = caption_node.get_text(" ", strip=True)
+			if not label:
+				label = f"Figure {idx + 1}"
+			fig_obj = PaperFigure(label=label, caption=caption, url=src, order=idx)
+			fig_obj.reference_text = self._extract_reference_text(soup, label)
+			out.append(fig_obj)
+		return out
+
 	def fetch_method_figure(self, arxiv_id: str) -> Optional[PaperFigure]:
 		"""Extract the single most informative figure — the method /
 		architecture / flow diagram.
