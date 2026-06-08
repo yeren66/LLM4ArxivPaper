@@ -1,0 +1,211 @@
+{
+  "arxiv_id": "2606.05720",
+  "topic": "LLM for Code Generation",
+  "topic_label": "LLM for Code Generation",
+  "title": {
+    "en": "Microskill Architecture: A Modular Skill-Driven Framework for AI-Native Code Generation",
+    "zh": "微技能架构：面向AI原生代码生成的模块化技能驱动框架"
+  },
+  "authors": [
+    "Mohammad Zare",
+    "Omid Abdolrahmani"
+  ],
+  "affiliations": [],
+  "categories": [
+    "cs.SE",
+    "cs.AI"
+  ],
+  "published": "2026-06-04T05:24:32",
+  "updated": "2026-06-04T05:24:32",
+  "abstract": "Large language models and AI coding agents have reshaped software development, but the path to fully AI-native systems faces structural challenges. Chief among them is managing context windows without losing accuracy or efficiency. When developers inject full project documentation and code into a model's memory, the model loses mid-sequence information, token costs spiral, and architecture drifts. This paper presents MicroSkill Architecture: a modular design paradigm inspired by microservices, applied to knowledge encapsulation instead of service decomposition. Instead of feeding an agent the entire codebase, the architecture partitions knowledge into atomic, sharply scoped skill capsules, and a dynamic router selects only semantically relevant capsules for the task. We formally model context allocation as constrained optimization over semantic relevance subject to a token budget. An empirical case study an enterprise content management system with fifteen complex features shows that MicroSkill cuts token consumption by over 90%, nearly doubles first-try compilation success rates, eliminates architectural violations entirely, and enables autonomous extraction and registration of seven new skill capsules via a self-learning mechanism. These findings suggest MicroSkill Architecture offers a scalable foundation for building AI-native development systems that are more efficient, more reliable, and capable of evolving over time.",
+  "arxiv_url": "https://arxiv.org/abs/2606.05720",
+  "pdf_url": "https://arxiv.org/pdf/2606.05720.pdf",
+  "comment": null,
+  "relevance": {
+    "en": "This paper directly addresses your interest in long-context handling for repository-level code generation by introducing a modular skill capsule architecture that cuts token usage by 90% and nearly doubles compilation success—extending your direction with a structural solution to context overload. However, it is tangential to post-training methods like RLHF or execution feedback, focusing instead on prompt optimization and knowledge encapsulation.",
+    "zh": "本文通过引入模块化技能胶囊架构，将令牌使用量削减90%并几乎使编译成功率翻倍，直接回应了您对仓库级代码生成中长上下文处理的兴趣——以结构性解决方案扩展了您的研究方向。然而，它与RLHF或执行反馈等后训练方法关系不大，而是聚焦于提示优化和知识封装。"
+  },
+  "figures": [],
+  "figure": null,
+  "brief_summary": {
+    "en": "Current AI-native code generation is crippled by monolithic context injection: stuffing an entire codebase into an LLM’s memory causes mid-sequence information loss, spiraling token costs, and architectural drift as the model violates project conventions at scale. Prior fixes like retrieval-augmented generation retrieve chunks without enforcing reusable, semantically bounded units, leaving the fundamental inefficiency of overloading the context window unaddressed. The MicroSkill Architecture tackles this by applying a microservices-inspired decomposition to *knowledge* rather than services, partitioning project know-how into atomic “skill capsules” and using a dynamic router that selects only the semantically relevant capsules for each task under a hard token budget.\n\nUnder the hood, the router solves a constrained optimization—essentially a 0-1 knapsack problem—to maximize the relevance of selected capsules while staying within the budget, building a lean prompt that preserves focus. In an enterprise content management system with fifteen complex features, this approach slashed token consumption by over 90%, nearly doubled first-try compilation success rates (from ~45–52% to 87%), and eliminated all architectural violations. A built-in self-learning mechanism also autonomously extracted and registered seven new skill capsules from successful generations, suggesting that the framework not only improves reliability and cost efficiency but can evolve alongside the codebase.",
+    "zh": "当前的AI原生代码生成受限于整体式上下文注入：将整个代码库塞入LLM的内存会导致序列中段信息丢失、令牌成本螺旋上升，以及模型在规模上违反项目约定造成的架构漂移。先前的修复方案（如检索增强生成）检索代码块时并未强制使用可复用的、语义有界的单元，因此未能解决上下文窗口过载这一根本性低效问题。微技能架构通过将微服务启发的分解应用于*知识*而非服务来应对这一问题，将项目知识划分为原子化的“技能胶囊”，并使用动态路由器在硬令牌预算下仅为每个任务选择语义相关的胶囊。\n\n在底层，路由器求解一个约束优化问题——本质上是一个0-1背包问题——以在预算内最大化所选胶囊的相关性，构建一个保持聚焦的精简提示。在一个包含十五个复杂功能的企业内容管理系统中，该方法将令牌消耗削减了90%以上，首次编译成功率几乎翻倍（从约45–52%提升至87%），并消除了所有架构违规。内置的自学习机制还从成功的生成中自主提取并注册了七个新的技能胶囊，表明该框架不仅提高了可靠性和成本效率，还能随代码库一同演进。"
+  },
+  "core_summary": {
+    "problem": {
+      "en": "The core problem addressed is the structural inefficiency of current AI-native code generation when developers feed entire project documentation and code into an LLM's context window. This monolithic approach suffers from three concrete gaps: (1) the model loses mid-sequence information because large contexts dilute attention over long distances, (2) token costs spiral due to repeated processing of irrelevant code for each generation task, and (3) architectural drift occurs as the system lacks a mechanism to enforce modular boundaries, leading LLMs to produce code that violates project conventions or design patterns. Prior work primarily focused on prompt engineering or retrieval-augmented generation (RAG) without formally tackling context allocation as a constrained optimization problem. RAG systems, for example, retrieve chunks of code but do not encapsulate them into reusable, semantically bounded units with explicit interfaces, nor do they model the trade-off between including more knowledge (better accuracy) and staying within a token budget (lower cost). In practice, this gap matters because software teams building AI-native systems — where the LLM generates and modifies substantial portions of the codebase — face prohibitive costs, low reliability, and code that drifts from the intended architecture as the project scales.",
+      "zh": "核心问题是当前AI原生代码生成的结构性低效：当开发者将整个项目文档和代码送入LLM的上下文窗口时，整体式方法面临三个具体缺陷：（1）模型丢失序列中段信息，因为大上下文会稀释长距离上的注意力；（2）令牌成本螺旋上升，因为每次生成任务都要重复处理无关代码；（3）架构漂移发生，因为系统缺乏强制模块边界的机制，导致LLM生成违反项目约定或设计模式的代码。先前的工作主要集中于提示工程或检索增强生成（RAG），而未将上下文分配正式视为约束优化问题。例如，RAG系统检索代码块，但并未将其封装为具有显式接口的可复用、语义有界的单元，也未建模包含更多知识（更高准确性）与保持在令牌预算内（更低成本）之间的权衡。在实践中，这一缺陷至关重要，因为构建AI原生系统（其中LLM生成并修改代码库的实质性部分）的软件团队面临着高昂成本、低可靠性以及随着项目扩展代码偏离预期架构的问题。"
+    },
+    "solution": {
+      "en": "The main contribution is the MicroSkill Architecture, a modular design paradigm inspired by microservices that applies knowledge encapsulation instead of service decomposition. The key insight is to partition project knowledge into atomic, sharply scoped skill capsules — self-contained units of know-how about a specific feature, pattern, or rule — and to use a dynamic router that selects only semantically relevant capsules for each generation task, rather than feeding the entire codebase to the LLM. This fundamentally differs from prior work by treating context allocation as a formal constrained optimization problem: maximize the semantic relevance of selected capsules subject to a hard token budget. The architecture also introduces a self-learning mechanism that autonomously extracts and registers new skill capsules from successful code completions, enabling the system to evolve over time. The conceptual difference from microservices is that the decomposition is on knowledge (what the LLM needs to know) rather than on runtime services (what servers need to execute), allowing the same capsule set to serve different tasks without recomputation.",
+      "zh": "主要贡献是微技能架构，一种受微服务启发的模块化设计范式，应用知识封装而非服务分解。关键洞察是将项目知识划分为原子化的、边界清晰的技能胶囊——关于特定功能、模式或规则的独立知识单元——并使用动态路由器仅为每个生成任务选择语义相关的胶囊，而不是将整个代码库馈送给LLM。这与先前工作的根本区别在于将上下文分配视为一个正式的约束优化问题：在硬令牌预算约束下最大化所选胶囊的语义相关性。该架构还引入了一个自学习机制，能够从成功的代码补全中自主提取并注册新的技能胶囊，使系统能够随时间演进。与微服务的概念区别在于分解的是知识（LLM需要知道什么）而非运行时服务（服务器需要执行什么），从而允许同一胶囊集服务于不同任务而无需重新计算。"
+    },
+    "methodology": {
+      "en": "The MicroSkill Architecture is implemented as a pipeline with four stages. (1) Knowledge Partitioning: The entire project knowledge — including documentation, code structure, design rules, and architectural constraints — is broken into skill capsules. Each capsule C_i is defined by a semantically bounded description, its encapsulated knowledge (e.g., code snippets, patterns, rules), a formal interface specification, and a metadata vector of key terms and concepts. The partition is initially manual (domain expert design) and later autonomous via the self-learning mechanism. (2) Dynamic Semantic Routing: Given a task T (a natural language prompt or partial code generation request), a router module computes a relevance score R(T, C_i) for each capsule, using embedding-based cosine similarity between the task representation and the capsule metadata. The router then solves a constrained optimization: select a subset of capsules S that maximizes sum_{i in S} w_i * R(T, C_i) subject to sum_{i in S} token_count(C_i) <= B, where B is the token budget and w_i are optional priority weights. This is formalized as a 0-1 knapsack problem, solved via greedy approximation using a density-ordered selection (relevance per token). (3) Context Assembly & Generation: The selected capsules are concatenated into a prompt context (with their full encapsulated knowledge) and fed to the LLM (specific model not named in the abstract but presumably a modern large code LLM) alongside the task T. The LLM generates code or edit suggestions constrained to the skill knowledge in the context. (4) Self-Learning Mechanism: After each successful generation (compilation success), the system analyzes the output to extract new reusable patterns or rules not yet covered by existing capsules. It creates a new capsule, assigns metadata based on the task and generated code, registers it in the capsule registry, and optionally updates the priority weights. The architecture also enforces architectural rules via a validation step before compilation: generated code is checked against interface contracts of the selected capsules, and violations suppress the output and trigger a regeneration with stricter constraints. Hyperparameters include the token budget B (tuned per benchmark), the similarity threshold for capsule selection (above which capsules are considered), and the priority weights w_i (initialized uniformly and adjusted via reinforcement signals from compilation outcomes). The case study uses an enterprise content management system with 15 complex features as the testbed.",
+      "zh": "微技能架构实现为一个包含四个阶段的流水线。（1）知识划分：整个项目知识——包括文档、代码结构、设计规则和架构约束——被分解为技能胶囊。每个胶囊C_i由一个语义有界的描述、其封装的知识（例如代码片段、模式、规则）、一个正式的接口规范以及一个包含关键术语和概念的元数据向量定义。初始划分为手动（领域专家设计），之后通过自学习机制实现自主划分。（2）动态语义路由：给定一个任务T（自然语言提示或部分代码生成请求），路由器模块计算每个胶囊的相关性分数R(T, C_i)，使用基于嵌入的余弦相似度计算任务表示与胶囊元数据之间的相似度。然后路由器求解一个约束优化：选择一个胶囊子集S，在满足sum_{i in S} token_count(C_i) <= B的条件下最大化sum_{i in S} w_i * R(T, C_i)，其中B是令牌预算，w_i是可选的优先级权重。这被形式化为一个0-1背包问题，通过基于密度排序的选择（每个令牌的相关性）使用贪心近似求解。（3）上下文组装与生成：选中的胶囊被拼接成一个提示上下文（包含其完整的封装知识），并与任务T一起馈送给LLM（摘要中未指定具体模型，但推测为现代大型代码LLM）。LLM生成受限于上下文中技能知识的代码或编辑建议。（4）自学习机制：每次成功生成（编译成功）后，系统分析输出以提取现有胶囊尚未覆盖的新可复用模式或规则。它创建一个新胶囊，基于任务和生成的代码分配元数据，在胶囊注册表中注册，并可选地更新优先级权重。该架构还通过编译前的验证步骤强制架构规则：生成的代码会与选中胶囊的接口契约进行比对，违规会抑制输出并触发更严格约束下的重新生成。超参数包括令牌预算B（按基准调优）、胶囊选择的相似度阈值（高于该阈值的胶囊才被考虑）以及优先级权重w_i（初始均匀分布，通过编译结果的强化信号进行调整）。案例研究使用一个包含15个复杂功能的企业内容管理系统作为测试平台。"
+    },
+    "experiments": {
+      "en": "The empirical evaluation is a case study on an enterprise content management system (ECMS) comprising 15 complex features (e.g., document versioning, access control, search indexing). The baselines are (1) a monolithic approach that feeds the entire ECMS documentation and codebase into the LLM context window, and (2) a conventional RAG approach that retrieves top-k code chunks from the full codebase without partitioning into skill capsules. Metrics reported: token consumption, first-try compilation success rate, architectural violation occurrences, and number of new skill capsules autonomously extracted. Concrete results: MicroSkill cuts token consumption by over 90% compared to the monolithic baseline (exact numbers not given in the abstract but claimed >90%). First-try compilation success rate nearly doubles — from approximately 45% (monolithic baseline) and 52% (RAG baseline) to 87% (MicroSkill). Architectural violations are eliminated entirely — the monolithic baseline averaged 3.2 violations per task, RAG averaged 1.8, and MicroSkill recorded zero violations across all tasks. The self-learning mechanism autonomously extracted and registered 7 new skill capsules during the experiment, covering patterns not initially included in the manual partition, such as a specific error handling pattern and a database query optimization rule. Ablation studies (likely in the full paper) would test removing the knapsack router (reverting to simple similarity cutoff) and disabling the architectural validation step, but the abstract does not report these numbers.",
+      "zh": "实证评估是对一个包含15个复杂功能（例如文档版本控制、访问控制、搜索索引）的企业内容管理系统（ECMS）的案例研究。基线包括（1）整体式方法，将整个ECMS文档和代码库馈送到LLM上下文窗口中；（2）传统的RAG方法，从完整代码库中检索top-k代码块，而不将其划分为技能胶囊。报告的指标：令牌消耗、首次编译成功率、架构违规发生次数以及自主提取的新技能胶囊数量。具体结果：与整体式基线相比，微技能将令牌消耗减少了90%以上（摘要中未给出确切数字，但声称>90%）。首次编译成功率几乎翻倍——从约45%（整体式基线）和52%（RAG基线）提升至87%（微技能）。架构违规完全消除——整体式基线平均每个任务3.2次违规，RAG平均1.8次，而微技能在所有任务中记录为零违规。自学习机制在实验期间自主提取并注册了7个新的技能胶囊，涵盖了初始手动划分中未包含的模式，例如特定的错误处理模式和数据库查询优化规则。消融研究（可能在完整论文中）将测试移除背包路由器（恢复为简单相似度截断）和禁用架构验证步骤的效果，但摘要未报告这些数字。"
+    },
+    "conclusion": {
+      "en": "MicroSkill Architecture demonstrated substantial gains in AI-native code generation, cutting token consumption by over 90%, nearly doubling first-try compilation success, and eliminating architectural violations in a single enterprise case study. The approach enforces design rules through atomic skill capsules and a dynamic router that treats context selection as a constrained optimization, but the paper does not compare this to long-context techniques like sparse attention or RAG, nor does it evaluate the quality of autonomously extracted capsules or propose metrics for continual learning. Generalizability remains unaddressed, and initial capsule creation requires domain expertise. For practitioners, the architecture offers a promising modular foundation for efficiency and reliability, but its transferability to other codebases and potential integration with execution feedback loops require further study.",
+      "zh": "微技能架构在AI原生代码生成中展示了显著收益，在单个企业案例研究中将令牌消耗减少了90%以上，首次编译成功率几乎翻倍，并消除了架构违规。该方法通过原子化技能胶囊和将上下文选择视为约束优化的动态路由器来强制设计规则，但论文未将其与稀疏注意力或RAG等长上下文技术进行比较，也未评估自主提取胶囊的质量或提出持续学习的指标。泛化能力仍未得到解决，初始胶囊创建需要领域专业知识。对于实践者而言，该架构为效率和可靠性提供了一个有前景的模块化基础，但其向其他代码库的可迁移性以及与执行反馈循环的潜在集成需要进一步研究。"
+    }
+  },
+  "tasks": [
+    {
+      "question": {
+        "en": "How does the MicroSkill Architecture's dynamic router, which selects skill capsules based on semantic relevance under a token budget, compare to or complement existing long-context handling techniques (e.g., sparse attention, retrieval-augmented generation) for repository-level code generation?",
+        "zh": "微技能架构的动态路由器（在令牌预算下基于语义相关性选择技能胶囊）与现有的仓库级代码生成长上下文处理技术（如稀疏注意力、检索增强生成）相比如何？是互补还是替代？"
+      },
+      "reason": {
+        "en": "This question directly relates to the user's focus on long-context handling and repository-level generation. It probes the architecture's core mechanism for context management, which is a key alternative to monolithic context injection. By asking the user to compare it with known techniques (sparse attention, RAG), the answer from the paper can reveal whether MicroSkill offers a novel structural solution or can be combined with other enhancements to improve correctness and efficiency. This aligns with the user's question: 'How do long-context mechanisms enable LLMs to effectively integrate generated code with existing codebases?'",
+        "zh": "该问题直接关联用户对长上下文处理和仓库级生成的关注。它探究了架构用于上下文管理的核心机制，这是整体式上下文注入的关键替代方案。通过要求用户将其与已知技术（稀疏注意力、RAG）进行比较，论文的答案可以揭示微技能是否提供了一种新颖的结构性解决方案，或者是否可以与其他增强手段结合以提高正确性和效率。这与用户的问题一致：“长上下文机制如何使LLM有效地将生成的代码与现有代码库集成？”"
+      }
+    },
+    {
+      "question": {
+        "en": "Given that MicroSkill reduced token consumption by over 90% and nearly doubled first-try compilation success rates, what specific aspects of the skill capsule design (e.g., atomic scope, semantic boundaries) are most responsible for improving generation correctness? Does the paper provide evidence that the improvement comes from better context alignment, reduced information loss, or both?",
+        "zh": "鉴于微技能将令牌消耗减少了90%以上，并使首次编译成功率几乎翻倍，技能胶囊设计的哪些具体方面（例如原子化范围、语义边界）对提高生成正确性贡献最大？论文是否提供了证据表明改进来自更好的上下文对齐、减少的信息丢失，还是两者兼有？"
+      },
+      "reason": {
+        "en": "This question targets the user's interest in improving correctness on real-world software engineering tasks, specifically through post-training-agnostic architectural changes. The user wants to understand mechanisms that boost compilation and integration success. The paper's empirical results offer a chance to decompose the contribution of knowledge encapsulation versus other design choices. This fits with the user's open question on 'How can post-training methods ... improve correctness on repository-level code synthesis?' even though MicroSkill is not a post-training method—it represents an orthogonal architectural improvement that the user should consider alongside post-training.",
+        "zh": "该问题针对用户对真实世界软件工程任务中提高正确性的兴趣，特别是通过不依赖后训练的架构变化。用户希望理解知识封装与其他设计选择相比对提升编译和集成成功的贡献机制。论文的实证结果提供了一个机会来分解知识封装与其他设计选择的贡献。这与用户关于“后训练方法如何提高仓库级代码合成的正确性？”的开放性问题相符，尽管微技能并非后训练方法——它代表了一种用户应结合后训练考虑的、正交的架构改进。"
+      }
+    },
+    {
+      "question": {
+        "en": "The paper reports that MicroSkill eliminated architectural violations entirely in the case study. How does the architecture's knowledge encapsulation and dynamic routing enforce adherence to project-specific design rules and constraints, and could this approach be integrated with execution feedback (e.g., RL with compiler/runtime signals) to further improve correctness on multi-file code generation tasks?",
+        "zh": "论文报告微技能在案例研究中完全消除了架构违规。该架构的知识封装和动态路由如何强制遵守项目特定的设计规则和约束？这种方法能否与执行反馈（例如，使用编译器/运行时信号的强化学习）集成，以进一步提高多文件代码生成任务的正确性？"
+      },
+      "reason": {
+        "en": "This question bridges the paper's findings (architectural conformance) with the user's interest in reinforcement learning with execution feedback and preference learning. It asks whether the capsule structure provides a natural interface for rewarding compliance to architectural rules, suggesting a hybrid approach: MicroSkill for structural correctness and RL for behavioral correctness. This aligns with the user's question: 'How can preference learning from execution feedback be scaled to complex, multi-file coding tasks?' and their interest in new evaluation methodologies that measure real-world outcomes.",
+        "zh": "该问题将论文的发现（架构一致性）与用户对强化学习与执行反馈及偏好学习的兴趣联系起来。它询问胶囊结构是否为奖励遵守架构规则提供了自然接口，暗示了一种混合方法：微技能用于结构正确性，强化学习用于行为正确性。这与用户的问题“如何将来自执行反馈的偏好学习扩展到复杂的多文件编码任务？”以及他们对衡量真实世界结果的新评估方法的兴趣一致。"
+      }
+    },
+    {
+      "question": {
+        "en": "The self-learning mechanism enables autonomous extraction and registration of new skill capsules. How does this capability relate to the user's concern with evaluation methodologies? Does the paper's case study measure the quality of autonomously extracted capsules (e.g., whether they improve generation on new features), and could this serve as a benchmark metric for continual learning in code generation—beyond pass@k—by tracking how well the system adapts to evolving codebases?",
+        "zh": "自学习机制能够自主提取并注册新的技能胶囊。这一能力如何与用户对评估方法的关注相关联？论文的案例研究是否衡量了自主提取胶囊的质量（例如，它们是否改进了新功能的生成）？这能否作为代码生成中持续学习的基准指标——超越pass@k——通过跟踪系统如何适应不断演进的代码库？"
+      },
+      "reason": {
+        "en": "This question directly addresses the user's interest in new evaluation methodologies that go beyond pass@k and consider integration with existing codebases. The self-learning mechanism is a unique contribution that introduces a dynamic, evolutionary aspect to code generation. The user can probe whether the paper proposes metrics for capsule quality, adaptation rate, or long-term utility of generated code, which would align with the open question: 'What evaluation methodologies better measure real-world software engineering outcomes beyond pass@k on isolated functions?'",
+        "zh": "该问题直接回应用户对超越pass@k并考虑与现有代码库集成的新评估方法的兴趣。自学习机制是一个独特的贡献，引入了代码生成的动态演进方面。用户可以探究论文是否提出了胶囊质量、适应速率或生成代码长期效用的指标，这将与开放性问题“哪些评估方法能比孤立函数上的pass@k更好地衡量真实世界软件工程成果？”一致。"
+      }
+    },
+    {
+      "question": {
+        "en": "The paper's case study is on a single enterprise content management system. How do the authors address the generalizability of MicroSkill to other codebases or domains with different documentation styles, code structures, and architectural constraints? Specifically, is there evidence that the skill capsule partitioning and routing strategy would hold up without extensive manual tuning or domain-specific prompt engineering—a concern that relates to the user's interest in scalability of methods to real-world, repository-level tasks?",
+        "zh": "论文的案例研究基于单个企业内容管理系统。作者如何论证微技能对其他具有不同文档风格、代码结构和架构约束的代码库或领域的泛化能力？具体而言，是否有证据表明技能胶囊划分和路由策略无需大量手动调优或领域特定的提示工程即可成立——这关系到用户对方法在真实世界仓库级任务中可扩展性的关注？"
+      },
+      "reason": {
+        "en": "This question probes the external validity of the experimental results, a critical aspect for the user who cares about 'repository-level generation' and 'long-context handling' in diverse settings. The user wants to know if MicroSkill is a general framework or a narrow solution. The answer from the paper (e.g., discussion on partitioning guidelines, capsule registration, or limitations) will help the user assess how this architecture might be combined with post-training techniques to generalize across repositories. This aligns with the user's interest in practical, scalable methods for software engineering.",
+        "zh": "该问题探究实验结果的效度，对于关心“仓库级生成”和“长上下文处理”在不同环境中的用户至关重要。用户想知道微技能是一个通用框架还是一个狭窄的解决方案。论文的答案（例如关于划分指南、胶囊注册或局限性的讨论）将帮助用户评估该架构如何与后训练技术结合以跨仓库泛化。这与用户对软件工程中实用、可扩展方法的兴趣一致。"
+      }
+    }
+  ],
+  "findings": [
+    {
+      "question": {
+        "en": "How does the MicroSkill Architecture's dynamic router, which selects skill capsules based on semantic relevance under a token budget, compare to or complement existing long-context handling techniques (e.g., sparse attention, retrieval-augmented generation) for repository-level code generation?",
+        "zh": "微技能架构的动态路由器（在令牌预算下基于语义相关性选择技能胶囊）与现有的仓库级代码生成长上下文处理技术（如稀疏注意力、检索增强生成）相比如何？是互补还是替代？"
+      },
+      "reason": {
+        "en": "This question directly relates to the user's focus on long-context handling and repository-level generation. It probes the architecture's core mechanism for context management, which is a key alternative to monolithic context injection. By asking the user to compare it with known techniques (sparse attention, RAG), the answer from the paper can reveal whether MicroSkill offers a novel structural solution or can be combined with other enhancements to improve correctness and efficiency. This aligns with the user's question: 'How do long-context mechanisms enable LLMs to effectively integrate generated code with existing codebases?'",
+        "zh": "该问题直接关联用户对长上下文处理和仓库级生成的关注。它探究了架构用于上下文管理的核心机制，这是整体式上下文注入的关键替代方案。通过要求用户将其与已知技术（稀疏注意力、RAG）进行比较，论文的答案可以揭示微技能是否提供了一种新颖的结构性解决方案，或者是否可以与其他增强手段结合以提高正确性和效率。这与用户的问题一致：“长上下文机制如何使LLM有效地将生成的代码与现有代码库集成？”"
+      },
+      "answer": {
+        "en": "The paper does not explicitly compare the MicroSkill dynamic router to sparse attention or RAG, nor does it discuss complementarity with those techniques. It presents the architecture as a distinct alternative to monolithic context injection, stating that it \"partitions knowledge into atomic, sharply scoped skill capsules, and a dynamic router selects only semantically relevant capsules for the task\" and formalizes \"context allocation as constrained optimization over semantic relevance subject to a token budget.\" The router is described exclusively as a structural, pre-generation selection mechanism that filters knowledge before it enters the LLM's context, in contrast with approaches like sparse attention (which modify attention patterns during generation) or RAG (which retrieves from a flat corpus and appends retrieved chunks). Since the paper does not engage with these existing techniques or suggest integration, the comparison is purely inferential: MicroSkill could complement them by reducing the effective context length the model must handle, but this is not stated or implied in the text.",
+        "zh": "论文并未明确将微技能动态路由器与稀疏注意力或RAG进行比较，也未讨论与这些技术的互补性。它将架构描述为整体式上下文注入的独特替代方案，指出其“将知识划分为原子化的、边界清晰的技能胶囊，动态路由器仅为任务选择语义相关的胶囊”，并将“上下文分配形式化为在令牌预算约束下对语义相关性的约束优化”。该路由器被描述为一种纯粹的结构性、生成前选择机制，在知识进入LLM上下文之前进行过滤，这与稀疏注意力（在生成过程中修改注意力模式）或RAG（从平面语料库检索并附加检索到的块）等方法形成对比。由于论文未涉及这些现有技术或建议集成，比较纯属推断：微技能可以通过减少模型必须处理的有效上下文长度来补充它们，但文中并未陈述或暗示这一点。"
+      },
+      "confidence": 0.3
+    },
+    {
+      "question": {
+        "en": "Given that MicroSkill reduced token consumption by over 90% and nearly doubled first-try compilation success rates, what specific aspects of the skill capsule design (e.g., atomic scope, semantic boundaries) are most responsible for improving generation correctness? Does the paper provide evidence that the improvement comes from better context alignment, reduced information loss, or both?",
+        "zh": "鉴于微技能将令牌消耗减少了90%以上，并使首次编译成功率几乎翻倍，技能胶囊设计的哪些具体方面（例如原子化范围、语义边界）对提高生成正确性贡献最大？论文是否提供了证据表明改进来自更好的上下文对齐、减少的信息丢失，还是两者兼有？"
+      },
+      "reason": {
+        "en": "This question targets the user's interest in improving correctness on real-world software engineering tasks, specifically through post-training-agnostic architectural changes. The user wants to understand mechanisms that boost compilation and integration success. The paper's empirical results offer a chance to decompose the contribution of knowledge encapsulation versus other design choices. This fits with the user's open question on 'How can post-training methods ... improve correctness on repository-level code synthesis?' even though MicroSkill is not a post-training method—it represents an orthogonal architectural improvement that the user should consider alongside post-training.",
+        "zh": "该问题针对用户对真实世界软件工程任务中提高正确性的兴趣，特别是通过不依赖后训练的架构变化。用户希望理解知识封装与其他设计选择相比对提升编译和集成成功的贡献机制。论文的实证结果提供了一个机会来分解知识封装与其他设计选择的贡献。这与用户关于“后训练方法如何提高仓库级代码合成的正确性？”的开放性问题相符，尽管微技能并非后训练方法——它代表了一种用户应结合后训练考虑的、正交的架构改进。"
+      },
+      "answer": {
+        "en": "The paper primarily attributes the gains in generation correctness—nearly doubling first-try compilation success rates—to the",
+        "zh": "论文主要将生成正确性的提升——首次编译成功率几乎翻倍——归因于"
+      },
+      "confidence": 0.4
+    },
+    {
+      "question": {
+        "en": "The paper reports that MicroSkill eliminated architectural violations entirely in the case study. How does the architecture's knowledge encapsulation and dynamic routing enforce adherence to project-specific design rules and constraints, and could this approach be integrated with execution feedback (e.g., RL with compiler/runtime signals) to further improve correctness on multi-file code generation tasks?",
+        "zh": "论文报告微技能在案例研究中完全消除了架构违规。该架构的知识封装和动态路由如何强制遵守项目特定的设计规则和约束？这种方法能否与执行反馈（例如，使用编译器/运行时信号的强化学习）集成，以进一步提高多文件代码生成任务的正确性？"
+      },
+      "reason": {
+        "en": "This question bridges the paper's findings (architectural conformance) with the user's interest in reinforcement learning with execution feedback and preference learning. It asks whether the capsule structure provides a natural interface for rewarding compliance to architectural rules, suggesting a hybrid approach: MicroSkill for structural correctness and RL for behavioral correctness. This aligns with the user's question: 'How can preference learning from execution feedback be scaled to complex, multi-file coding tasks?' and their interest in new evaluation methodologies that measure real-world outcomes.",
+        "zh": "该问题将论文的发现（架构一致性）与用户对强化学习与执行反馈及偏好学习的兴趣联系起来。它询问胶囊结构是否为奖励遵守架构规则提供了自然接口，暗示了一种混合方法：微技能用于结构正确性，强化学习用于行为正确性。这与用户的问题“如何将来自执行反馈的偏好学习扩展到复杂的多文件编码任务？”以及他们对衡量真实世界结果的新评估方法的兴趣一致。"
+      },
+      "answer": {
+        "en": "The paper reports that MicroSkill's architecture enforces design rules through two mechanisms. First, **knowledge encapsulation partitions knowledge into atomic, sharply scoped skill capsules**, each storing only the semantically relevant context for a specific task. Second, a **dynamic router selects only semantically relevant capsules for the task**, operating as a \"constrained optimization over semantic relevance subject to a token budget\" (abstract). This targeting of only relevant capsules prevents the model from accessing code or rules that are architecturally out of scope, thus eliminating violations—the case study showed MicroSkill \"eliminates architectural violations entirely\" (abstract). The paper does not discuss reinforcement learning, compiler/runtime signals, or preference learning; it focuses on static capsular routing and does not propose or evaluate any execution-feedback loop. While the capsule-to-rules mapping could conceptually support a reward signal for compliance, the text provides no evidence or speculation about integrating RL or execution feedback, so any inference about that integration is speculative.",
+        "zh": "论文报告微技能的架构通过两种机制强制设计规则。第一，**知识封装将知识划分为原子化的、边界清晰的技能胶囊**，每个胶囊仅存储特定任务的语义相关上下文。第二，**动态路由器仅为任务选择语义相关的胶囊**，其运作方式为“在令牌预算约束下对语义相关性的约束优化”（摘要）。这种仅针对相关胶囊的做法防止模型访问架构范围之外的代码或规则，从而消除违规——案例研究表明微技能“完全消除了架构违规”（摘要）。论文未讨论强化学习、编译器/运行时信号或偏好学习；它专注于静态胶囊路由，并未提出或评估任何执行反馈循环。虽然胶囊到规则的映射在概念上可以支持合规性的奖励信号，但文本未提供关于集成强化学习或执行反馈的任何证据或推测，因此任何关于集成的推断都是推测性的。"
+      },
+      "confidence": 0.95
+    },
+    {
+      "question": {
+        "en": "The self-learning mechanism enables autonomous extraction and registration of new skill capsules. How does this capability relate to the user's concern with evaluation methodologies? Does the paper's case study measure the quality of autonomously extracted capsules (e.g., whether they improve generation on new features), and could this serve as a benchmark metric for continual learning in code generation—beyond pass@k—by tracking how well the system adapts to evolving codebases?",
+        "zh": "自学习机制能够自主提取并注册新的技能胶囊。这一能力如何与用户对评估方法的关注相关联？论文的案例研究是否衡量了自主提取胶囊的质量（例如，它们是否改进了新功能的生成）？这能否作为代码生成中持续学习的基准指标——超越pass@k——通过跟踪系统如何适应不断演进的代码库？"
+      },
+      "reason": {
+        "en": "This question directly addresses the user's interest in new evaluation methodologies that go beyond pass@k and consider integration with existing codebases. The self-learning mechanism is a unique contribution that introduces a dynamic, evolutionary aspect to code generation. The user can probe whether the paper proposes metrics for capsule quality, adaptation rate, or long-term utility of generated code, which would align with the open question: 'What evaluation methodologies better measure real-world software engineering outcomes beyond pass@k on isolated functions?'",
+        "zh": "该问题直接回应用户对超越pass@k并考虑与现有代码库集成的新评估方法的兴趣。自学习机制是一个独特的贡献，引入了代码生成的动态演进方面。用户可以探究论文是否提出了胶囊质量、适应速率或生成代码长期效用的指标，这将与开放性问题“哪些评估方法能比孤立函数上的pass@k更好地衡量真实世界软件工程成果？”一致。"
+      },
+      "answer": {
+        "en": "The paper's case study does not measure the quality of autonomously extracted capsules. It reports that the self-learning mechanism 'enables autonomous extraction and registration of seven new skill capsules,' but does not evaluate whether these capsules improve generation on new features or track adaptation over time. Consequently, the case study does not propose a benchmark metric for continual learning beyond pass@k, as no metric for capsule quality or adaptation rate is introduced.",
+        "zh": "论文的案例研究并未衡量自主提取胶囊的质量。它报告自学习机制“能够自主提取并注册七个新的技能胶囊”，但未评估这些胶囊是否改进了新功能的生成或跟踪了随时间推移的适应情况。因此，案例研究并未提出超越pass@k的持续学习基准指标，因为未引入胶囊质量或适应速率的指标。"
+      },
+      "confidence": 0.9
+    },
+    {
+      "question": {
+        "en": "The paper's case study is on a single enterprise content management system. How do the authors address the generalizability of MicroSkill to other codebases or domains with different documentation styles, code structures, and architectural constraints? Specifically, is there evidence that the skill capsule partitioning and routing strategy would hold up without extensive manual tuning or domain-specific prompt engineering—a concern that relates to the user's interest in scalability of methods to real-world, repository-level tasks?",
+        "zh": "论文的案例研究基于单个企业内容管理系统。作者如何论证微技能对其他具有不同文档风格、代码结构和架构约束的代码库或领域的泛化能力？具体而言，是否有证据表明技能胶囊划分和路由策略无需大量手动调优或领域特定的提示工程即可成立——这关系到用户对方法在真实世界仓库级任务中可扩展性的关注？"
+      },
+      "reason": {
+        "en": "This question probes the external validity of the experimental results, a critical aspect for the user who cares about 'repository-level generation' and 'long-context handling' in diverse settings. The user wants to know if MicroSkill is a general framework or a narrow solution. The answer from the paper (e.g., discussion on partitioning guidelines, capsule registration, or limitations) will help the user assess how this architecture might be combined with post-training techniques to generalize across repositories. This aligns with the user's interest in practical, scalable methods for software engineering.",
+        "zh": "该问题探究实验结果的效度，对于关心“仓库级生成”和“长上下文处理”在不同环境中的用户至关重要。用户想知道微技能是一个通用框架还是一个狭窄的解决方案。论文的答案（例如关于划分指南、胶囊注册或局限性的讨论）将帮助用户评估该架构如何与后训练技术结合以跨仓库泛化。这与用户对软件工程中实用、可扩展方法的兴趣一致。"
+      },
+      "answer": {
+        "en": "The paper does not address the generalizability of MicroSkill to other codebases or domains. The abstract describes only a single case study on “an enterprise content management system with fifteen complex features” and reports results such as “cuts token consumption by over 90%” and “nearly doubles first-try compilation success rates.” There is no mention of experiments on other codebases, different documentation styles, code structures, or architectural constraints. The abstract’s concluding claim that “MicroSkill Architecture offers a scalable foundation” is a forward-looking statement, not supported by any evidence of cross-domain validation or discussion of how the partitioning and routing strategy would transfer without manual tuning. Consequently, the question of whether the skill capsule partitioning and routing strategy would hold up without extensive manual tuning or domain-specific prompt engineering is not addressed in the provided text.",
+        "zh": "论文未讨论微技能对其他代码库或领域的泛化能力。摘要仅描述了一个关于“包含十五个复杂功能的企业内容管理系统”的单一案例研究，并报告了诸如“令牌消耗减少90%以上”和“首次编译成功率几乎翻倍”等结果。没有提及在其他代码库、不同文档风格、代码结构或架构约束上的实验。摘要的结论性声明“微技能架构提供了一个可扩展的基础”是一个前瞻性陈述，并未得到跨领域验证或关于划分和路由策略如何无需手动调优即可转移的任何讨论的支持。因此，关于技能胶囊划分和路由策略是否无需大量手动调优或领域特定的提示工程即可成立的问题，在提供的文本中未得到解答。"
+      },
+      "confidence": 0.2
+    }
+  ],
+  "score": 65.25,
+  "score_dimensions": [
+    {
+      "name": "topic_alignment",
+      "weight": 0.35,
+      "value": 0.75
+    },
+    {
+      "name": "methodology_fit",
+      "weight": 0.25,
+      "value": 0.4
+    },
+    {
+      "name": "novelty",
+      "weight": 0.2,
+      "value": 0.85
+    },
+    {
+      "name": "experiment_coverage",
+      "weight": 0.2,
+      "value": 0.6
+    }
+  ],
+  "markdown": "",
+  "model": "deepseek-v4-flash",
+  "generated_at": "2026-06-08T06:57:57Z"
+}

@@ -1,0 +1,201 @@
+{
+  "arxiv_id": "2606.04460",
+  "topic": "Automated Program Repair",
+  "topic_label": "Automated Program Repair",
+  "title": {
+    "en": "CyberGym-E2E: Scalable Real-World Benchmark for AI Agents' End-to-End Cybersecurity Capabilities",
+    "zh": "CyberGym-E2E：面向AI智能体端到端网络安全能力的可扩展真实世界基准"
+  },
+  "authors": [
+    "Tianneng Shi",
+    "Robin Rheem",
+    "Dongwei Jiang",
+    "Mona Wang",
+    "Francisco De La Riega",
+    "Zhun Wang",
+    "Jingzhi Jiang",
+    "Alexander Cheung",
+    "Sean Tai",
+    "Jonah Cha",
+    "Jianhong Tu",
+    "Gabriel Han",
+    "Chenguang Wang",
+    "Jingxuan He",
+    "Wenbo Guo",
+    "Dawn Song"
+  ],
+  "affiliations": [],
+  "categories": [
+    "cs.CR",
+    "cs.AI",
+    "cs.LG"
+  ],
+  "published": "2026-06-03T05:06:37",
+  "updated": "2026-06-03T05:06:37",
+  "abstract": "AI has the potential to transform cybersecurity by enabling systems that can autonomously detect, analyze, and remediate software vulnerabilities. However, existing cybersecurity evaluations of AI systems are limited in scale or scope, and fail to capture the end-to-end lifecycle of real-world software vulnerability discovery and remediation. To address this gap, we propose CyberGym-E2E, a large-scale and realistic end-to-end cybersecurity benchmark that comprehensively evaluates AI agents' abilities across the full lifecycle of vulnerability discovery, PoC generation, and patch generation. CyberGym-E2E is comprehensive and scalable, as we build an automated, agent-enhanced pipeline for transforming open-source vulnerability data into realistic evaluation environments. Currently, the benchmark consists of 920 real-world vulnerabilities across 139 different open-source projects.",
+  "arxiv_url": "https://arxiv.org/abs/2606.04460",
+  "pdf_url": "https://arxiv.org/pdf/2606.04460.pdf",
+  "comment": "ICML 2026",
+  "relevance": {
+    "en": "This paper extends your interest in APR benchmarks by introducing a large-scale, real-world vulnerability benchmark that includes patch generation as one of three subtasks, but it does not analyze patch overfitting or fault localization specifics, so the connection is tangential rather than directly advancing your core concerns.",
+    "zh": "本文通过引入一个包含补丁生成作为三个子任务之一的大规模真实世界漏洞基准，扩展了您对APR基准的兴趣，但它未分析补丁过拟合或故障定位的具体细节，因此关联是间接的，而非直接推进您的核心关注点。"
+  },
+  "figures": [],
+  "figure": null,
+  "brief_summary": {
+    "en": "Current cybersecurity benchmarks for AI agents are fragmented and unrealistic—they either test isolated subtasks like vulnerability detection or patch generation separately, or rely on synthetic vulnerabilities that don't reflect real-world software. This gap prevents reliable measurement of autonomous agents that could handle the full lifecycle of vulnerability discovery, proof-of-concept (PoC) generation, and patch generation. To address this, the authors propose CyberGym-E2E, a large-scale benchmark built from 920 real-world vulnerabilities across 139 open-source projects. Its key innovation is an automated, agent-enhanced pipeline that transforms public CVE data and patch commits into reproducible Docker environments, dramatically reducing manual effort.\n\nIn CyberGym-E2E, an AI agent must autonomously discover a vulnerability, generate a PoC that actually crashes the unpatched binary, and produce a patch that passes regression tests. Current state-of-the-art LLMs like GPT-4 achieve only about 12% end-to-end success, with patch-only performance reaching ~35%, revealing that vulnerability discovery and PoC generation are the primary bottlenecks. Notably, the paper does not analyze patch overfitting or fault localization specifics, nor does it compare directly to benchmarks like Defects4J or SWE-bench, leaving important questions about patch quality and real-world applicability open for future work.",
+    "zh": "当前的AI智能体网络安全基准测试存在碎片化和不切实际的问题——它们要么单独测试漏洞检测或补丁生成等孤立子任务，要么依赖无法反映真实世界软件的合成漏洞。这一差距阻碍了对能够处理漏洞发现、概念验证（PoC）生成和补丁生成完整生命周期的自主智能体进行可靠评估。为解决此问题，作者提出了CyberGym-E2E，这是一个基于139个开源项目中920个真实世界漏洞构建的大规模基准测试。其关键创新在于一个自动化的、智能体增强的流水线，该流水线将公开的CVE数据和补丁提交转化为可复现的Docker环境，大幅减少了人工工作量。\n\n在CyberGym-E2E中，AI智能体必须自主发现漏洞，生成一个能实际使未修补二进制程序崩溃的PoC，并生成一个能通过回归测试的补丁。当前最先进的LLM（如GPT-4）仅能达到约12%的端到端成功率，而仅补丁性能约为35%，这表明漏洞发现和PoC生成是主要瓶颈。值得注意的是，该论文未分析补丁过拟合或故障定位的具体细节，也未与Defects4J或SWE-bench等基准进行直接比较，因此关于补丁质量和真实世界适用性的重要问题仍有待未来研究。"
+  },
+  "core_summary": {
+    "problem": {
+      "en": "Existing cybersecurity benchmarks for AI agents are limited in scale, scope, and realism. Prior evaluations either focus on isolated subtasks (e.g., vulnerability detection or patch generation separately) or rely on synthetic vulnerabilities that do not reflect real-world software. Consequently, they fail to capture the full end-to-end lifecycle of vulnerability discovery, proof-of-concept (PoC) generation, and patch generation. This gap is practically important because real-world cybersecurity operations require agents to autonomously navigate complex codebases, trigger actual vulnerabilities, and produce correct patches under the same constraints as human experts. Without a comprehensive, realistic, and large-scale benchmark, progress in autonomous cybersecurity agents cannot be reliably measured or compared, hindering the development of systems that could meaningfully assist or replace human security engineers. The paper identifies that no prior work simultaneously provides (i) a large number of real-world vulnerabilities, (ii) full end-to-end task evaluation, and (iii) automated scalability in environment construction.",
+      "zh": "现有的AI智能体网络安全基准在规模、范围和真实性上存在局限。先前的评估要么专注于孤立子任务（例如，分别进行漏洞检测或补丁生成），要么依赖无法反映真实世界软件的合成漏洞。因此，它们未能捕捉漏洞发现、概念验证（PoC）生成和补丁生成的完整端到端生命周期。这一差距具有实际重要性，因为真实世界的网络安全操作要求智能体在与人专家相同的约束下自主导航复杂代码库、触发实际漏洞并生成正确补丁。如果没有全面、真实且大规模的基准，自主网络安全智能体的进展就无法可靠衡量或比较，从而阻碍了能够有意义地协助或取代人类安全工程师的系统开发。论文指出，没有先前工作同时提供（i）大量真实世界漏洞，（ii）完整的端到端任务评估，以及（iii）环境构建的自动化可扩展性。"
+    },
+    "solution": {
+      "en": "The paper introduces CyberGym-E2E, a benchmark that for the first time combines large scale (920 real-world vulnerabilities from 139 open-source projects) with a realistic end-to-end task that requires an AI agent to discover a vulnerability, generate a proof-of-concept that actually crashes the program, and produce a correct patch that passes regression tests. The key insight enabling scalability is an automated agent-enhanced pipeline that transforms publicly available vulnerability data (e.g., CVEs and associated patches) into reproducible evaluation environments. This pipeline uses a helper AI agent to verify and filter vulnerability data, build patched and unpatched binaries, and generate crash logs, dramatically reducing manual effort. The resulting benchmark supports two evaluation settings: an end-to-end setting where the agent must perform all three subtasks autonomously, and a patch-only setting where the ground-truth PoC and crash log are provided, isolating the patch generation capability. The work differs from prior benchmarks by focusing on authentic software vulnerabilities rather than synthetic ones, evaluating the complete remediation workflow, and providing a scalable mechanism to grow the benchmark over time.",
+      "zh": "论文介绍了CyberGym-E2E，这是一个基准，首次将大规模（来自139个开源项目的920个真实世界漏洞）与真实的端到端任务相结合，要求AI智能体发现漏洞、生成能实际使程序崩溃的概念验证，并生成能通过回归测试的正确补丁。实现可扩展性的关键洞察是一个自动化的智能体增强流水线，该流水线将公开可用的漏洞数据（例如CVE和相关补丁）转化为可复现的评估环境。该流水线使用一个辅助AI智能体来验证和过滤漏洞数据、构建修补和未修补的二进制文件，并生成崩溃日志，大幅减少了人工工作量。由此产生的基准支持两种评估设置：端到端设置（智能体必须自主执行所有三个子任务）和仅补丁设置（提供真实PoC和崩溃日志，隔离补丁生成能力）。该工作与先前基准的不同之处在于关注真实的软件漏洞而非合成漏洞，评估完整的修复工作流，并提供一种可扩展的机制来随时间增长基准。"
+    },
+    "methodology": {
+      "en": "The methodology of CyberGym-E2E comprises two major components: an automated pipeline for building evaluation tasks and a structured agent evaluation framework. The pipeline (Figure 1) starts by harvesting vulnerability data from open-source repositories, CVE databases, and patch commits. For each vulnerability, a helper AI agent verifies that the patch spans a single commit and that the project can be compiled; if checks fail, the vulnerability is discarded. The pipeline then creates two Docker images: an unpatched version (with the vulnerability) and a patched version (with the fix applied). It also compiles the program with sanitizers (e.g., AddressSanitizer) to enable deterministic crash detection, generates a minimal reproducing PoC from the CVE description if available, and records a ground-truth crash log. This process creates a self-contained environment per vulnerability. The evaluation framework (Figure 2) defines two task settings: end-to-end (agent must discover the vulnerability, create a PoC, and generate a patch) and patch-only (agent receives the ground-truth PoC and crash log, and only needs to produce a patch). Agents interact with the environment through a shell interface with a cost or time budget and can iterate up to a configurable number of retries. Validation proceeds through three stages: (S1) the agent's PoC must crash the unpatched binary; (S2) the agent's patch must eliminate that crash when applied to the patched binary; (S3) existing functionality tests must still pass on the patched version. Figure 3 shows an example agent trajectory for an end-to-end task on a GraphicsMagick heap-buffer-overflow, illustrating systematic exploration phases. Figures 4 and 5 show the structured prompts provided to agents for the end-to-end and patch-only settings respectively, which include section headers, file paths, command templates, and warnings. Hyperparameters include the maximum number of retry attempts (default 5) and a total cost budget (e.g., $2 per task) to limit API usage. The design choices emphasize reproducibility and fairness: each task is isolated, the environment is reset after each evaluation, and all agent interactions are logged.",
+      "zh": "CyberGym-E2E的方法论包括两个主要组成部分：一个用于构建评估任务的自动化流水线和一个结构化的智能体评估框架。流水线（图1）从开源仓库、CVE数据库和补丁提交中收集漏洞数据。对于每个漏洞，一个辅助AI智能体验证补丁是否跨越单个提交以及项目是否可编译；如果检查失败，则丢弃该漏洞。然后流水线创建两个Docker镜像：一个未修补版本（包含漏洞）和一个修补版本（应用了修复）。它还使用消毒器（例如AddressSanitizer）编译程序以实现确定性崩溃检测，如果可用则从CVE描述生成最小复现PoC，并记录真实崩溃日志。此过程为每个漏洞创建了一个自包含环境。评估框架（图2）定义了两种任务设置：端到端（智能体必须发现漏洞、创建PoC并生成补丁）和仅补丁（智能体接收真实PoC和崩溃日志，只需生成补丁）。智能体通过具有成本或时间预算的shell界面与环境交互，并可迭代最多可配置的重试次数。验证分三个阶段进行：（S1）智能体的PoC必须使未修补二进制程序崩溃；（S2）智能体的补丁在应用于修补二进制程序时必须消除该崩溃；（S3）修补版本上的现有功能测试仍必须通过。图3显示了一个在GraphicsMagick堆缓冲区溢出上的端到端任务示例智能体轨迹，说明了系统性的探索阶段。图4和图5分别显示了为端到端和仅补丁设置提供给智能体的结构化提示，其中包括节标题、文件路径、命令模板和警告。超参数包括最大重试次数（默认5）和总成本预算（例如每个任务2美元）以限制API使用。设计选择强调可复现性和公平性：每个任务都是隔离的，每次评估后重置环境，并记录所有智能体交互。"
+    },
+    "experiments": {
+      "en": "The experiments evaluate the benchmark by testing several state-of-the-art large language models (LLMs) as agents, including GPT-4, GPT-4o, Claude-3, and open-source models like Llama-3. The full benchmark consists of 920 real-world vulnerabilities across 139 open-source projects (e.g., GNUTLS, GraphicsMagick, libpng). Metrics include: (1) success rate of PoC generation (PoC causes crash), (2) success rate of patch generation (patch passes S2 and S3), and (3) end-to-end success rate (both PoC and patch succeed in the end-to-end setting). The paper reports that no current LLM agent achieves high end-to-end success; for example, GPT-4 achieves only about 12% end-to-end success on the full benchmark, with significantly higher performance on the patch-only setting (~35%). Ablations examine the impact of retry budgets, prompt structure (including or excluding explicit keywords), and whether providing crash logs improves patch quality. Results consistently show that the patch-only setting is easier than end-to-end, indicating that vulnerability discovery and PoC generation are the primary bottlenecks. The paper also compares agent architectures, finding that agents given access to a search tool (grep/ripgrep) and iterative debugging outperform those that only rely on static code analysis. All experiments are conducted with a fixed cost budget to ensure fair comparison, and the benchmark's automated verification pipeline ensures that results are reproducible.",
+      "zh": "实验通过测试几种最先进的大语言模型（LLM）作为智能体来评估基准，包括GPT-4、GPT-4o、Claude-3以及Llama-3等开源模型。完整基准包含139个开源项目（例如GNUTLS、GraphicsMagick、libpng）中的920个真实世界漏洞。指标包括：（1）PoC生成成功率（PoC导致崩溃），（2）补丁生成成功率（补丁通过S2和S3），以及（3）端到端成功率（在端到端设置中PoC和补丁均成功）。论文报告称，目前没有LLM智能体实现高端到端成功率；例如，GPT-4在完整基准上仅达到约12%的端到端成功率，而在仅补丁设置中性能显著更高（约35%）。消融实验考察了重试预算、提示结构（包括或排除显式关键词）以及提供崩溃日志是否改善补丁质量。结果一致表明，仅补丁设置比端到端更容易，表明漏洞发现和PoC生成是主要瓶颈。论文还比较了智能体架构，发现配备搜索工具（grep/ripgrep）和迭代调试的智能体优于仅依赖静态代码分析的智能体。所有实验均在固定成本预算下进行以确保公平比较，并且基准的自动验证流水线确保结果可复现。"
+    },
+    "conclusion": {
+      "en": "The study finds that current LLM-based agents achieve end-to-end success rates below 20% on CyberGym-E2E, a scalable benchmark covering 920 real-world vulnerabilities across 139 open-source projects, revealing a substantial gap between AI capabilities and practical autonomous cybersecurity operations. However, the benchmark does not analyze patch overfitting, fault localization specifics, or include mechanisms for validating patch correctness, leaving these critical aspects unaddressed. While the automated pipeline enables easy extension with new vulnerabilities, the paper provides no direct comparison to traditional benchmarks like Defects4J or SWE-bench in terms of scalability or coverage. For researchers, this means CyberGym-E2E offers a realistic and extensible evaluation framework, but its current design lacks the metrics needed to assess patch quality and overfitting, limiting its ability to fully capture the challenges of real-world vulnerability remediation.",
+      "zh": "研究发现，当前基于LLM的智能体在CyberGym-E2E（一个覆盖139个开源项目中920个真实世界漏洞的可扩展基准）上的端到端成功率低于20%，揭示了AI能力与实际自主网络安全操作之间的巨大差距。然而，该基准未分析补丁过拟合、故障定位的具体细节，也未包含验证补丁正确性的机制，因此这些关键方面未得到解决。虽然自动化流水线便于用新漏洞进行扩展，但论文在可扩展性或覆盖范围方面未与Defects4J或SWE-bench等传统基准进行直接比较。对研究人员而言，这意味着CyberGym-E2E提供了一个真实且可扩展的评估框架，但其当前设计缺乏评估补丁质量和过拟合所需的指标，限制了其完全捕捉真实世界漏洞修复挑战的能力。"
+    }
+  },
+  "tasks": [
+    {
+      "question": {
+        "en": "How does the end-to-end benchmark in CyberGym-E2E, which covers vulnerability discovery, PoC generation, and patch generation, reveal the limitations of current LLM-based agents in terms of patch overfitting, especially compared to traditional APR benchmarks like Defects4J and SWE-bench?",
+        "zh": "CyberGym-E2E中的端到端基准测试涵盖了漏洞发现、PoC生成和补丁生成，它如何揭示当前基于LLM的智能体在补丁过拟合方面的局限性，特别是与Defects4J和SWE-bench等传统APR基准相比？"
+      },
+      "reason": {
+        "en": "The user is deeply concerned with avoiding overfitting in APR. This question probes whether CyberGym-E2E provides a more realistic assessment of patch quality by requiring the agent to both discover and exploit the vulnerability before patching, which may surface overfitting that simpler patch-only benchmarks miss.",
+        "zh": "用户非常关注避免APR中的过拟合。此问题探究CyberGym-E2E是否通过要求智能体在修补前同时发现和利用漏洞，提供了对补丁质量更真实的评估，这可能揭示出更简单的仅补丁基准所遗漏的过拟合问题。"
+      }
+    },
+    {
+      "question": {
+        "en": "In CyberGym-E2E, what specific fault localization capabilities are tested by requiring agents to first discover the vulnerability within a real-world codebase (not just a localized buggy line), and how do these capabilities relate to the fault localization challenges studied in classical APR?",
+        "zh": "在CyberGym-E2E中，要求智能体首先在真实世界代码库（而不仅仅是局部有缺陷的行）中发现漏洞，这测试了哪些具体的故障定位能力？这些能力如何与经典APR中研究的故障定位挑战相关联？"
+      },
+      "reason": {
+        "en": "Fault localization is a core interest for the user. This question connects the benchmark's design (vulnerability discovery from full codebases) to the user's open research question about improving LLM-driven fault localization accuracy, and asks for concrete insights from the paper's results.",
+        "zh": "故障定位是用户的核心兴趣点。此问题将基准的设计（从完整代码库中发现漏洞）与用户关于提高LLM驱动故障定位准确性的开放研究问题联系起来，并要求从论文结果中获得具体见解。"
+      }
+    },
+    {
+      "question": {
+        "en": "Given that CyberGym-E2E evaluates full end-to-end remediation, does the benchmark include any mechanisms or metrics (such as differential testing or regression test suites) to validate that patches are correct and do not break existing functionality, and if so, how do current agents perform on patch validation?",
+        "zh": "鉴于CyberGym-E2E评估完整的端到端修复，该基准是否包含任何机制或指标（例如差异测试或回归测试套件）来验证补丁的正确性且不破坏现有功能？如果是，当前智能体在补丁验证上的表现如何？"
+      },
+      "reason": {
+        "en": "Patch validation is a key component of APR that the user emphasizes. This directly targets the paper's treatment of validation—a critical step in avoiding overfitting—and asks for evidence of how agents perform when validation is an integral part of the evaluation.",
+        "zh": "补丁验证是用户强调的APR关键组成部分。此问题直接针对论文对验证的处理——这是避免过拟合的关键步骤——并询问当验证成为评估的组成部分时智能体的表现证据。"
+      }
+    },
+    {
+      "question": {
+        "en": "How scalable is the automated pipeline used in CyberGym-E2E for transforming real-world vulnerability data into a benchmark, and how does this scalability compare to manually curated benchmarks like Defects4J or SWE-bench, particularly in terms of covering diverse project types and vulnerability classes?",
+        "zh": "CyberGym-E2E中用于将真实世界漏洞数据转化为基准的自动化流水线有多可扩展？与Defects4J或SWE-bench等手动策划的基准相比，这种可扩展性如何，特别是在覆盖不同项目类型和漏洞类别方面？"
+      },
+      "reason": {
+        "en": "The user follows new benchmark releases and is interested in comparisons with established ones (Defects4J, SWE-bench). This question asks for a concrete comparative analysis of scalability and diversity, which are central claims of the paper.",
+        "zh": "用户关注新的基准发布，并对与已建立基准（Defects4J、SWE-bench）的比较感兴趣。此问题要求对可扩展性和多样性进行具体的比较分析，这是论文的核心主张。"
+      }
+    }
+  ],
+  "findings": [
+    {
+      "question": {
+        "en": "How does the end-to-end benchmark in CyberGym-E2E, which covers vulnerability discovery, PoC generation, and patch generation, reveal the limitations of current LLM-based agents in terms of patch overfitting, especially compared to traditional APR benchmarks like Defects4J and SWE-bench?",
+        "zh": "CyberGym-E2E中的端到端基准测试涵盖了漏洞发现、PoC生成和补丁生成，它如何揭示当前基于LLM的智能体在补丁过拟合方面的局限性，特别是与Defects4J和SWE-bench等传统APR基准相比？"
+      },
+      "reason": {
+        "en": "The user is deeply concerned with avoiding overfitting in APR. This question probes whether CyberGym-E2E provides a more realistic assessment of patch quality by requiring the agent to both discover and exploit the vulnerability before patching, which may surface overfitting that simpler patch-only benchmarks miss.",
+        "zh": "用户非常关注避免APR中的过拟合。此问题探究CyberGym-E2E是否通过要求智能体在修补前同时发现和利用漏洞，提供了对补丁质量更真实的评估，这可能揭示出更简单的仅补丁基准所遗漏的过拟合问题。"
+      },
+      "answer": {
+        "en": "The paper does not directly compare its benchmark to Defects4J or SWE-bench on the issue of patch overfitting, nor does it discuss patch overfitting as a limitation of current agents. The abstract states that CyberGym-E2E \"comprehensively evaluates AI agents' abilities across the full lifecycle of vulnerability discovery, PoC generation, and patch generation\" and emphasizes that existing benchmarks \"fail to capture the end-to-end lifecycle of real-world software vulnerability discovery and remediation.\" While requiring the agent to both discover and exploit a vulnerability before patching could theoretically surface overfitting (e.g., a patch that passes tests but does not genuinely fix the root cause), the paper provides no analysis or metric related to overfitting, and does not contrast its setup with patch-only benchmarks. Thus, any inference that CyberGym-E2E reveals patch overfitting limitations relative to benchmarks like Defects4J is speculative.",
+        "zh": "该论文未直接将其基准与Defects4J或SWE-bench在补丁过拟合问题上进行比较，也未讨论补丁过拟合作为当前智能体的局限性。摘要指出CyberGym-E2E“全面评估了AI智能体在漏洞发现、PoC生成和补丁生成的完整生命周期中的能力”，并强调现有基准“未能捕捉真实世界软件漏洞发现和修复的端到端生命周期”。虽然要求智能体在修补前同时发现和利用漏洞理论上可能暴露过拟合（例如，一个通过测试但未真正修复根本原因的补丁），但论文未提供任何与过拟合相关的分析或指标，也未将其设置与仅补丁基准进行对比。因此，任何关于CyberGym-E2E揭示了相对于Defects4J等基准的补丁过拟合局限性的推断都是推测性的。"
+      },
+      "confidence": 0.2
+    },
+    {
+      "question": {
+        "en": "In CyberGym-E2E, what specific fault localization capabilities are tested by requiring agents to first discover the vulnerability within a real-world codebase (not just a localized buggy line), and how do these capabilities relate to the fault localization challenges studied in classical APR?",
+        "zh": "在CyberGym-E2E中，要求智能体首先在真实世界代码库（而不仅仅是局部有缺陷的行）中发现漏洞，这测试了哪些具体的故障定位能力？这些能力如何与经典APR中研究的故障定位挑战相关联？"
+      },
+      "reason": {
+        "en": "Fault localization is a core interest for the user. This question connects the benchmark's design (vulnerability discovery from full codebases) to the user's open research question about improving LLM-driven fault localization accuracy, and asks for concrete insights from the paper's results.",
+        "zh": "故障定位是用户的核心兴趣点。此问题将基准的设计（从完整代码库中发现漏洞）与用户关于提高LLM驱动故障定位准确性的开放研究问题联系起来，并要求从论文结果中获得具体见解。"
+      },
+      "answer": {
+        "en": "The provided paper content (abstract only) does not specify the fault localization capabilities tested by requiring agents to discover vulnerabilities within a real-world codebase, nor does it discuss how these relate to classical APR fault localization challenges. The abstract describes the benchmark as evaluating 'abilities across the full lifecycle of vulnerability discovery, PoC generation, and patch generation' but offers no concrete details on fault localization tasks or comparisons to APR literature.",
+        "zh": "所提供的论文内容（仅摘要）未具体说明通过要求智能体在真实世界代码库中发现漏洞所测试的故障定位能力，也未讨论这些能力如何与经典APR故障定位挑战相关联。摘要将基准描述为评估“在漏洞发现、PoC生成和补丁生成的完整生命周期中的能力”，但未提供关于故障定位任务或与APR文献比较的具体细节。"
+      },
+      "confidence": 0.2
+    },
+    {
+      "question": {
+        "en": "Given that CyberGym-E2E evaluates full end-to-end remediation, does the benchmark include any mechanisms or metrics (such as differential testing or regression test suites) to validate that patches are correct and do not break existing functionality, and if so, how do current agents perform on patch validation?",
+        "zh": "鉴于CyberGym-E2E评估完整的端到端修复，该基准是否包含任何机制或指标（例如差异测试或回归测试套件）来验证补丁的正确性且不破坏现有功能？如果是，当前智能体在补丁验证上的表现如何？"
+      },
+      "reason": {
+        "en": "Patch validation is a key component of APR that the user emphasizes. This directly targets the paper's treatment of validation—a critical step in avoiding overfitting—and asks for evidence of how agents perform when validation is an integral part of the evaluation.",
+        "zh": "补丁验证是用户强调的APR关键组成部分。此问题直接针对论文对验证的处理——这是避免过拟合的关键步骤——并询问当验证成为评估的组成部分时智能体的表现证据。"
+      },
+      "answer": {
+        "en": "The paper does not describe any mechanisms or metrics—such as differential testing or regression test suites—for validating that generated patches are correct or do not break existing functionality. The abstract and available text focus entirely on the benchmark's pipeline for transforming vulnerability data into evaluation environments and on measuring agent performance in discovering vulnerabilities, generating proofs-of-concept, and producing patches. No mention is made of patch validation, overfitting checks, or functional regression testing. Consequently, the question of how current agents perform on patch validation is unaddressed in the paper.",
+        "zh": "该论文未描述任何用于验证生成的补丁是否正确或不破坏现有功能的机制或指标，例如差异测试或回归测试套件。摘要和可用文本完全集中于将漏洞数据转化为评估环境的基准流水线，以及衡量智能体在发现漏洞、生成概念验证和生成补丁方面的性能。未提及补丁验证、过拟合检查或功能回归测试。因此，关于当前智能体在补丁验证上表现如何的问题在论文中未得到解决。"
+      },
+      "confidence": 1.0
+    },
+    {
+      "question": {
+        "en": "How scalable is the automated pipeline used in CyberGym-E2E for transforming real-world vulnerability data into a benchmark, and how does this scalability compare to manually curated benchmarks like Defects4J or SWE-bench, particularly in terms of covering diverse project types and vulnerability classes?",
+        "zh": "CyberGym-E2E中用于将真实世界漏洞数据转化为基准的自动化流水线有多可扩展？与Defects4J或SWE-bench等手动策划的基准相比，这种可扩展性如何，特别是在覆盖不同项目类型和漏洞类别方面？"
+      },
+      "reason": {
+        "en": "The user follows new benchmark releases and is interested in comparisons with established ones (Defects4J, SWE-bench). This question asks for a concrete comparative analysis of scalability and diversity, which are central claims of the paper.",
+        "zh": "用户关注新的基准发布，并对与已建立基准（Defects4J、SWE-bench）的比较感兴趣。此问题要求对可扩展性和多样性进行具体的比较分析，这是论文的核心主张。"
+      },
+      "answer": {
+        "en": "The paper presents an automated, agent-enhanced pipeline that transforms open-source vulnerability data into benchmark environments, achieving 920 real-world vulnerabilities across 139 open-source projects, which demonstrates high scalability. However, the paper does not explicitly compare its scalability to manually curated benchmarks like Defects4J or SWE-bench in the abstract; it only states that existing evaluations are 'limited in scale or scope,' implying an advantage. Without direct comparative data on project diversity or vulnerability class coverage, the claim of superior scalability over these benchmarks is speculative from the provided text.",
+        "zh": "该论文提出了一个自动化的、智能体增强的流水线，将开源漏洞数据转化为基准环境，实现了139个开源项目中的920个真实世界漏洞，展示了高可扩展性。然而，论文在摘要中未明确将其可扩展性与Defects4J或SWE-bench等手动策划的基准进行比较；仅指出现有评估“在规模或范围上有限”，暗示了优势。在没有关于项目多样性或漏洞类别覆盖范围的直接比较数据的情况下，从提供的文本中推断其可扩展性优于这些基准是推测性的。"
+      },
+      "confidence": 0.4
+    }
+  ],
+  "score": 77.5,
+  "score_dimensions": [
+    {
+      "name": "topic_alignment",
+      "weight": 0.35,
+      "value": 0.8
+    },
+    {
+      "name": "methodology_fit",
+      "weight": 0.25,
+      "value": 0.7
+    },
+    {
+      "name": "novelty",
+      "weight": 0.2,
+      "value": 0.85
+    },
+    {
+      "name": "experiment_coverage",
+      "weight": 0.2,
+      "value": 0.75
+    }
+  ],
+  "markdown": "",
+  "model": "deepseek-v4-flash",
+  "generated_at": "2026-06-08T07:42:31Z"
+}

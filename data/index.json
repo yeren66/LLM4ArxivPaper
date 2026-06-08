@@ -1,6 +1,303 @@
 {
   "papers": [
     {
+      "arxiv_id": "2606.03852",
+      "topic": "Automated Program Repair",
+      "topic_label": "Automated Program Repair",
+      "title": {
+        "en": "FLARE: Fine-Grained Diagnostic Feedback for LLM Code Refinement",
+        "zh": "FLARE：面向LLM代码精炼的细粒度诊断反馈"
+      },
+      "authors": [
+        "Yinsheng Yao",
+        "Hongxiang Zhang",
+        "Weixi Tong",
+        "Tianyi Zhang"
+      ],
+      "score": 79.75,
+      "published": "2026-06-02",
+      "generated_at": "2026-06-08T07:50:22Z"
+    },
+    {
+      "arxiv_id": "2606.04402",
+      "topic": "Automated Program Repair",
+      "topic_label": "Automated Program Repair",
+      "title": {
+        "en": "Not All Errors Are Equal: Consequence-Aware Reasoning Compute Allocation",
+        "zh": "并非所有错误都同等重要：后果感知的推理计算分配"
+      },
+      "authors": [
+        "Jingbo Wen",
+        "Liang He",
+        "Ziqi He"
+      ],
+      "score": 66.25,
+      "published": "2026-06-03",
+      "generated_at": "2026-06-08T07:47:44Z"
+    },
+    {
+      "arxiv_id": "2606.04460",
+      "topic": "Automated Program Repair",
+      "topic_label": "Automated Program Repair",
+      "title": {
+        "en": "CyberGym-E2E: Scalable Real-World Benchmark for AI Agents' End-to-End Cybersecurity Capabilities",
+        "zh": "CyberGym-E2E：面向AI智能体端到端网络安全能力的可扩展真实世界基准"
+      },
+      "authors": [
+        "Tianneng Shi",
+        "Robin Rheem",
+        "Dongwei Jiang",
+        "Mona Wang",
+        "Francisco De La Riega",
+        "Zhun Wang"
+      ],
+      "score": 77.5,
+      "published": "2026-06-03",
+      "generated_at": "2026-06-08T07:42:31Z"
+    },
+    {
+      "arxiv_id": "2606.07297",
+      "topic": "Automated Program Repair",
+      "topic_label": "Automated Program Repair",
+      "title": {
+        "en": "SWE-Explore: Benchmarking How Coding Agents Explore Repositories",
+        "zh": "SWE-Explore：基准测试编码代理如何探索代码仓库"
+      },
+      "authors": [
+        "Shaoqiu Zhang",
+        "Yuhang Wang",
+        "Jialiang Liang",
+        "Yuling Shi",
+        "Wenhao Zeng",
+        "Maoquan Wang"
+      ],
+      "score": 81.25000000000001,
+      "published": "2026-06-05",
+      "generated_at": "2026-06-08T07:40:13Z"
+    },
+    {
+      "arxiv_id": "2606.07412",
+      "topic": "Automated Program Repair",
+      "topic_label": "Automated Program Repair",
+      "title": {
+        "en": "Socratic-SWE: Self-Evolving Coding Agents via Trace-Derived Agent Skills",
+        "zh": "Socratic-SWE: 通过轨迹导出的智能体技能实现自演化编码智能体"
+      },
+      "authors": [
+        "Chuan Xiao",
+        "Zhengbo Jiao",
+        "Shaobo Wang",
+        "Wei Wang",
+        "Bing Zhao",
+        "Hu Wei"
+      ],
+      "score": 81.75,
+      "published": "2026-06-05",
+      "generated_at": "2026-06-08T07:36:27Z"
+    },
+    {
+      "arxiv_id": "2606.02398",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "A Local Perturbation Theory for Cross-Domain Interference and Recovery in Multi-Domain RL",
+        "zh": "多域强化学习中跨域干扰与恢复的局部扰动理论"
+      },
+      "authors": [
+        "Lei Yang",
+        "Siyu Ding",
+        "Deyi Xiong"
+      ],
+      "score": 60.24999999999999,
+      "published": "2026-06-01",
+      "generated_at": "2026-06-08T07:27:42Z"
+    },
+    {
+      "arxiv_id": "2606.03108",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "EvoTrainer: Co-Evolving LLM Policies and Training Harnesses for Autonomous Agentic Reinforcement Learning",
+        "zh": "EvoTrainer：面向自主智能体强化学习的LLM策略与训练框架协同进化"
+      },
+      "authors": [
+        "Guhong Chen",
+        "Yingcheng Shi",
+        "Yongbin Li",
+        "Binhua Li",
+        "Xander Xu",
+        "Hu Wei"
+      ],
+      "score": 75.0,
+      "published": "2026-06-02",
+      "generated_at": "2026-06-08T07:23:51Z"
+    },
+    {
+      "arxiv_id": "2606.03130",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "Synthetic Hallucinations, Real Gains: Hard Negatives from Frontier Models for FIM Hallucination Mitigation",
+        "zh": "合成幻觉，真实收益：来自前沿模型的硬负样本用于FIM幻觉缓解"
+      },
+      "authors": [
+        "Mahdi Erfanian",
+        "Nelson Daniel Troncoso",
+        "Aashna Garg",
+        "Amabel Gale",
+        "Xiaoyu Liu",
+        "Pareesa Ameneh Golnari"
+      ],
+      "score": 73.75,
+      "published": "2026-06-02",
+      "generated_at": "2026-06-08T07:20:31Z"
+    },
+    {
+      "arxiv_id": "2606.03657",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "Diagnosing Knowledge Gaps in LLM Tool Use: An Agentic Benchmark for Novel API Acquisition",
+        "zh": "诊断LLM工具使用中的知识缺口：面向新型API获取的智能体基准"
+      },
+      "authors": [
+        "Jinnuo Liu",
+        "Yue Peng",
+        "Jinhan Niu",
+        "Hongyi Wen"
+      ],
+      "score": 67.75,
+      "published": "2026-06-02",
+      "generated_at": "2026-06-08T07:16:53Z"
+    },
+    {
+      "arxiv_id": "2606.04246",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "StepPRM-RTL: Stepwise Process-Reward Guided LLM Fine-Tuning for Enhanced RTL Synthesis",
+        "zh": "StepPRM-RTL：逐步过程奖励引导的LLM微调以增强RTL综合"
+      },
+      "authors": [
+        "Prashanth Vijayaraghavan",
+        "Apoorva Nitsure",
+        "Luyao Shi",
+        "Ehsan Degan",
+        "Vandana Mukherjee"
+      ],
+      "score": 63.0,
+      "published": "2026-06-02",
+      "generated_at": "2026-06-08T07:13:05Z"
+    },
+    {
+      "arxiv_id": "2606.05249",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "SWE-InfraBench: Evaluating Language Models on Cloud Infrastructure Code",
+        "zh": "SWE-InfraBench：评估语言模型在云基础设施代码上的表现"
+      },
+      "authors": [
+        "Natalia Tarasova",
+        "Enrique Balp-Straffon",
+        "Aleksei Iancheruk",
+        "Yevhenii Sielskyi",
+        "Nikita Kozodoi",
+        "Liam H. Byrne"
+      ],
+      "score": 68.75,
+      "published": "2026-06-03",
+      "generated_at": "2026-06-08T07:09:54Z"
+    },
+    {
+      "arxiv_id": "2606.05001",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "TeleSWEBench: A Commit-Driven Benchmark for Evaluating LLM-Powered Software Engineering in Telecommunications",
+        "zh": "TeleSWEBench：面向电信软件工程的提交驱动基准测试，用于评估大语言模型能力"
+      },
+      "authors": [
+        "Pranshav Gajjar",
+        "Ali Mamaghani",
+        "Dinesh Bharadia",
+        "Vijay K Shah"
+      ],
+      "score": 78.25000000000001,
+      "published": "2026-06-03",
+      "generated_at": "2026-06-08T07:06:54Z"
+    },
+    {
+      "arxiv_id": "2606.05570",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "TensorBench: Benchmarking Coding Agents on a Compiler-Based Tensor Framework",
+        "zh": "TensorBench：在基于编译器的张量框架上对编码智能体进行基准测试"
+      },
+      "authors": [
+        "Bobby Yan",
+        "Fredrik Kjolstad"
+      ],
+      "score": 82.5,
+      "published": "2026-06-04",
+      "generated_at": "2026-06-08T07:02:39Z"
+    },
+    {
+      "arxiv_id": "2606.05720",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "Microskill Architecture: A Modular Skill-Driven Framework for AI-Native Code Generation",
+        "zh": "微技能架构：面向AI原生代码生成的模块化技能驱动框架"
+      },
+      "authors": [
+        "Mohammad Zare",
+        "Omid Abdolrahmani"
+      ],
+      "score": 65.25,
+      "published": "2026-06-04",
+      "generated_at": "2026-06-08T06:57:57Z"
+    },
+    {
+      "arxiv_id": "2606.05920",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "Asuka-Bench: Benchmarking Code Agents on Underspecified User Intent and Multi-Round Refinement",
+        "zh": "Asuka-Bench：对代码智能体在未明确用户意图与多轮精化任务上的基准测试"
+      },
+      "authors": [
+        "Xin Wang",
+        "Liangtai Sun",
+        "Yaoming Zhu",
+        "Shuang Zhou",
+        "Jiaxing Liu",
+        "Fengjiao Chen"
+      ],
+      "score": 81.25,
+      "published": "2026-06-04",
+      "generated_at": "2026-06-08T06:53:08Z"
+    },
+    {
+      "arxiv_id": "2606.06492",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "Code2LoRA: Hypernetwork-Generated Adapters for Code Language Models under Software Evolution",
+        "zh": "Code2LoRA：软件演化下代码语言模型的超网络生成适配器"
+      },
+      "authors": [
+        "Liliana Hotsko",
+        "Yinxi Li",
+        "Yuntian Deng",
+        "Pengyu Nie"
+      ],
+      "score": 76.25,
+      "published": "2026-06-04",
+      "generated_at": "2026-06-08T06:47:55Z"
+    },
+    {
       "arxiv_id": "2605.11235",
       "topic": "LLM for Code Generation",
       "topic_label": "LLM for Code Generation",
@@ -247,5 +544,5 @@
       "generated_at": "2026-05-14T14:40:43Z"
     }
   ],
-  "updated_at": "2026-05-18T07:36:16Z"
+  "updated_at": "2026-06-08T07:50:22Z"
 }
