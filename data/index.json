@@ -1,6 +1,176 @@
 {
   "papers": [
     {
+      "arxiv_id": "2606.10662",
+      "topic": "Automated Program Repair",
+      "topic_label": "Automated Program Repair",
+      "title": {
+        "en": "Decentralized Multi-Agent Systems with Shared Context",
+        "zh": "基于共享上下文的去中心化多智能体系统"
+      },
+      "authors": [
+        "Yuzhen Mao",
+        "Azalia Mirhoseini"
+      ],
+      "score": 78.0,
+      "published": "2026-06-09",
+      "generated_at": "2026-06-15T07:44:55Z"
+    },
+    {
+      "arxiv_id": "2606.11976",
+      "topic": "Automated Program Repair",
+      "topic_label": "Automated Program Repair",
+      "title": {
+        "en": "Exploration Structure in LLM Agents for Multi-File Change Localization",
+        "zh": "LLM代理中用于多文件变更定位的探索结构"
+      },
+      "authors": [
+        "Akeela Darryl Fattha",
+        "Kia Ying Chua",
+        "Lingxiao Jiang",
+        "Laura Wynter"
+      ],
+      "score": 60.5,
+      "published": "2026-06-10",
+      "generated_at": "2026-06-15T07:42:32Z"
+    },
+    {
+      "arxiv_id": "2606.14066",
+      "topic": "Automated Program Repair",
+      "topic_label": "Automated Program Repair",
+      "title": {
+        "en": "FastContext: Training Efficient Repository Explorer for Coding Agents",
+        "zh": "FastContext：为代码代理训练高效的仓库探索器"
+      },
+      "authors": [
+        "Shaoqiu Zhang",
+        "Maoquan Wang",
+        "Yuling Shi",
+        "Yuhang Wang",
+        "Xiaodong Gu",
+        "Yongqiang Yao"
+      ],
+      "score": 72.0,
+      "published": "2026-06-12",
+      "generated_at": "2026-06-15T07:39:41Z"
+    },
+    {
+      "arxiv_id": "2606.09396",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "PriFT: Prior-Support Guided Supervised Fine-Tuning",
+        "zh": "PriFT：基于预训练先验支持的监督微调"
+      },
+      "authors": [
+        "Ke Wang",
+        "Shuangqi Li",
+        "Mathieu Salzmann",
+        "Pascal Frossard"
+      ],
+      "score": 78.75,
+      "published": "2026-06-08",
+      "generated_at": "2026-06-15T07:34:25Z"
+    },
+    {
+      "arxiv_id": "2606.10728",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "DeNovoSWE: Scaling Long-Horizon Environments for Generating Entire Repositories from Scratch",
+        "zh": "DeNovoSWE：从零开始生成完整仓库的长周期环境扩展"
+      },
+      "authors": [
+        "Jiale Zhao",
+        "Guoxin Chen",
+        "Fanzhe Meng",
+        "Wayne Xin Zhao",
+        "Ruihua Song",
+        "Ji-Rong Wen"
+      ],
+      "score": 82.0,
+      "published": "2026-06-09",
+      "generated_at": "2026-06-15T07:32:06Z"
+    },
+    {
+      "arxiv_id": "2606.11521",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "Counterexample Guided Learning in the Large using Reasoning Agents",
+        "zh": "基于推理代理的大规模反例引导学习"
+      },
+      "authors": [
+        "Hongyi Liu",
+        "Frederic Sala",
+        "Thomas Reps",
+        "Adithya Murali"
+      ],
+      "score": 63.5,
+      "published": "2026-06-09",
+      "generated_at": "2026-06-15T07:30:00Z"
+    },
+    {
+      "arxiv_id": "2606.12370",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "Breaking Entropy Bounds: Accelerating RL Training via MTP with Rejection Sampling",
+        "zh": "打破熵界：通过带有拒绝采样的 MTP 加速强化学习训练"
+      },
+      "authors": [
+        "Yucheng Li",
+        "Huiqiang Jiang",
+        "Yang Xu",
+        "Jianxin Yang",
+        "Yi Zhang",
+        "Yizhong Cao"
+      ],
+      "score": 73.25,
+      "published": "2026-06-10",
+      "generated_at": "2026-06-15T07:27:23Z"
+    },
+    {
+      "arxiv_id": "2606.13392",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "MiniMax Sparse Attention",
+        "zh": "MiniMax 稀疏注意力"
+      },
+      "authors": [
+        "Xunhao Lai",
+        "Weiqi Xu",
+        "Yufeng Yang",
+        "Qiaorui Chen",
+        "Yang Xu",
+        "Lunbin Zeng"
+      ],
+      "score": 65.49999999999999,
+      "published": "2026-06-11",
+      "generated_at": "2026-06-15T07:21:18Z"
+    },
+    {
+      "arxiv_id": "2606.14061",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "LLM Agents Can See Code Repositories",
+        "zh": "LLM智能体可以看到代码仓库"
+      },
+      "authors": [
+        "Dongjian Ma",
+        "Silin Chen",
+        "Yufei Yang",
+        "Yulin Shi",
+        "Yanfu yan",
+        "Xiaodong Gu"
+      ],
+      "score": 62.5,
+      "published": "2026-06-12",
+      "generated_at": "2026-06-15T07:19:29Z"
+    },
+    {
       "arxiv_id": "2606.03852",
       "topic": "Automated Program Repair",
       "topic_label": "Automated Program Repair",
@@ -544,5 +714,5 @@
       "generated_at": "2026-05-14T14:40:43Z"
     }
   ],
-  "updated_at": "2026-06-08T07:50:22Z"
+  "updated_at": "2026-06-15T07:44:55Z"
 }
