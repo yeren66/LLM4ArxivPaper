@@ -1,6 +1,136 @@
 {
   "papers": [
     {
+      "arxiv_id": "2606.17612",
+      "topic": "Automated Program Repair",
+      "topic_label": "Automated Program Repair",
+      "title": {
+        "en": "PracRepair: LLM-Empowered Automated Program Repair Inspired by Human-Like Debugging Practices",
+        "zh": "PracRepair：灵感源于人类调试实践的LLM驱动自动化程序修复"
+      },
+      "authors": [
+        "Yu Cheng",
+        "Zhongxin Liu",
+        "Zhenchang Xing",
+        "Chao Ni",
+        "Qing Huang",
+        "Xiaoxue Ren"
+      ],
+      "score": 93.0,
+      "published": "2026-06-16",
+      "generated_at": "2026-06-22T07:37:19Z"
+    },
+    {
+      "arxiv_id": "2606.20243",
+      "topic": "Automated Program Repair",
+      "topic_label": "Automated Program Repair",
+      "title": {
+        "en": "Phoenix: Safe GitHub Issue Resolution via Multi-Agent LLMs",
+        "zh": "Phoenix：基于多智能体LLM的安全GitHub问题解决"
+      },
+      "authors": [
+        "Kipngeno Koech",
+        "Muhammad Adam",
+        "Baimam Boukar Jean Jacques",
+        "Joao Barros"
+      ],
+      "score": 74.5,
+      "published": "2026-06-18",
+      "generated_at": "2026-06-22T07:34:42Z"
+    },
+    {
+      "arxiv_id": "2606.17514",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "Unlocking LLM Code Correction with Iterative Feedback Loops",
+        "zh": "通过迭代反馈循环解锁LLM代码修正能力"
+      },
+      "authors": [
+        "Le Zhang",
+        "Suresh Kothari"
+      ],
+      "score": 70.25,
+      "published": "2026-06-16",
+      "generated_at": "2026-06-22T07:28:47Z"
+    },
+    {
+      "arxiv_id": "2606.19830",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "JAMER: Project-Level Code Framework Dataset and Benchmark on Professional Game Engines",
+        "zh": "JAMER: 专业游戏引擎上的项目级代码框架数据集与基准测试"
+      },
+      "authors": [
+        "Jianwen Sun",
+        "Chuanhao Li",
+        "Zizhen Li",
+        "Yukang Feng",
+        "Fanrui Zhang",
+        "Yifei Huang"
+      ],
+      "score": 74.25,
+      "published": "2026-06-18",
+      "generated_at": "2026-06-22T07:25:37Z"
+    },
+    {
+      "arxiv_id": "2606.19988",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "Repository-Level Solidity Code Generation with Large Language Models: From Prompting to Fine-Tuning",
+        "zh": "面向仓库级别的Solidity代码生成：从提示工程到微调的大语言模型方法"
+      },
+      "authors": [
+        "Shi Chen",
+        "Rongcun Wang",
+        "Yuan Tian",
+        "Xiaoyuan Xie",
+        "Wei Song",
+        "Rubing Huang"
+      ],
+      "score": 73.5,
+      "published": "2026-06-18",
+      "generated_at": "2026-06-22T07:23:32Z"
+    },
+    {
+      "arxiv_id": "2606.20512",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "Probe-and-Refine Tuning of Repository Guidance for Coding Agents",
+        "zh": "面向代码代理的仓库指导的探测与精调"
+      },
+      "authors": [
+        "Asa Shepard",
+        "Jeannie Albrecht"
+      ],
+      "score": 82.5,
+      "published": "2026-06-18",
+      "generated_at": "2026-06-22T07:20:38Z"
+    },
+    {
+      "arxiv_id": "2606.20517",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "Multi-LCB: Extending LiveCodeBench to Multiple Programming Languages",
+        "zh": "Multi-LCB: 将LiveCodeBench扩展至多种编程语言"
+      },
+      "authors": [
+        "Maria Ivanova",
+        "Pavel Zadorozhny",
+        "Rodion Levichev",
+        "Ivan Petrov",
+        "Adamenko Pavel",
+        "Ivan Lopatin"
+      ],
+      "score": 74.5,
+      "published": "2026-06-18",
+      "generated_at": "2026-06-22T07:18:16Z"
+    },
+    {
       "arxiv_id": "2606.10662",
       "topic": "Automated Program Repair",
       "topic_label": "Automated Program Repair",
@@ -714,5 +844,5 @@
       "generated_at": "2026-05-14T14:40:43Z"
     }
   ],
-  "updated_at": "2026-06-15T07:44:55Z"
+  "updated_at": "2026-06-22T07:37:19Z"
 }
