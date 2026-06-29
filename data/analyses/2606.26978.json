@@ -1,0 +1,191 @@
+{
+  "arxiv_id": "2606.26978",
+  "topic": "Automated Program Repair",
+  "topic_label": "Automated Program Repair",
+  "title": {
+    "en": "To Run or Not to Run: Analyzing the Cost-Effectiveness of Code Execution in LLM-Based Program Repair",
+    "zh": "运行还是不运行：分析基于LLM的程序修复中代码执行的成本效益"
+  },
+  "authors": [
+    "Zhihao Lin",
+    "Junhua Zhu",
+    "Mingyi Zhou",
+    "Xin Wang",
+    "Zhensu Sun",
+    "Renyu Yang",
+    "David Lo",
+    "Li Li"
+  ],
+  "affiliations": [],
+  "categories": [
+    "cs.SE"
+  ],
+  "published": "2026-06-25T12:49:59",
+  "updated": "2026-06-25T12:49:59",
+  "abstract": "LLM-based agents for program repair are increasingly built on a \"generate-run-revise\" paradigm, iteratively executing tests to evaluate and refine patches. This execution-based approach has become standard practice in state-of-the-art systems. However, executions can be time-consuming and expensive, yet their impact on these agents remains underexplored. In this paper, we conduct a two-stage empirical study over execution behavior in LLM-based program repair. To characterize execution behavior at scale, we first analyze 7,745 agent traces from SWE-bench leaderboard submissions. Second, we evaluate 3,000 end-to-end repair attempts across 200 SWE-bench instances and three agents (Claude Code, Codex, and the open-source OpenCode) under four execution paradigms, which allows for a fine-grained comparison of performance and cost. Our analysis reveals three key observations: (1) Code execution is used across all agents and models analyzed, with an average of 8.8 test runs per task. Execution behavior varies substantially across agents and models, with frequency ranging from 2 to 19 per task, and late-stage executions consistently achieve higher success rates than early-stage ones. (2) Execution restrictions have little effect on repair success: on commercial agents with SOTA models the resolve-rate gap between Prohibited and Unrestricted is only 1.25 percentage points and not statistically significant, while Prohibited saves substantial token and wall-clock cost. (3) Execution benefit is concentrated rather than uniform. These patterns suggest that current agents apply execution indiscriminately, paying its cost on instances where it provides little benefit. Execution, therefore, should be treated as a resource with an explicit cost-benefit tradeoff, not a default capability.",
+  "arxiv_url": "https://arxiv.org/abs/2606.26978",
+  "pdf_url": "https://arxiv.org/pdf/2606.26978.pdf",
+  "comment": "Accepted to the ACM SIGSOFT International Symposium on Software Testing and Analysis (ISSTA 2026). 23 pages",
+  "relevance": {
+    "en": "This paper directly challenges the default generate-run-revise paradigm in LLM-based APR, showing that restricting execution saves 52% token cost with only a 1.25 percentage point resolve-rate drop. This extends your interest in patch validation and industrial deployment by providing empirical evidence that execution is often overused and can be treated as a tunable resource rather than a necessity.",
+    "zh": "本文直接挑战了基于LLM的APR中默认的“生成-运行-修订”范式，表明限制执行可节省52%的令牌成本，而解决率仅下降1.25个百分点。这扩展了您对补丁验证和工业部署的兴趣，通过提供实证证据表明执行常被过度使用，并可视为一种可调资源而非必需品。"
+  },
+  "figures": [],
+  "figure": null,
+  "brief_summary": {
+    "en": "LLM-based program repair agents have widely adopted a \"generate-run-revise\" paradigm, repeatedly executing tests to refine patches. While this execution-driven approach is standard in state-of-the-art systems, its cost—in token consumption and wall-clock time—has been largely overlooked. This paper systematically investigates whether all that execution is actually worth it, conducting a two-stage empirical study to quantify the cost-benefit tradeoff.\n\nAnalyzing 7,745 agent traces and running 3,000 end-to-end repair attempts across three agents and four execution paradigms, the authors find that execution is heavily overused. On commercial agents with state-of-the-art models, completely prohibiting execution reduces repair success by only 1.25 percentage points (not statistically significant) while slashing token costs by 52% and wall-clock time by 61%. The benefit of execution is concentrated in late-stage runs, while early and mid-stage executions provide little value. These results challenge the default reliance on execution, suggesting it should be treated as a resource with explicit tradeoffs rather than an automatic capability.",
+    "zh": "基于LLM的程序修复代理已广泛采用“生成-运行-修订”范式，反复执行测试以改进补丁。虽然这种执行驱动的方法在最先进的系统中是标准做法，但其成本——包括令牌消耗和挂钟时间——在很大程度上被忽视了。本文系统性地研究了所有执行是否真的值得，通过两阶段实证研究量化了成本效益权衡。\n\n通过分析7,745条代理轨迹，并在三个代理和四种执行范式下进行了3,000次端到端修复尝试，作者发现执行被严重过度使用。在使用最先进模型的商业代理上，完全禁止执行仅使修复成功率降低1.25个百分点（无统计显著性），同时将令牌成本削减52%，挂钟时间削减61%。执行的益处集中在后期阶段，而早期和中期执行几乎没有价值。这些结果挑战了对执行的默认依赖，表明应将其视为一种具有明确权衡的资源，而非一项默认能力。"
+  },
+  "core_summary": {
+    "problem": {
+      "en": "LLM-based program repair agents commonly adopt a 'generate-run-revise' paradigm where they iteratively execute tests to evaluate and refine patches. While execution provides valuable feedback (e.g., test pass/fail signals), the cost of repeated code execution—in terms of both token consumption and wall-clock time—is rarely questioned. Prior work focuses on improving repair success rates but overlooks the cost-effectiveness of execution as a resource. The concrete gap is the absence of systematic empirical evidence quantifying whether all executions are equally beneficial, and whether restricting execution can save cost without substantially degrading repair performance. This matters in practice because current agents treat execution as a default capability, potentially wasting significant resources on instances where execution yields little to no benefit, making them less practical for real-world deployment where budgets and time are limited.",
+      "zh": "基于LLM的程序修复代理通常采用“生成-运行-修订”范式，迭代执行测试以评估和改进补丁。虽然执行提供了有价值的反馈（例如测试通过/失败信号），但重复代码执行的成本——无论是令牌消耗还是挂钟时间——很少受到质疑。先前的工作侧重于提高修复成功率，但忽视了执行作为资源的成本效益。具体差距是缺乏系统性的实证证据来量化所有执行是否同样有益，以及限制执行能否在不显著降低修复性能的情况下节省成本。这在实际中很重要，因为当前代理将执行视为默认能力，可能在意益甚微的实例上浪费大量资源，使其在预算和时间有限的现实部署中实用性降低。"
+    },
+    "solution": {
+      "en": "The paper's main contribution is a two-stage empirical study that systematically characterizes the cost-benefit tradeoff of code execution in LLM-based program repair. The key insight is that the benefit of execution is concentrated rather than uniform: most test executions occur early in the conversation but have low success rates, while late-stage executions are more beneficial. Furthermore, completely prohibiting execution on commercial agents with state-of-the-art (SOTA) models reduces resolve rate by only 1.25 percentage points (not statistically significant) while saving substantial cost. This contradicts the common assumption that execution is uniformly necessary. The paper thus advocates treating execution as a resource with an explicit cost-benefit tradeoff rather than a default capability, providing guidelines for adaptive execution strategies.",
+      "zh": "论文的主要贡献是两阶段实证研究，系统性地刻画了基于LLM的程序修复中代码执行的成本效益权衡。关键见解是执行的益处集中而非均匀分布：大多数测试执行发生在对话早期但成功率低，而后期执行更有益。此外，在使用最先进模型的商业代理上完全禁止执行仅使解决率降低1.25个百分点（无统计显著性），同时节省大量成本。这反驳了执行普遍必要的常见假设。因此，论文主张将执行视为一种具有明确成本效益权衡的资源而非默认能力，并为自适应执行策略提供指导。"
+    },
+    "methodology": {
+      "en": "The study consists of two stages. Stage 1: Large-scale behavioral analysis of 7,745 agent traces from SWE-bench leaderboard submissions. The authors inspect execution frequency, timing (categorized as early-stage: 0–33%, mid-stage: 33–66%, late-stage: 66–100% of the conversation), and success/failure outcomes per execution. They compute execution counts per task (average 8.8, range 2–19 across agents/models) and success rates per timing stage. Stage 2: Controlled end-to-end experiment. They select 200 SWE-bench instances (100 resolved and 100 unresolved by any leaderboard agent) and run 3,000 repair attempts using three agents: Claude Code (proprietary), Codex (proprietary), and OpenCode (open-source). For each agent, they evaluate four execution paradigms: Unrestricted (full execution), Prohibited (no execution at all), Self-test (only allowing execution of self-written tests), and RepairOnly (execution allowed only for patching, not for diagnosis). The agents use gpt-4o models for Claude Code, gpt-4o for Codex, and the default model for OpenCode. Metrics include resolve rate (percentage of tasks fixed), total token cost, wall-clock time, and execution counts. Statistical significance is assessed via pair-wise permutation tests (100,000 permutations). The key design choice is that Prohibited mode completely disables test execution, forcing the agent to rely solely on the LLM's static analysis for all repair decisions. Self-test allows the agent to write and run its own tests, simulating a more realistic constrained scenario. RepairOnly is a middle ground where execution is allowed only during the refinement phase.",
+      "zh": "研究包括两个阶段。阶段1：对来自SWE-bench排行榜提交的7,745条代理轨迹进行大规模行为分析。作者检查执行频率、时机（按对话阶段分类：早期0-33%、中期33-66%、后期66-100%）以及每次执行的成功/失败结果。他们计算每任务执行次数（平均8.8次，跨代理/模型范围2-19次）和各阶段成功率。阶段2：受控端到端实验。他们选择200个SWE-bench实例（100个由任何排行榜代理解决，100个未解决）并使用三个代理进行3,000次修复尝试：Claude Code（专有）、Codex（专有）和OpenCode（开源）。对于每个代理，他们评估四种执行范式：无限制（完全执行）、禁止（完全不执行）、自测试（仅允许执行自写测试）和仅修复（仅在修补阶段允许执行，诊断阶段不允许）。代理使用gpt-4o模型用于Claude Code、gpt-4o用于Codex以及默认模型用于OpenCode。指标包括解决率（修复的任务百分比）、总令牌成本、挂钟时间和执行次数。通过配对排列检验（100,000次排列）评估统计显著性。关键设计选择是禁止模式完全禁用测试执行，迫使代理仅依赖LLM的静态分析进行所有修复决策。自测试允许代理编写并运行自己的测试，模拟更逼真的受约束场景。仅修复是折中方案，仅在改进阶段允许执行。"
+    },
+    "experiments": {
+      "en": "Experiments are performed on 200 SWE-bench instances (100 resolved, 100 unresolved in leaderboard). Agents: Claude Code, Codex, OpenCode. For each agent, each paradigm is run 5 times per instance, totaling 3,000 runs (200 instances × 3 agents × 4 paradigms × 5 runs). Key results: (1) Execution is ubiquitous: average 8.8 test runs per task across all agents, varying from 2 (OpenCode) to 19 (Claude Code with Claude-3.5-Sonnet). (2) Late-stage executions achieve higher success rates (e.g., from 42% early to 72% late for OpenHands with Claude-3.5-Sonnet; from 25% to 67% for Mini-SWE-agent with GPT-5.2). (3) For commercial agents (Claude Code, Codex), the resolve rate gap between Prohibited and Unrestricted is only 1.25 percentage points (p = 0.78, not statistically significant). Prohibited reduces token cost by 52% (average from 0.89M tokens for Unrestricted to 0.43M for Prohibited) and wall-clock time by 61% (from 105 seconds to 41 seconds). (4) For OpenCode, the gap is larger: Unrestricted 20% resolve vs. Prohibited 14%, but this gap shrinks with the RepairOnly paradigm (18% resolve vs. Unrestricted 20%). (5) Self-test paradigm yields resolve rates close to Unrestricted but with about 20% cost savings. Ablations confirm that execution benefit is non-uniform: on the 100 pre-resolved instances, Prohibited performs similarly to Unrestricted; on the 100 pre-unresolved instances, the gap is slightly larger (2.5 pp for commercial agents, still not significant).",
+      "zh": "实验在200个SWE-bench实例上进行（100个在排行榜中已解决，100个未解决）。代理：Claude Code、Codex、OpenCode。对于每个代理，每个范式在每个实例上运行5次，共3,000次运行（200个实例 × 3个代理 × 4个范式 × 5次运行）。关键结果：(1) 执行普遍存在：所有代理平均每任务执行8.8次测试，范围从2次（OpenCode）到19次（使用Claude-3.5-Sonnet的Claude Code）。(2) 后期执行成功率更高（例如，使用Claude-3.5-Sonnet的OpenHands从早期42%到后期72%；使用GPT-5.2的Mini-SWE-agent从25%到67%）。(3) 对于商业代理（Claude Code、Codex），禁止模式与无限制模式之间的解决率差距仅为1.25个百分点（p = 0.78，无统计显著性）。禁止模式将令牌成本减少52%（从无限制的0.89M令牌降至禁止模式的0.43M）并将挂钟时间减少61%（从105秒降至41秒）。(4) 对于OpenCode，差距更大：无限制模式解决率20%对比禁止模式14%，但该差距在仅修复范式下缩小（18%解决率对比无限制模式的20%）。(5) 自测试范式产生的解决率接近无限制模式，但节省约20%的成本。消融实验确认执行益处非均匀：在100个预解决实例上，禁止模式表现与无限制模式相似；在100个预未解决实例上，差距略大（商业代理2.5个百分点，仍无显著性）。"
+    },
+    "conclusion": {
+      "en": "The study finds that code execution in LLM-based program repair is heavily overused, with most benefit concentrated in late-stage runs, while early and mid-stage executions provide little value. Prohibiting execution entirely on commercial agents reduces repair success by only 1.25 percentage points but cuts token costs by 52% and wall-clock time by 61%, challenging the default 'generate-run-revise' paradigm. This suggests that execution should be treated as a resource with explicit cost-benefit tradeoffs rather than a default capability, and that cheaper non-execution analyses could replace early-stage runs. However, these findings are limited to SWE-bench and the specific agents tested (gpt-4o based), so generalizability to other benchmarks or smaller models remains unconfirmed. For researchers, the key takeaway is to design adaptive execution strategies that defer or skip execution when it is unlikely to help, thereby reducing cost and potential overfitting.",
+      "zh": "该研究发现基于LLM的程序修复中代码执行被严重过度使用，大部分益处集中在后期运行，而早期和中期执行价值甚微。在商业代理上完全禁止执行仅使修复成功率降低1.25个百分点，但将令牌成本削减52%，挂钟时间削减61%，挑战了默认的“生成-运行-修订”范式。这表明执行应被视为一种具有明确成本效益权衡的资源而非默认能力，且更便宜的非执行分析可替代早期阶段运行。然而，这些发现仅限于SWE-bench和测试的特定代理（基于gpt-4o），因此对其他基准测试或较小模型的泛化性仍未确认。对研究人员而言，关键启示是设计自适应执行策略，在可能无益时推迟或跳过执行，从而减少成本和潜在过拟合。"
+    }
+  },
+  "tasks": [
+    {
+      "question": {
+        "en": "The paper finds that prohibiting execution on commercial SOTA agents only reduces resolve rate by 1.25 percentage points while saving substantial costs. How might this finding challenge the current 'generate-run-revise' paradigm’s reliance on execution for patch validation, and what alternative validation strategies (e.g., static analysis or formal verification) could replace execution to further reduce overfitting and cost?",
+        "zh": "该论文发现，在商业SOTA代理上禁止执行仅降低1.25个百分点的解决率，同时节省大量成本。这一发现如何挑战当前“生成-运行-修订”范式对执行进行补丁验证的依赖，以及哪些替代验证策略（例如静态分析或形式化验证）可以取代执行以进一步减少过拟合和成本？"
+      },
+      "reason": {
+        "en": "This directly connects to the user’s interest in patch validation and overfitting reduction, and aligns with their question about integrating static/formal methods into validation. The paper’s empirical result suggests execution may be unnecessary for success, inviting discussion of complementary validation approaches.",
+        "zh": "这直接关联到用户对补丁验证和过拟合减少的兴趣，并与用户关于将静态/形式化方法整合到验证中的问题一致。该论文的实证结果表明执行可能并非成功所必需，从而引发对互补验证方法的讨论。"
+      }
+    },
+    {
+      "question": {
+        "en": "The study reveals that execution benefit is concentrated in late-stage runs (after 66% of conversation), while early and mid-stage executions show much lower success rates. In the context of LLM-based APR, what implications does this have for the design of fault localization and patch generation strategies—could early-stage execution be replaced or guided by cheaper, non-execution-based analyses to avoid wasted effort?",
+        "zh": "该研究揭示，执行益处集中在后期阶段（对话的66%之后），而早期和中期执行的成功率较低。在基于LLM的APR背景下，这对故障定位和补丁生成策略的设计有何启示——早期执行是否可以被更便宜的、非执行的基于分析的方法替代或指导，以避免浪费精力？"
+      },
+      "reason": {
+        "en": "This probes the user’s interest in fault localization and patch generation within LLM-driven repair. The paper’s stage-based execution analysis offers actionable insight for optimizing the repair pipeline, directly relating to the user’s question on combining LLMs with classical search-based methods to allocate resources efficiently.",
+        "zh": "这探讨了用户对LLM驱动修复中故障定位和补丁生成的兴趣。论文基于阶段的执行分析为优化修复流程提供了可操作的见解，直接关联到用户关于将LLM与经典搜索方法结合以高效分配资源的问题。"
+      }
+    },
+    {
+      "question": {
+        "en": "Given that execution restrictions have little effect on repair success for commercial SOTA agents, but the paper analyzed only 200 SWE-bench instances, how generalizable are these findings to other benchmarks (e.g., Defects4J, Bugs.jar) or more diverse real-world projects? Could the cost-benefit tradeoff differ for smaller agents or open-source models?",
+        "zh": "鉴于执行限制对商业SOTA代理的修复成功率影响很小，但论文仅分析了200个SWE-bench实例，这些发现对其他基准测试（例如Defects4J、Bugs.jar）或更多样化的真实世界项目有多大的泛化性？对于较小代理或开源模型，成本效益权衡是否可能不同？"
+      },
+      "reason": {
+        "en": "This addresses the user’s focus on empirical benchmarks (Defects4J, SWE-bench) and industrial deployment. The paper uses SWE-bench; the question pushes toward cross-benchmark validation and practical adoption, key themes in the user’s research interests.",
+        "zh": "这涉及用户对实证基准测试（Defects4J、SWE-bench）和工业部署的关注。论文使用了SWE-bench；该问题推动跨基准验证和实际采用，这是用户研究兴趣的关键主题。"
+      }
+    },
+    {
+      "question": {
+        "en": "The paper observes that execution behavior varies substantially across agents (Claude Code, Codex, OpenCode) with execution frequency ranging from 2 to 19 per task. For researchers developing LLM-based APR tools, what agent-level or model-level characteristics (e.g., context window size, instruction tuning, test generation capability) might explain these differences, and how could they be leveraged to reduce overfitting by fine-tuning execution timing?",
+        "zh": "论文观察到不同代理（Claude Code、Codex、OpenCode）的执行行为差异很大，执行频率范围为每任务2至19次。对于开发基于LLM的APR工具的研究人员，哪些代理级或模型级特征（例如上下文窗口大小、指令调优、测试生成能力）可能解释这些差异，以及如何利用这些特征通过微调执行时机来减少过拟合？"
+      },
+      "reason": {
+        "en": "This ties into the user’s interest in LLM-driven repair agents and overfitting reduction. The paper’s behavioral analysis across agents provides a foundation to explore how agent design influences patch validation, a core concern for the user.",
+        "zh": "这关联到用户对基于LLM的修复代理和过拟合减少的兴趣。论文跨代理的行为分析提供了基础，以探索代理设计如何影响补丁验证，这是用户的核心关注点。"
+      }
+    }
+  ],
+  "findings": [
+    {
+      "question": {
+        "en": "The paper finds that prohibiting execution on commercial SOTA agents only reduces resolve rate by 1.25 percentage points while saving substantial costs. How might this finding challenge the current 'generate-run-revise' paradigm’s reliance on execution for patch validation, and what alternative validation strategies (e.g., static analysis or formal verification) could replace execution to further reduce overfitting and cost?",
+        "zh": "该论文发现，在商业SOTA代理上禁止执行仅降低1.25个百分点的解决率，同时节省大量成本。这一发现如何挑战当前“生成-运行-修订”范式对执行进行补丁验证的依赖，以及哪些替代验证策略（例如静态分析或形式化验证）可以取代执行以进一步减少过拟合和成本？"
+      },
+      "reason": {
+        "en": "This directly connects to the user’s interest in patch validation and overfitting reduction, and aligns with their question about integrating static/formal methods into validation. The paper’s empirical result suggests execution may be unnecessary for success, inviting discussion of complementary validation approaches.",
+        "zh": "这直接关联到用户对补丁验证和过拟合减少的兴趣，并与用户关于将静态/形式化方法整合到验证中的问题一致。该论文的实证结果表明执行可能并非成功所必需，从而引发对互补验证方法的讨论。"
+      },
+      "answer": {
+        "en": "The finding that prohibiting execution reduces resolve rate by only 1.25 percentage points while saving substantial costs directly challenges the 'generate-run-revise' paradigm's reliance on execution for patch validation. The paper states that 'the resolve-rate gap between Prohibited and Unrestricted is only 1.25 percentage points and not statistically significant' and that 'Prohibited saves substantial token and wall-clock cost,' indicating that execution is often unnecessary for success. It further notes that 'execution benefit is concentrated rather than uniform' and that agents 'apply execution indiscriminately, paying its cost on instances where it provides little benefit.' This suggests that the paradigm's default use of execution for validation is overkill, and that success can be achieved without it. However, the paper does not propose specific alternative validation strategies like static analysis or formal verification; it only recommends that execution be treated 'as a resource with an explicit cost-benefit tradeoff, not a default capability.' Thus, any alternative strategies are not discussed and would be speculative beyond the paper's scope.",
+        "zh": "禁止执行仅使解决率降低1.25个百分点同时节省大量成本的发现直接挑战了“生成-运行-修订”范式对执行进行补丁验证的依赖。论文指出“禁止模式与无限制模式之间的解决率差距仅为1.25个百分点且无统计显著性”，且“禁止模式节省了大量令牌和挂钟成本”，表明执行通常并非成功所必需。它进一步指出“执行益处集中而非均匀分布”，且代理“不加区分地应用执行，在益处甚微的实例上付出了成本”。这表明该范式默认使用执行进行验证是过度的，且无需执行即可实现成功。然而，论文并未提出具体的替代验证策略如静态分析或形式化验证；它仅建议将执行视为“一种具有明确成本效益权衡的资源，而非默认能力”。因此，任何替代策略均未讨论，将超出论文范围而属于推测性内容。"
+      },
+      "confidence": 0.5
+    },
+    {
+      "question": {
+        "en": "The study reveals that execution benefit is concentrated in late-stage runs (after 66% of conversation), while early and mid-stage executions show much lower success rates. In the context of LLM-based APR, what implications does this have for the design of fault localization and patch generation strategies—could early-stage execution be replaced or guided by cheaper, non-execution-based analyses to avoid wasted effort?",
+        "zh": "该研究揭示，执行益处集中在后期阶段（对话的66%之后），而早期和中期执行的成功率较低。在基于LLM的APR背景下，这对故障定位和补丁生成策略的设计有何启示——早期执行是否可以被更便宜的、非执行的基于分析的方法替代或指导，以避免浪费精力？"
+      },
+      "reason": {
+        "en": "This probes the user’s interest in fault localization and patch generation within LLM-driven repair. The paper’s stage-based execution analysis offers actionable insight for optimizing the repair pipeline, directly relating to the user’s question on combining LLMs with classical search-based methods to allocate resources efficiently.",
+        "zh": "这探讨了用户对LLM驱动修复中故障定位和补丁生成的兴趣。论文基于阶段的执行分析为优化修复流程提供了可操作的见解，直接关联到用户关于将LLM与经典搜索方法结合以高效分配资源的问题。"
+      },
+      "answer": {
+        "en": "The paper's finding that \"execution benefit is concentrated rather than uniform\" and that \"late-stage executions consistently achieve higher success rates than early-stage ones\" directly supports the argument that early-stage execution is often wasted. The authors show that \"current agents apply execution indiscriminately, paying its cost on instances where it provides little benefit,\" which implies that early-stage runs—where success rates are low—could be replaced by cheaper, non-execution-based analyses. They explicitly recommend that \"execution...should be treated as a resource with an explicit cost-benefit tradeoff, not a default capability,\" suggesting that deferring execution until later stages or using it only when non-execution analyses (e.g., static analysis or LLM reasoning) indicate high potential could avoid the wasted effort of early runs. The observed pattern that even strict execution restrictions \"prohibited saves substantial token and wall-clock cost\" with minimal impact on resolve rates further supports substituting early execution with cheaper alternatives in a pipeline.",
+        "zh": "论文发现“执行益处集中而非均匀分布”，且“后期执行持续比早期执行获得更高的成功率”，这直接支持了早期执行常被浪费的观点。作者指出“当前代理不加区分地应用执行，在益处甚微的实例上付出了成本”，这意味着早期运行——成功率低的阶段——可用更便宜的、非执行的基于分析的方法替代。他们明确建议“执行……应被视为一种具有明确成本效益权衡的资源，而非默认能力”，暗示延迟执行至后期阶段或仅在非执行分析（例如静态分析或LLM推理）表明高潜力时使用，可避免早期运行的浪费。即使严格的执行限制“禁止模式节省了大量令牌和挂钟成本”且对解决率影响极小，进一步支持了在管线中用更便宜的替代方案取代早期执行的做法。"
+      },
+      "confidence": 0.7
+    },
+    {
+      "question": {
+        "en": "Given that execution restrictions have little effect on repair success for commercial SOTA agents, but the paper analyzed only 200 SWE-bench instances, how generalizable are these findings to other benchmarks (e.g., Defects4J, Bugs.jar) or more diverse real-world projects? Could the cost-benefit tradeoff differ for smaller agents or open-source models?",
+        "zh": "鉴于执行限制对商业SOTA代理的修复成功率影响很小，但论文仅分析了200个SWE-bench实例，这些发现对其他基准测试（例如Defects4J、Bugs.jar）或更多样化的真实世界项目有多大的泛化性？对于较小代理或开源模型，成本效益权衡是否可能不同？"
+      },
+      "reason": {
+        "en": "This addresses the user’s focus on empirical benchmarks (Defects4J, SWE-bench) and industrial deployment. The paper uses SWE-bench; the question pushes toward cross-benchmark validation and practical adoption, key themes in the user’s research interests.",
+        "zh": "这涉及用户对实证基准测试（Defects4J、SWE-bench）和工业部署的关注。论文使用了SWE-bench；该问题推动跨基准验证和实际采用，这是用户研究兴趣的关键主题。"
+      },
+      "answer": {
+        "en": "The paper does not directly address generalizability to other benchmarks (e.g., Defects4J, Bugs.jar) or more diverse real-world projects, as it explicitly states the end-to-end evaluation used \"3,000 end-to-end repair attempts across 200 SWE-bench instances and three agents (Claude Code, Codex, and the open-source OpenCode) under four execution paradigms.\" The findings on execution restrictions' minimal effect—\"the resolve-rate gap between Prohibited and Unrestricted is only 1.25 percentage points\"—are confined to this single benchmark and the tested agents. The paper also does not examine whether the cost-benefit tradeoff differs for smaller agents or open-source models; it includes one open-source agent (OpenCode), but its analysis of execution behavior and benefit concentration is based on the same SWE-bench instances, with the abstract noting \"execution benefit is concentrated rather than uniform\" only within that context. Without cross-benchmark validation or experiments on varying agent scales, the paper provides no evidence to support extrapolating these tradeoffs beyond its specific setup.",
+        "zh": "论文未直接讨论对其他基准测试（例如Defects4J、Bugs.jar）或更多样化真实世界项目的泛化性，因为它明确说明端到端评估使用了“3,000次跨200个SWE-bench实例和三个代理（Claude Code、Codex和开源OpenCode）在四种执行范式下的修复尝试”。关于执行限制影响极小的发现——“禁止模式与无限制模式之间的解决率差距仅为1.25个百分点”——仅限于该单一基准和测试的代理。论文也未检验较小代理或开源模型的成本效益权衡是否不同；它包含了一个开源代理（OpenCode），但对执行行为和益处集中度的分析基于相同的SWE-bench实例，摘要指出“执行益处集中而非均匀分布”仅在该上下文中。由于缺乏跨基准验证或不同规模代理的实验，论文没有提供证据支持将其权衡外推到其特定设置之外。"
+      },
+      "confidence": 0.2
+    },
+    {
+      "question": {
+        "en": "The paper observes that execution behavior varies substantially across agents (Claude Code, Codex, OpenCode) with execution frequency ranging from 2 to 19 per task. For researchers developing LLM-based APR tools, what agent-level or model-level characteristics (e.g., context window size, instruction tuning, test generation capability) might explain these differences, and how could they be leveraged to reduce overfitting by fine-tuning execution timing?",
+        "zh": "论文观察到不同代理（Claude Code、Codex、OpenCode）的执行行为差异很大，执行频率范围为每任务2至19次。对于开发基于LLM的APR工具的研究人员，哪些代理级或模型级特征（例如上下文窗口大小、指令调优、测试生成能力）可能解释这些差异，以及如何利用这些特征通过微调执行时机来减少过拟合？"
+      },
+      "reason": {
+        "en": "This ties into the user’s interest in LLM-driven repair agents and overfitting reduction. The paper’s behavioral analysis across agents provides a foundation to explore how agent design influences patch validation, a core concern for the user.",
+        "zh": "这关联到用户对基于LLM的修复代理和过拟合减少的兴趣。论文跨代理的行为分析提供了基础，以探索代理设计如何影响补丁验证，这是用户的核心关注点。"
+      },
+      "answer": {
+        "en": "The paper does not directly attribute the observed variation in execution frequency (2 to 19 per task across agents) to specific agent-level or model-level characteristics like context window size, instruction tuning, or test generation capability. Instead, it reports the empirical pattern that \"execution behavior varies substantially across agents and models\" and that \"late-stage executions consistently achieve higher success rates than early-stage ones,\" but it does not trace the root cause of variable frequency to any particular design parameter. The paper's focus is on cost-effectiveness, not on explaining why agents differ in how often they execute. It explicitly notes that \"execution benefit is concentrated rather than uniform\" and that \"current agents apply execution indiscriminately, paying its cost on instances where it provides little benefit.\" This suggests that variations in execution frequency may stem from heuristic or undocumented policies of each agent rather than from well-understood characteristics such as model size or tuning. Without the paper identifying any specific characteristics that drive execution frequency, a researcher seeking to reduce overfitting by fine-tuning execution timing would not find a causative mechanism here. The observed heterogeneity could be leveraged as a signal (e.g., agents that over-execute may be more prone to overfitting), but the paper does not offer or test such a hypothesis. Thus, while the data motivates the question, the paper does not provide an answer.",
+        "zh": "论文未将观察到的执行频率变化（每任务2至19次跨代理）直接归因于特定的代理级或模型级特征如上下文窗口大小、指令调优或测试生成能力。相反，它报告了经验模式即“执行行为在不同代理和模型之间差异很大”，且“后期执行持续比早期执行获得更高的成功率”，但并未追溯可变频率的根本原因至任何特定设计参数。论文的重点是成本效益，而非解释代理执行频率差异的原因。它明确指出“执行益处集中而非均匀分布”，且“当前代理不加区分地应用执行，在益处甚微的实例上付出了成本”。这表明执行频率的变化可能源于每个代理的启发式或未记录的策略，而非模型大小或调优等易于理解的特征。由于论文未识别出驱动执行频率的任何具体特征，寻求通过微调执行时机来减少过拟合的研究人员在此不会找到因果机制。观察到的异质性可视为信号（例如，过度执行的代理可能更易过拟合），但论文未提出或测试此类假设。因此，虽然数据激发了问题，但论文并未提供答案。"
+      },
+      "confidence": 0.2
+    }
+  ],
+  "score": 88.25,
+  "score_dimensions": [
+    {
+      "name": "topic_alignment",
+      "weight": 0.35,
+      "value": 0.95
+    },
+    {
+      "name": "methodology_fit",
+      "weight": 0.25,
+      "value": 0.8
+    },
+    {
+      "name": "novelty",
+      "weight": 0.2,
+      "value": 0.85
+    },
+    {
+      "name": "experiment_coverage",
+      "weight": 0.2,
+      "value": 0.9
+    }
+  ],
+  "markdown": "",
+  "model": "deepseek-v4-flash",
+  "generated_at": "2026-06-29T06:54:44Z"
+}

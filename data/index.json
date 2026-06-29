@@ -1,6 +1,176 @@
 {
   "papers": [
     {
+      "arxiv_id": "2606.25514",
+      "topic": "Automated Program Repair",
+      "topic_label": "Automated Program Repair",
+      "title": {
+        "en": "Unlocking Model Potentials Through Adaptive Multi-Agent Scaffolding for Efficient Issue Resolution",
+        "zh": "通过自适应多智能体支架释放模型潜能，实现高效问题解决"
+      },
+      "authors": [
+        "Yang Chen",
+        "Aliya Ahmad",
+        "Yiheng Zhou",
+        "Reyhaneh Jabbarvand"
+      ],
+      "score": 88.75,
+      "published": "2026-06-24",
+      "generated_at": "2026-06-29T06:56:51Z"
+    },
+    {
+      "arxiv_id": "2606.26978",
+      "topic": "Automated Program Repair",
+      "topic_label": "Automated Program Repair",
+      "title": {
+        "en": "To Run or Not to Run: Analyzing the Cost-Effectiveness of Code Execution in LLM-Based Program Repair",
+        "zh": "运行还是不运行：分析基于LLM的程序修复中代码执行的成本效益"
+      },
+      "authors": [
+        "Zhihao Lin",
+        "Junhua Zhu",
+        "Mingyi Zhou",
+        "Xin Wang",
+        "Zhensu Sun",
+        "Renyu Yang"
+      ],
+      "score": 88.25,
+      "published": "2026-06-25",
+      "generated_at": "2026-06-29T06:54:44Z"
+    },
+    {
+      "arxiv_id": "2606.22906",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "From Fragments to Paths: Task-Level Context Recovery for Large Industrial Codebases",
+        "zh": "从片段到路径：大型工业代码库的任务级上下文恢复"
+      },
+      "authors": [
+        "Jiawei He",
+        "Weisong Sun",
+        "Mengyu Shi",
+        "Jie Jia",
+        "Tong Bian",
+        "Xikai Yang"
+      ],
+      "score": 83.25,
+      "published": "2026-06-22",
+      "generated_at": "2026-06-29T06:51:05Z"
+    },
+    {
+      "arxiv_id": "2606.23104",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "ReNIO: Reweighting Negative Trajectory Importance for LLM On-Policy Distillation",
+        "zh": "ReNIO：为大语言模型在线策略蒸馏重新加权负轨迹重要性"
+      },
+      "authors": [
+        "Chen Lin",
+        "Kedi Chen",
+        "Wei Zhang"
+      ],
+      "score": 66.75,
+      "published": "2026-06-22",
+      "generated_at": "2026-06-29T06:48:33Z"
+    },
+    {
+      "arxiv_id": "2606.25402",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "LibEvoBench: Probing Temporal Knowledge Stratification in Code Generation Models",
+        "zh": "LibEvoBench：探测代码生成模型中的时间知识分层"
+      },
+      "authors": [
+        "Daniele Cipollone",
+        "Sergey Titov",
+        "Maliheh Izadi",
+        "Egor Bogomolov",
+        "Arie van Deursen"
+      ],
+      "score": 75.75,
+      "published": "2026-06-24",
+      "generated_at": "2026-06-29T06:46:34Z"
+    },
+    {
+      "arxiv_id": "2606.25530",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "Evaluating LLMs on Real-World Software Performance Optimization",
+        "zh": "评估大语言模型在真实世界软件性能优化中的表现"
+      },
+      "authors": [
+        "Ezgi Sarıkayak",
+        "Wenchao Gu",
+        "Hesham Ghonim",
+        "Chunyang Chen"
+      ],
+      "score": 69.25,
+      "published": "2026-06-24",
+      "generated_at": "2026-06-29T06:43:18Z"
+    },
+    {
+      "arxiv_id": "2606.25747",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "CodeChat-Eval: Evaluating Large Language Models in Multi-Turn Code Refinement Dialogues",
+        "zh": "CodeChat-Eval：评估大语言模型在多轮代码优化对话中的表现"
+      },
+      "authors": [
+        " Guoxiang",
+        " Guo",
+        "Kla Tantithamthavorn",
+        "Neelofar Neelofar",
+        "Yuanyuan Qi",
+        "Aldeida Aleti"
+      ],
+      "score": 67.0,
+      "published": "2026-06-24",
+      "generated_at": "2026-06-29T06:41:22Z"
+    },
+    {
+      "arxiv_id": "2606.26979",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "How Much Static Structure Do Code Agents Need? A Study of Deterministic Anchoring",
+        "zh": "代码智能体需要多少静态结构？关于确定性锚定效应的研究"
+      },
+      "authors": [
+        "Zhihao Lin",
+        "Mingyi Zhou",
+        "Yizhuo Yang",
+        "Li Li"
+      ],
+      "score": 78.25000000000001,
+      "published": "2026-06-25",
+      "generated_at": "2026-06-29T06:38:38Z"
+    },
+    {
+      "arxiv_id": "2606.27733",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "BashCoder-R1: Towards Robust and Explainable Bash Code Generation with Robustness-Aware Group Relative Policy Optimization",
+        "zh": "BashCoder-R1：面向鲁棒且可解释的Bash代码生成——基于鲁棒性感知的组相对策略优化"
+      },
+      "authors": [
+        "Lei Yu",
+        "Peng Wang",
+        "Jia Xu",
+        "Jingyuan Zhang",
+        "Xin Wang",
+        "Jiajia Ma"
+      ],
+      "score": 70.25,
+      "published": "2026-06-26",
+      "generated_at": "2026-06-29T06:36:24Z"
+    },
+    {
       "arxiv_id": "2606.17612",
       "topic": "Automated Program Repair",
       "topic_label": "Automated Program Repair",
@@ -844,5 +1014,5 @@
       "generated_at": "2026-05-14T14:40:43Z"
     }
   ],
-  "updated_at": "2026-06-22T07:37:19Z"
+  "updated_at": "2026-06-29T06:56:51Z"
 }
