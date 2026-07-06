@@ -1,0 +1,220 @@
+{
+  "arxiv_id": "2606.31206",
+  "topic": "LLM for Code Generation",
+  "topic_label": "LLM for Code Generation",
+  "title": {
+    "en": "FeatX: Editing Software by Editing Features for Repository-Level Code Evolution",
+    "zh": "FeatX: 通过编辑特征来编辑软件，实现仓库级代码演化"
+  },
+  "authors": [
+    "Xutian Li",
+    "Yifeng Zhu",
+    "Xianlin Zhao",
+    "Yanzhen Zou",
+    "Lu Zhang",
+    "Bing Xie"
+  ],
+  "affiliations": [],
+  "categories": [
+    "cs.SE"
+  ],
+  "published": "2026-06-30T06:38:56",
+  "updated": "2026-06-30T06:38:56",
+  "abstract": "Large language models (LLMs) are increasingly used for software evolution, yet most interaction paradigms remain code-centric and require manual context management and prompt iteration. We present FeatX, a feature-oriented tool for editing software by editing features. Given an existing repository, FeatX extracts a hierarchical epic-feature structure with explicit feature-to-code mappings, then invokes a three-stage Evolution Agent to translate feature edits into code patches. The workflow is exposed through four coordinated panels. Across a controlled user study and replay experiments on 38 real-world feature-editing commits, FeatX significantly reduces cognitive load and improves usability compared with vanilla ChatGPT. It also achieves a 42.6\\% relative improvement in function-level modification localization F1 over strong LLM baselines, at substantially lower cost (\\$0.07 in total). The tool and collected dataset are available at https://github.com/a496263365/FeatX/tree/demo, with a demonstration video at https://youtu.be/OZqKZ4Ii-yM.",
+  "arxiv_url": "https://arxiv.org/abs/2606.31206",
+  "pdf_url": "https://arxiv.org/pdf/2606.31206.pdf",
+  "comment": "4 pages, Accepted to the Tools and Datasets Track of ASE 2026",
+  "relevance": {
+    "en": "This paper's repository-level editing tool and replay-based evaluation extend work on long-context handling and beyond-pass@k metrics, but it does not involve post-training techniques like RLHF or execution feedback, so it is tangential to your core interest in improving correctness through those methods.",
+    "zh": "本文的仓库级编辑工具和基于重放的评估扩展了长上下文处理和超越pass@k指标的工作，但它不涉及RLHF或执行反馈等后训练技术，因此与您通过这些方法改进正确性的核心兴趣是间接相关的。"
+  },
+  "figures": [
+    {
+      "label": "Figure 1.",
+      "caption": {
+        "en": "Figure 1. The overall design of FeatX.",
+        "zh": "图1. FeatX的总体设计。"
+      },
+      "url": "https://ar5iv.org/html/2606.31206/assets/Overview.png",
+      "order": 0,
+      "stage": "methodology",
+      "reference_text": "Figure 1 presents the overall design of FeatX.\nIt extracts a hierarchical feature structure from a repository ( Section 2.1 ), lets users edit target features in the Feature Panel, and feeds the edited feature with associated code context to a three-stage Evolution Agent that outputs diffs ( Section 2.2 )."
+    },
+    {
+      "label": "Figure 2.",
+      "caption": {
+        "en": "Figure 2. Usage workflow of FeatX.",
+        "zh": "图2. FeatX的使用工作流。"
+      },
+      "url": "https://ar5iv.org/html/2606.31206/assets/Usage-short.png",
+      "order": 1,
+      "stage": "methodology",
+      "reference_text": "As shown in Figure 2 , FeatX provides a concise feature-oriented workflow through four coordinated panels: A the Feature Panel lists extracted epics and features hierarchically and supports direct addition, modification, and removal operations; B the CodeMap Panel visualizes feature-related code entities and highlights entities affected by the current edit; C the Agent Panel presents the three-stage reasoning process of Evolution Agent;\nand D the Diff Panel provides class-wise line-level code diffs for final review and confirmation.\nThis feature-oriented workflow shifts user effort from manual repository navigation and context management to feature specification and targeted verification, improving traceability between feature intent and concrete code evolution."
+    }
+  ],
+  "figure": {
+    "label": "Figure 1.",
+    "caption": {
+      "en": "Figure 1. The overall design of FeatX.",
+      "zh": "图1. FeatX的总体设计。"
+    },
+    "url": "https://ar5iv.org/html/2606.31206/assets/Overview.png",
+    "reference_text": "Figure 1 presents the overall design of FeatX.\nIt extracts a hierarchical feature structure from a repository ( Section 2.1 ), lets users edit target features in the Feature Panel, and feeds the edited feature with associated code context to a three-stage Evolution Agent that outputs diffs ( Section 2.2 )."
+  },
+  "brief_summary": {
+    "en": "Current LLM-based tools for software evolution are code-centric, forcing developers to manually manage context and iterate prompts, which imposes high cognitive load and is especially burdensome on unfamiliar repositories. FeatX proposes a feature-oriented alternative that treats features as first-class editable units, extracting a hierarchical epic-feature structure from static and semantic analysis to map editing intent directly to concrete code. This shifts developer effort from manual navigation to feature specification, supported by a three-stage Evolution Agent that automatically translates feature edits into coordinated patches.\n\nIn a user study, FeatX reduced cognitive load by 41% (NASA-TLX) and improved usability by 15% (SUS) over vanilla ChatGPT. Replay experiments on 38 real-world commits further showed a 42.6% relative improvement in function-level modification localization F1 compared to strong baselines like Claude-opus-4.5, all at a cost of just $0.07. These findings validate that a feature-level abstraction not only enhances human efficiency but also boosts accuracy for repository-level code evolution.",
+    "zh": "当前基于LLM的软件演化工具以代码为中心，迫使开发人员手动管理上下文并迭代提示，带来了高认知负荷，尤其在处理不熟悉的仓库时更加繁琐。FeatX提出了一种以特征为导向的替代方案，将特征视为可编辑的一等单元，通过静态和语义分析提取层次化的史诗-特征结构，将编辑意图直接映射到具体代码。这将开发人员的精力从手动导航转向特征说明，并由三阶段演化代理自动将特征编辑转化为协调补丁。\n\n在用户研究中，与原生ChatGPT相比，FeatX将认知负荷降低了41%（NASA-TLX），可用性提高了15%（SUS）。对38个真实世界提交的重放实验进一步表明，其函数级修改定位F1相较于Claude-opus-4.5等强基线提升了42.6%，而成本仅为0.07美元。这些发现验证了特征级抽象不仅提升了人工效率，也提高了仓库级代码演化的准确性。"
+  },
+  "core_summary": {
+    "problem": {
+      "en": "The core problem addressed is that current LLM-based software evolution tools are predominantly code-centric, requiring developers to manually manage context and iterate prompts. They lack an explicit feature abstraction and feature-to-code mappings, leading to ambiguous task descriptions and poor localization accuracy when making repository-level changes. This is especially problematic for unfamiliar repositories, where developers must infer features and map intended changes to concrete edit locations, incurring substantial cognitive load. Given that approximately 60% of repository maintenance tasks involve feature evolution, the absence of feature-level support represents a practical gap in leveraging LLMs for software evolution effectively.",
+      "zh": "核心问题是当前基于LLM的软件演化工具主要以代码为中心，要求开发人员手动管理上下文并迭代提示。它们缺乏显式特征抽象和特征到代码映射，导致在仓库级变更时任务描述模糊，定位精度差。这在不熟悉的仓库中尤为严重，开发人员必须推断特征并将预期变更映射到具体编辑位置，产生大量认知负荷。鉴于约60%的仓库维护任务涉及特征演化，缺乏特征级支持是利用LLM有效进行软件演化的一个实际鸿沟。"
+    },
+    "solution": {
+      "en": "FeatX introduces a feature-oriented paradigm that treats features as first-class editable units, shifting interaction from code-level to feature-level. Its key insight is to provide an explicit hierarchical epic-feature structure with direct mappings to code entities, enabling developers to edit features directly and have those edits automatically translated into coordinated code patches. This contrasts with prior work that lacks such abstraction and traceability. The solution integrates automatic feature extraction (building a two-level hierarchy from static and semantic analysis) with a three-stage Evolution Agent (contextual expansion, localization & planning, concrete code modification) that translates feature edits into code diffs, supported by a four-panel interface that visualizes features, code context, agent reasoning, and resulting patches.",
+      "zh": "FeatX引入了一种以特征为导向的范式，将特征视为可编辑的一等单元，将交互从代码级转移到特征级。其关键洞察是提供一个显式的层次化史诗-特征结构，并直接映射到代码实体，使开发人员能够直接编辑特征，并将这些编辑自动转化为协调的代码补丁。这与以往缺乏此类抽象和可追溯性的工作形成对比。该解决方案集成了自动特征提取（从静态和语义分析构建两级层次结构）和一个三阶段演化代理（上下文扩展、定位与规划、具体代码修改），将特征编辑转化为代码差异，并得到四面板界面的支持，该界面可视化特征、代码上下文、代理推理和生成的补丁。"
+    },
+    "methodology": {
+      "en": "FeatX's technical approach consists of two main components: feature extraction and the Evolution Agent. Feature extraction begins by constructing a binary structural matrix from static dependencies (imports, calls) and a continuous semantic matrix from LLM-based summaries and Sentence-BERT embeddings, both at file and function levels. These matrices are fused with a weight α=0.5 into unified similarity matrices. Two-stage hierarchical clustering using the Leiden algorithm then clusters files into epics (with LLM-generated descriptions) and, within each epic, functions into features (with descriptions). The result is an epic-feature hierarchy displayed in the Feature Panel. The Evolution Agent operates in three stages: (1) Contextual expansion enriches the initial code entities via static analysis (method calls, field references, etc.) and LLM-guided exploratory retrieval, producing an expanded CodeMap. (2) Localization and planning compares original and edited feature descriptions, combines the semantic delta with the expanded code context to pinpoint concrete code regions, and generates a fine-grained modification plan with dependencies and order. (3) Concrete code modification then implements the changes, outputting class-wise line-level diffs. All LLM calls use DeepSeek-v3 with temperature 0.0 for determinism. The system is implemented with a Java Spring Boot backend and a React frontend, using JavaParser for static analysis. The workflow is exposed through four coordinated panels: Feature Panel (listing editable features), CodeMap Panel (visualizing code entities and highlighting affected ones), Agent Panel (showing reasoning and plans), and Diff Panel (displaying reviewable diffs).",
+      "zh": "FeatX的技术方法包括两个主要组件：特征提取和演化代理。特征提取首先从静态依赖（导入、调用）构建二元结构矩阵，并从基于LLM的摘要和Sentence-BERT嵌入构建连续语义矩阵，两者均处于文件和函数级别。这些矩阵以权重α=0.5融合成统一相似性矩阵。使用Leiden算法的两阶段层次聚类将文件聚类成史诗（带LLM生成描述），在每个史诗内将函数聚类成特征（带描述）。结果是一个在特征面板中显示的史诗-特征层次结构。演化代理分三个阶段运行：（1）上下文扩展：通过静态分析（方法调用、字段引用等）和LLM引导的探索性检索丰富初始代码实体，生成扩展的CodeMap。（2）定位与规划：比较原始和编辑后的特征描述，将语义差异与扩展代码上下文结合，精确定位具体代码区域，并生成细粒度修改计划，包含依赖关系和顺序。（3）具体代码修改：实施变更，输出类级行级差异。所有LLM调用使用DeepSeek-v3，温度为0.0以确保确定性。系统采用Java Spring Boot后端和React前端实现，使用JavaParser进行静态分析。工作流通过四个协调面板暴露：特征面板（列出可编辑特征）、CodeMap面板（可视化代码实体并高亮受影响实体）、代理面板（展示推理和计划）、差异面板（显示可审查差异）。"
+    },
+    "experiments": {
+      "en": "Evaluation covered cognitive load and localization accuracy. A controlled user study with 21 participants performed two feature-editing tasks on the NBlog repository using FeatX versus vanilla ChatGPT in a crossover design. Cognitive load was measured via NASA-TLX (1–21 scale) and usability via System Usability Scale (SUS). FeatX reduced overall NASA-TLX significantly from 12.5 to 7.4 (41% reduction), with largest reductions in mental demand (6.6 vs. 13.3), effort (8.2 vs. 14.5), and frustration (7.7 vs. 13.6), all p<0.001. SUS improved from 73 to 84 (15% increase). For localization accuracy, replay experiments on 38 real-world feature-editing commits computed function-level modification localization F1. FeatX achieved 0.385 F1, outperforming Claude-opus-4.5 (0.270) by 42.6%, and also surpassed GPT-4.5 and DeepSeek-v3. The total LLM cost for FeatX was $0.07, compared to $45.05 for direct Claude invocation.",
+      "zh": "评估涵盖认知负荷和定位精度。一项受控用户研究有21名参与者，在NBlog仓库上使用FeatX与原生ChatGPT进行两项特征编辑任务，采用交叉设计。认知负荷通过NASA-TLX（1–21量表）测量，可用性通过系统可用性量表（SUS）测量。FeatX将整体NASA-TLX从12.5显著降至7.4（降低41%），其中心理需求（6.6对13.3）、努力（8.2对14.5）和挫折感（7.7对13.6）降幅最大，所有p<0.001。SUS从73提高到84（提高15%）。在定位精度方面，对38个真实世界特征编辑提交的重放实验计算了函数级修改定位F1。FeatX达到了0.385的F1，比Claude-opus-4.5（0.270）高出42.6%，并且也超越了GPT-4.5和DeepSeek-v3。FeatX的总LLM成本为0.07美元，而直接调用Claude的成本为45.05美元。"
+    },
+    "conclusion": {
+      "en": "The paper finds that FeatX's feature-oriented abstraction significantly reduces cognitive load and improves usability over code-centric tools while achieving higher modification localization accuracy at dramatically lower cost. Its evaluation methodology using NASA-TLX, SUS, and localization F1 reveals that pass@k metrics alone are insufficient, emphasizing the need for human-centric and accuracy-oriented assessment in realistic code generation tasks. By automating context management through hierarchical extraction and a three-stage Evolution Agent, FeatX allows developers to focus on feature specification and verification, enhancing both efficiency and accuracy. These findings validate treating features as first-class entities and adopting more holistic evaluation approaches for repository-level software evolution.",
+      "zh": "The paper finds that FeatX's feature-oriented abstraction significantly reduces cognitive load and improves usability over code-centric tools while achieving higher modification localization accuracy at dramatically lower cost. Its evaluation methodology using NASA-TLX, SUS, and localization F1 reveals that pass@k metrics alone are insufficient, emphasizing the need for human-centric and accuracy-oriented assessment in realistic code generation tasks. By automating context management through hierarchical extraction and a three-stage Evolution Agent, FeatX allows developers to focus on feature specification and verification, enhancing both efficiency and accuracy. These findings validate treating features as first-class entities and adopting more holistic evaluation approaches for repository-level software evolution."
+    }
+  },
+  "tasks": [
+    {
+      "question": {
+        "en": "How does FeatX's hierarchical feature extraction and Evolution Agent address the challenge of repository-level code generation with long-context handling, and what specific mechanisms reduce the need for manual context management?",
+        "zh": "FeatX的层次化特征提取和演化代理如何解决具有长上下文处理的仓库级代码生成挑战？哪些具体机制减少了对手动上下文管理的需求？"
+      },
+      "reason": {
+        "en": "This directly probes the repository-level generation and long-context handling aspects of the user's interest, as FeatX decomposes a repository into manageable feature units and uses a three-stage agent to localize, plan, and implement edits without requiring developers to manually curate context.",
+        "zh": "这直接探询了用户兴趣中的仓库级生成和长上下文处理方面，因为FeatX将仓库分解为可管理的特征单元，并使用三阶段代理定位、规划和实现编辑，无需开发人员手动整理上下文。"
+      }
+    },
+    {
+      "question": {
+        "en": "What does FeatX's evaluation methodology (NASA-TLX for cognitive load, SUS for usability, and modification localization F1) reveal about more realistic assessment of code generation tools beyond pass@k, and how could such metrics be adopted for evaluating post-training methods?",
+        "zh": "FeatX的评估方法论（NASA-TLX认知负荷、SUS可用性、修改定位F1）揭示了超越pass@k的代码生成工具更现实的评估方式是什么？这些指标如何应用于评估后训练方法？"
+      },
+      "reason": {
+        "en": "The user emphasizes evaluation beyond pass@k; FeatX uses human-centric and integration-focused metrics. This question explores how these metrics could complement or inform benchmarks for post-training techniques like RLHF where alignment with developer intent is critical.",
+        "zh": "用户强调超越pass@k的评估；FeatX使用了以人为本和集成导向的指标。该问题探讨这些指标如何补充或指导RLHF等后训练技术的基准，其中与开发者意图的对齐至关重要。"
+      }
+    },
+    {
+      "question": {
+        "en": "Could the feature-oriented representation in FeatX be combined with execution feedback (e.g., from test suites or symbolic execution) to further improve the correctness of generated patches, and what challenges might arise in such integration?",
+        "zh": "FeatX中的特征导向表示能否与执行反馈（例如，来自测试套件或符号执行）结合，以进一步提高生成补丁的正确性？这种整合可能面临哪些挑战？"
+      },
+      "reason": {
+        "en": "This aligns with the user's interest in RL with execution feedback and post-training for correctness. The paper's Evolution Agent currently uses LLM-based planning and localization; injecting execution feedback could refine its outputs, making this a targeted inquiry.",
+        "zh": "这与用户对具有执行反馈的强化学习和用于正确性的后训练的兴趣一致。论文中的演化代理目前使用基于LLM的规划和定位；注入执行反馈可能优化其输出，这是一个有针对性的探究。"
+      }
+    },
+    {
+      "question": {
+        "en": "How does FeatX's human-in-the-loop interaction paradigm affect the quality and efficiency of repository-level code evolution compared to fully automated LLM-based approaches, and what design trade-offs are highlighted by the controlled user study?",
+        "zh": "FeatX的人机交互范式与完全自动化的基于LLM的方法相比，如何影响仓库级代码演化的质量和效率？受控用户研究突出了哪些设计权衡？"
+      },
+      "reason": {
+        "en": "The user cares about human-in-the-loop evaluation. FeatX's user study directly compares FeatX (with human guidance) to vanilla ChatGPT, providing insights into when and why human involvement improves outcomes, which is relevant for designing interactive coding agents.",
+        "zh": "用户关注人机交互评估。FeatX的用户研究直接比较了FeatX（有人工指导）与原生ChatGPT，提供了关于何时以及为何人类参与改善结果的见解，这与设计交互式编码代理相关。"
+      }
+    }
+  ],
+  "findings": [
+    {
+      "question": {
+        "en": "How does FeatX's hierarchical feature extraction and Evolution Agent address the challenge of repository-level code generation with long-context handling, and what specific mechanisms reduce the need for manual context management?",
+        "zh": "FeatX的层次化特征提取和演化代理如何解决具有长上下文处理的仓库级代码生成挑战？哪些具体机制减少了对手动上下文管理的需求？"
+      },
+      "reason": {
+        "en": "This directly probes the repository-level generation and long-context handling aspects of the user's interest, as FeatX decomposes a repository into manageable feature units and uses a three-stage agent to localize, plan, and implement edits without requiring developers to manually curate context.",
+        "zh": "这直接探询了用户兴趣中的仓库级生成和长上下文处理方面，因为FeatX将仓库分解为可管理的特征单元，并使用三阶段代理定位、规划和实现编辑，无需开发人员手动整理上下文。"
+      },
+      "answer": {
+        "en": "FeatX addresses repository-level code generation by first extracting a hierarchical epic-feature structure that decomposes the repository into manageable, semantically coherent units, each with explicit feature-to-code mappings. This structure, built via two-stage hierarchical clustering of structural and semantic similarity matrices, provides an explicit feature list and associated code entities, eliminating the need for developers to manually infer features or locate relevant code. The Evolution Agent then uses this structure to reduce manual context management through its three-stage design: contextual expansion, which automatically enriches the feature's code context via static analysis and exploratory retrieval; localization and planning, which compares feature deltas to pinpoint exact edit locations and generate a fine-grained plan; and concrete code modification, which produces reviewable diffs. Crucially, as stated in the paper, \"this feature-oriented workflow shifts user effort from manual repository navigation and context management to feature specification and targeted verification.\" The hierarchical extraction and the agent's automated context expansion jointly handle long-context requirements by focusing on only the relevant code entities, without developers having to curate the full repository context manually.",
+        "zh": "FeatX通过首先提取一个层次化的史诗-特征结构来解决仓库级代码生成问题，该结构将仓库分解为可管理、语义连贯的单元，每个单元具有显式的特征到代码映射。该结构通过结构性和语义相似性矩阵的两阶段层次聚类构建，提供了显式的特征列表和关联的代码实体，消除了开发人员手动推断特征或定位相关代码的需要。演化代理随后利用该结构，通过其三阶段设计减少手动上下文管理：上下文扩展，自动通过静态分析和探索性检索丰富特征代码上下文；定位与规划，比较特征差异以精确定位编辑位置并生成细粒度计划；具体代码修改，生成可审查的差异。关键在于，论文指出“这种以特征为导向的工作流将用户工作量从手动仓库导航和上下文管理转移到特征说明和针对性验证”。层次化提取和代理的自动上下文扩展共同处理了长上下文需求，仅关注相关代码实体，无需开发人员手动整理整个仓库上下文。"
+      },
+      "confidence": 1.0
+    },
+    {
+      "question": {
+        "en": "What does FeatX's evaluation methodology (NASA-TLX for cognitive load, SUS for usability, and modification localization F1) reveal about more realistic assessment of code generation tools beyond pass@k, and how could such metrics be adopted for evaluating post-training methods?",
+        "zh": "FeatX的评估方法论（NASA-TLX认知负荷、SUS可用性、修改定位F1）揭示了超越pass@k的代码生成工具更现实的评估方式是什么？这些指标如何应用于评估后训练方法？"
+      },
+      "reason": {
+        "en": "The user emphasizes evaluation beyond pass@k; FeatX uses human-centric and integration-focused metrics. This question explores how these metrics could complement or inform benchmarks for post-training techniques like RLHF where alignment with developer intent is critical.",
+        "zh": "用户强调超越pass@k的评估；FeatX使用了以人为本和集成导向的指标。该问题探讨这些指标如何补充或指导RLHF等后训练技术的基准，其中与开发者意图的对齐至关重要。"
+      },
+      "answer": {
+        "en": "FeatX's evaluation methodology reveals that pass@k alone is insufficient for realistic assessment of code generation tools, as it ignores human factors and integration effort. By measuring cognitive load via NASA-TLX (reduced from 12.5 to 7.4, a 41% reduction) and usability via SUS (improved from 73 to 84, a 15% increase), FeatX captures developer burden and satisfaction directly. Additionally, its function-level modification localization F1 (0.385, outperforming Claude-opus-4.5 by 42.6%) assesses how well tool output aligns with actual intended changes in a repository context, a critical aspect of practical code evolution. These metrics reveal that realistic evaluation must consider human cognition, workflow integration, and precise localization beyond simple pass rates. For evaluating post-training methods (e.g., RLHF), such human-centric and accuracy-oriented metrics could be adopted by designing user studies that measure cognitive load and usability on real editing tasks, and by computing modification localization F1 against ground-truth changes in curated user intent scenarios. This would provide a more holistic view of alignment with developer intent than conventional benchmarks.",
+        "zh": "FeatX的评估方法揭示，仅靠pass@k不足以现实评估代码生成工具，因为它忽略了人为因素和集成工作量。通过NASA-TLX测量认知负荷（从12.5降至7.4，降低41%）和SUS测量可用性（从73增至84，提高15%），FeatX直接捕捉了开发人员负担和满意度。此外，其函数级修改定位F1（0.385，优于Claude-opus-4.5达42.6%）评估了工具输出与仓库上下文中实际预期变更的对齐程度，这是实际代码演化的关键方面。这些指标表明，现实评估必须考虑人类认知、工作流集成和精确定位，而非简单的通过率。对于评估后训练方法（如RLHF），此类以人为本和精度导向的指标可被采纳，通过设计用户研究在实际编辑任务中测量认知负荷和可用性，并在策划的用户意图场景中针对真实变更计算修改定位F1。这将提供比传统基准更全面的开发者意图对齐视图。"
+      },
+      "confidence": 0.7
+    },
+    {
+      "question": {
+        "en": "Could the feature-oriented representation in FeatX be combined with execution feedback (e.g., from test suites or symbolic execution) to further improve the correctness of generated patches, and what challenges might arise in such integration?",
+        "zh": "FeatX中的特征导向表示能否与执行反馈（例如，来自测试套件或符号执行）结合，以进一步提高生成补丁的正确性？这种整合可能面临哪些挑战？"
+      },
+      "reason": {
+        "en": "This aligns with the user's interest in RL with execution feedback and post-training for correctness. The paper's Evolution Agent currently uses LLM-based planning and localization; injecting execution feedback could refine its outputs, making this a targeted inquiry.",
+        "zh": "这与用户对具有执行反馈的强化学习和用于正确性的后训练的兴趣一致。论文中的演化代理目前使用基于LLM的规划和定位；注入执行反馈可能优化其输出，这是一个有针对性的探究。"
+      },
+      "answer": {
+        "en": "The paper does not discuss combining FeatX's feature-oriented representation with execution feedback; it relies solely on static analysis and LLM-based planning. The Evolution Agent uses deterministic LLM calls (temperature 0.0) and produces diffs without iterative correction from test suites. Integrating execution feedback could potentially improve correctness, but challenges include the lack of an iterative feedback loop in the current linear pipeline, the need to map test failures to specific features in the hierarchy, and the deterministic LLM configuration that would require revision to support retries. The paper provides no evidence or discussion of such integration.",
+        "zh": "论文未讨论将FeatX的特征导向表示与执行反馈结合；它仅依赖静态分析和基于LLM的规划。演化代理使用确定性LLM调用（温度0.0）并生成差异，没有来自测试套件的迭代修正。整合执行反馈可能提高正确性，但挑战包括当前线性流水线缺乏迭代反馈循环、需要将测试失败映射到层次结构中的特定特征，以及需修订确定性LLM配置以支持重试。论文未提供此类整合的证据或讨论。"
+      },
+      "confidence": 0.2
+    },
+    {
+      "question": {
+        "en": "How does FeatX's human-in-the-loop interaction paradigm affect the quality and efficiency of repository-level code evolution compared to fully automated LLM-based approaches, and what design trade-offs are highlighted by the controlled user study?",
+        "zh": "FeatX的人机交互范式与完全自动化的基于LLM的方法相比，如何影响仓库级代码演化的质量和效率？受控用户研究突出了哪些设计权衡？"
+      },
+      "reason": {
+        "en": "The user cares about human-in-the-loop evaluation. FeatX's user study directly compares FeatX (with human guidance) to vanilla ChatGPT, providing insights into when and why human involvement improves outcomes, which is relevant for designing interactive coding agents.",
+        "zh": "用户关注人机交互评估。FeatX的用户研究直接比较了FeatX（有人工指导）与原生ChatGPT，提供了关于何时以及为何人类参与改善结果的见解，这与设计交互式编码代理相关。"
+      },
+      "answer": {
+        "en": "FeatX's human-in-the-loop paradigm improves quality and efficiency: it reduces cognitive load (41% reduction in NASA-TLX) and improves usability (15% increase) compared to vanilla ChatGPT, and boosts localization F1 by 42.6% over automated LLM baselines like Claude-opus-4.5 while costing only $0.07 vs $45.05. The trade-off is that FeatX requires users to edit features and review diffs, but this structured involvement reduces ambiguity and improves accuracy, as typical LLM approaches lack explicit feature lists and feature-to-code mappings, increasing task ambiguity and localization errors.",
+        "zh": "FeatX的人机交互范式提高了质量和效率：与原生ChatGPT相比，它降低了认知负荷（NASA-TLX降低41%）并提高了可用性（SUS提高15%），同时定位F1比自动LLM基线（如Claude-opus-4.5）提升了42.6%，而成本仅为0.07美元对45.05美元。权衡在于，FeatX要求用户编辑特征并审查差异，但这种结构化参与减少了歧义并提高了准确性，因为典型LLM方法缺乏显式特征列表和特征到代码映射，增加了任务歧义和定位错误。"
+      },
+      "confidence": 1.0
+    }
+  ],
+  "score": 63.24999999999999,
+  "score_dimensions": [
+    {
+      "name": "topic_alignment",
+      "weight": 0.35,
+      "value": 0.75
+    },
+    {
+      "name": "methodology_fit",
+      "weight": 0.25,
+      "value": 0.4
+    },
+    {
+      "name": "novelty",
+      "weight": 0.2,
+      "value": 0.65
+    },
+    {
+      "name": "experiment_coverage",
+      "weight": 0.2,
+      "value": 0.7
+    }
+  ],
+  "markdown": "",
+  "model": "deepseek-v4-flash",
+  "generated_at": "2026-07-06T06:59:42Z"
+}

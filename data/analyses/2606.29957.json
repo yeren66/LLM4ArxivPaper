@@ -1,0 +1,273 @@
+{
+  "arxiv_id": "2606.29957",
+  "topic": "LLM for Code Generation",
+  "topic_label": "LLM for Code Generation",
+  "title": {
+    "en": "SWE-Together: Evaluating Coding Agents in Interactive User Sessions",
+    "zh": "SWE-Together: 在交互式用户会话中评估编程代理"
+  },
+  "authors": [
+    "Yifan Wu",
+    "Zhuokai Zhao",
+    "Songlin Li",
+    "Ho Hin Lee",
+    "Jiacheng Zhu",
+    "Shirley Wu",
+    "Tianhe Yu",
+    "Serena Li",
+    "Lizhu Zhang",
+    "Xiangjun Fan",
+    "Shengzhi Li"
+  ],
+  "affiliations": [],
+  "categories": [
+    "cs.SE",
+    "cs.AI"
+  ],
+  "published": "2026-06-29T08:35:15",
+  "updated": "2026-06-29T08:35:15",
+  "abstract": "Most coding-agent benchmarks are static: an agent receives a complete task description up front and is judged only by its final code. Real coding assistance is interactive, with users clarifying goals, adding constraints, and correcting mistakes over multiple turns. We introduce SWE-Together, a multi-turn benchmark reconstructed from real user-agent coding sessions. To make real interactions verifiable, we curate 109 repository-level tasks from 11,260 recorded sessions, selecting sessions with recoverable repository states, clear user goals, and observable outcomes. To replay these interactions across agents, we build a reactive LLM-based user simulator that preserves the original users' intents and provides feedback when the coding agent's progress requires it. To evaluate agents as collaborators, we measure both final repository correctness and the number of corrective feedback turns required during the interaction. Experiments with frontier coding agents show that stronger agents generally achieve higher final success rates while requiring fewer interventions, suggesting an improved user experience.",
+  "arxiv_url": "https://arxiv.org/abs/2606.29957",
+  "pdf_url": "https://arxiv.org/pdf/2606.29957.pdf",
+  "comment": null,
+  "relevance": {
+    "en": "SWE-Together's interactive benchmark measures both repository-level correctness and user correction turns, extending evaluation beyond static pass@k to capture real-world collaboration. This directly aligns with your interest in realistic benchmarks and suggests that interaction efficiency could be a valuable training signal for RL with execution feedback.",
+    "zh": "SWE-Together的交互式基准既衡量仓库级别的正确性，也衡量用户修正轮数，将评估扩展到静态pass@k之外，以捕捉现实世界的协作。这与你对真实基准的兴趣直接一致，并表明交互效率可能是带有执行反馈的强化学习的一个有价值的训练信号。"
+  },
+  "figures": [
+    {
+      "label": "Figure 2",
+      "caption": {
+        "en": "Figure 2 : Overview of the session-to-task construction pipeline.\nThe first stage is fully deterministic, the second stage performs viability screening, and the third stage generates reproducible tasks in sandboxes.",
+        "zh": "图2：会话到任务构建流水线概述。\n第一阶段完全确定性，第二阶段执行可行性筛选，第三阶段在沙盒中生成可重现的任务。"
+      },
+      "url": "https://ar5iv.org/html/2606.29957/assets/assets/session_collection_pipeline_v2.png",
+      "order": 1,
+      "stage": "methodology",
+      "reference_text": "The construction pipeline has three stages.\nFirst, a deterministic rule-based collector filters raw upstream sessions and emits a normalized record for each candidate.\nSecond, an LLM judge determines whether the coding work can be reconstructed as a reproducible and verifiable task.\nThird, a sandbox orchestrator runs task construction to produce a complete task directory.\nThe overview is shown in Fig. 2 ."
+    },
+    {
+      "label": "Figure 3",
+      "caption": {
+        "en": "Figure 3 : Task-construction workflow.\nThe host orchestrator creates an isolated sandbox, supplies the normalized session and authoring prompt, and exports the resulting task package.\nInside the sandbox, the task-generation agent screens the candidate, identifies repository verification commands, writes tests, constructs the user-simulation prompt, and audits the generated task.",
+        "zh": "图3：任务构建工作流。\n主机编排器创建隔离沙盒，提供标准化会话和创作提示，并导出生成的任务包。\n在沙盒内部，任务生成代理筛选候选任务，识别仓库验证命令，编写测试，构建用户模拟提示，并审计生成的任务。"
+      },
+      "url": "https://ar5iv.org/html/2606.29957/assets/assets/step3.png",
+      "order": 2,
+      "stage": "methodology",
+      "reference_text": "The resulting package contains the original session record, the initial user instruction, a pinned execution environment, deterministic verifier artifacts, and a task-specific user-simulation prompt. Fig. 3 summarizes the workflow."
+    },
+    {
+      "label": "Figure 4",
+      "caption": {
+        "en": "Figure 4 : Context consulted by the user simulator.\nEach replay checkpoint combines fixed session anchors, a summary of the evaluated agent’s latest turn, and simulator memory from earlier checkpoints.\nThe simulator emits one structured action: message-bearing actions are injected as user turns, while no-op lets the agent continue.",
+        "zh": "图4：用户模拟器参考的上下文。\n每个重放检查点结合固定会话锚点、被评估代理最新轮的摘要以及来自早期检查点的模拟器记忆。\n模拟器发出一个结构化动作：携带消息的动作作为用户轮次注入，而无操作让代理继续。"
+      },
+      "url": "https://ar5iv.org/html/2606.29957/assets/assets/user_sim_runtime_loop.png",
+      "order": 3,
+      "stage": "methodology",
+      "reference_text": ""
+    },
+    {
+      "label": "Figure 5",
+      "caption": {
+        "en": "Figure 5 : Correctness plus interaction diagnostics.\nFinal correctness scores the submitted repository state, while the interaction diagnostics characterize the replay that produced that state.\nIntent Coverage measures simulator fidelity to the original user’s scope; User Correction measures agent-elicited steering.",
+        "zh": "图5：正确性加交互诊断。\n最终正确性对提交的仓库状态进行评分，而交互诊断则描述产生该状态的重放。\nIntent Coverage衡量模拟器对原始用户范围的忠实度；User Correction衡量代理引发的引导。"
+      },
+      "url": "https://ar5iv.org/html/2606.29957/assets/assets/interaction_diagnostics_panel.png",
+      "order": 4,
+      "stage": "methodology",
+      "reference_text": ""
+    }
+  ],
+  "figure": {
+    "label": "Figure 2",
+    "caption": {
+      "en": "Figure 2 : Overview of the session-to-task construction pipeline.\nThe first stage is fully deterministic, the second stage performs viability screening, and the third stage generates reproducible tasks in sandboxes.",
+      "zh": "图2：会话到任务构建流水线概述。\n第一阶段完全确定性，第二阶段执行可行性筛选，第三阶段在沙盒中生成可重现的任务。"
+    },
+    "url": "https://ar5iv.org/html/2606.29957/assets/assets/session_collection_pipeline_v2.png",
+    "reference_text": "The construction pipeline has three stages.\nFirst, a deterministic rule-based collector filters raw upstream sessions and emits a normalized record for each candidate.\nSecond, an LLM judge determines whether the coding work can be reconstructed as a reproducible and verifiable task.\nThird, a sandbox orchestrator runs task construction to produce a complete task directory.\nThe overview is shown in Fig. 2 ."
+  },
+  "brief_summary": {
+    "en": "Current coding-agent benchmarks, such as SWE-Bench, are static: they present complete task descriptions upfront and evaluate only final code via pre-written tests. This ignores the interactive reality of coding assistance, where users clarify goals, add constraints, and correct mistakes across multiple turns, meaning two agents with identical pass rates can impose vastly different user burdens. To capture this, the authors propose SWE-Together, a multi-turn benchmark reconstructed from 11,260 real user-agent sessions. Its core innovation is a reactive LLM-based user simulator that preserves original user intents and provides corrective feedback only when triggered conditions from the original session are met.\n\nThe benchmark evaluates both final repository correctness and interaction quality via two new metrics: User Correction (number of steering turns) and Intent Coverage. In experiments with seven frontier agents, stronger models achieved higher success rates (e.g., opus-4.8 with 48.6% pass@1) while requiring significantly fewer corrective turns (1.38 per trial for opus-4.8 vs. 2.04 for others), with a strong inverse correlation (Pearson −0.92) between pass@1 and user corrections. This reveals that interactive evaluation captures meaningful quality differences hidden by static pass@k alone, providing a direct proxy for user satisfaction. The findings suggest that post-training objectives like RLHF should explicitly incorporate interaction efficiency, rewarding agents that achieve correct outcomes with minimal user effort.",
+    "zh": "当前编程代理基准（如SWE-Bench）是静态的：它们预先提供完整的任务描述，并通过预编写的测试仅评估最终代码。这忽略了编程辅助的交互现实，即用户在多轮交互中逐步澄清目标、添加约束并纠正错误，这意味着两个具有相同通过率的代理可能给用户带来截然不同的负担。为了捕捉这一点，作者提出了SWE-Together，这是一个从11,260个真实用户-代理会话中重建的多轮基准。其核心创新是一个基于LLM的响应式用户模拟器，该模拟器保留原始用户意图，并仅在满足原始会话中的触发条件时提供纠正性反馈。\n该基准通过两个新指标评估最终仓库正确性和交互质量：User Correction（引导轮数）和Intent Coverage。在七个前沿代理的实验中，更强的模型实现了更高的成功率（例如，opus-4.8达到48.6%的pass@1），同时需要的修正轮数明显更少（opus-4.8每试验1.38轮，其他模型2.04轮），pass@1与用户修正之间存在强负相关（Pearson -0.92）。这表明交互式评估捕捉到了静态pass@k单独无法体现的有意义的质量差异，直接代理了用户满意度。研究结果表明，像RLHF这样的后训练目标应明确纳入交互效率，奖励那些以最小用户努力实现正确结果的代理。"
+  },
+  "core_summary": {
+    "problem": {
+      "en": "Current coding-agent benchmarks, such as SWE-Bench and Terminal-Bench, are static: they provide a complete task description in a single turn and evaluate only the final code via pre-written tests. This fails to capture the interactive nature of real-world coding assistance, where users incrementally clarify goals, add constraints, and correct mistakes over multiple turns. The two key gaps are: (1) task design—single-turn instructions miss the evolving, incomplete information typical of real sessions, and (2) evaluation—final correctness alone does not reflect the user effort (e.g., number of corrections) needed to achieve that outcome. As a result, two agents with identical pass rates can impose vastly different burdens on users, making static benchmarks inadequate for assessing practical assistant quality.",
+      "zh": "当前的编程代理基准（如SWE-Bench和Terminal-Bench）是静态的：它们在单轮中提供完整的任务描述，并通过预编写测试仅评估最终代码。这未能捕获真实世界编程辅助的交互本质，即用户在多轮中逐步澄清目标、添加约束和纠正错误。两个关键差距是：（1）任务设计——单轮指令错过了真实会话中典型的不断演变、不完整的信息；（2）评估——仅凭最终正确性不能反映实现该结果所需的用户努力（例如，修正次数）。因此，两个具有相同通过率的代理可能给用户带来截然不同的负担，使得静态基准不足以评估实际助手质量。"
+    },
+    "solution": {
+      "en": "SWE-Together reconstructs real multi-turn user–agent coding sessions into a replayable, verifiable benchmark. Its core innovation is a triplet of contributions: (1) a pipeline that converts raw conversation logs into sandboxed tasks with pinned code states, executable tests, and curated user-intent prompts; (2) an anchored, state-conditional LLM user simulator that dispatches corrective feedback only when trigger conditions from the original session are met, preserving the original user's intent while adapting to the evaluated agent's trajectory; (3) a joint evaluation protocol that measures both final repository correctness (via an agentic rubric) and interaction quality via two new metrics—User Correction (number of steering turns) and Intent Coverage (fidelity to the original user's scope). This contrasts with prior work by enabling multi-turn, adaptive evaluation that captures the human effort required for successful collaboration.",
+      "zh": "SWE-Together将真实的多轮用户-代理编程会话重构成可重放、可验证的基准。其核心创新是三个贡献：（1）一个将原始对话日志转换为沙盒任务的流水线，包含固定的代码状态、可执行测试和精心策划的用户意图提示；（2）一个锚定、状态条件的LLM用户模拟器，仅在满足原始会话中的触发条件时分配纠正反馈，在适应被评估代理轨迹的同时保留原始用户意图；（3）一个联合评估协议，通过两个新指标——User Correction（引导轮数）和Intent Coverage（对原始用户范围的忠实度）——同时衡量最终仓库正确性（通过代理评估模板）和交互质量。这与先前工作形成对比，实现了多轮、自适应评估，捕获了成功协作所需的人类努力。"
+    },
+    "methodology": {
+      "en": "SWE-Together is built in three stages. First, a deterministic rule-based collector filters 11,260 raw sessions from four sources (DataClaw, Pi-staging, Hyperswitch, SWE-chat) down to candidates that have multi-turn interaction, concrete agent edits, and a public, mature GitHub repository. The passing sessions (0.97% → 109 tasks) then enter viability screening: an LLM judge determines whether the coding work can be reproduced locally and evaluates the feasibility of writing tests and extracting user intents. Finally, a sandbox orchestrator (Figure 3) spawns an isolated environment where a task-generation agent (controlled by a detailed prompt) restores the repository at the relevant commit, identifies verification commands, writes executable checks, decomposes the original user's intents into structured descriptions with trigger conditions, and constructs a task-specific user-simulation prompt. The user simulator (Figure 4) is a state-conditional LLM that at each checkpoint receives: (a) fixed session anchors (invariant user goals, intervention order), (b) a summary of the evaluated agent's latest actions, and (c) simulator memory from earlier checks; it then chooses between injecting a message (if a trigger condition is satisfied) or issuing a no-op. Evaluation (Figure 5) has two components: correctness is scored by an agentic rubric that inspects the final repository state and runs the hand-written checks; interaction diagnostics measure User Correction (count of corrective messages) and Intent Coverage (proportion of original intents actually communicated during replay). The simulator's behavior is also audited to avoid false positives/negatives in triggering.",
+      "zh": "SWE-Together通过三个阶段构建。首先，一个基于规则确定性收集器从四个来源（DataClaw、Pi-staging、Hyperswitch、SWE-chat）过滤11,260个原始会话，筛选出具有多轮交互、具体代理编辑以及公开、成熟的GitHub仓库的候选会话。通过的会话（0.97% → 109个任务）随后进入可行性筛选：一个LLM判断者确定编程工作是否可以在本地复现，并评估编写测试和提取用户意图的可行性。最后，一个沙盒编排器（图3）生成一个隔离环境，其中任务生成代理（由详细提示控制）在相关提交处恢复仓库，识别验证命令，编写可执行检查，将原始用户意图分解为带有触发条件的结构化描述，并构建特定任务的用户模拟提示。用户模拟器（图4）是一个状态条件的LLM，在每个检查点接收：（a）固定会话锚点（不变的用户目标、干预顺序），（b）评估代理最新行动的摘要，以及（c）来自早期检查的模拟器记忆；然后它在注入消息（如果满足触发条件）或发出无操作之间进行选择。评估（图5）有两个组成部分：正确性由代理评估模板评分，该模板检查最终仓库状态并运行手写检查；交互诊断衡量User Correction（纠正消息计数）和Intent Coverage（重放期间实际传达的原始意图比例）。模拟器的行为也被审计以避免触发中的误报/漏报。"
+    },
+    "experiments": {
+      "en": "The benchmark was evaluated on seven frontier coding agents (e.g., opus-4.8, gpt-5.5, claude-sonnet-4, various open-code models). Each agent was run in a sandbox with the user simulator; the main metrics are pass@1 (first-attempt success), stable solve rate (consistency across runs), mean judge score (0–1 rubric average), User Correction (average corrective turns per trial), and Intent Coverage. Key results: opus-4.8 achieved the highest pass@1 (48.6%) and stable solve rate (50.6%) while requiring the fewest corrections (1.38 per trial); gpt-5.5 ranked second (44.6% pass@1, 2.04 corrections). User Correction was strongly inversely correlated with pass@1 (Pearson −0.92) and stable solve rate (−0.84), showing that stronger agents elicit less corrective feedback. Intent Coverage remained high and stable (≈70–80%) across models, indicating the simulator reliably conveyed intents. Cost comparisons (Figure 7) show gpt-5.5 as the most efficient in wall-clock time (10.7 min) and output tokens (29.9 k) while opus-4.8 consumed the most tokens (74.0 k). Ablations (not shown) verified that the simulator's timing and content were consistent across runs, and that the task set distinguishes models that appear similar on static benchmarks.",
+      "zh": "该基准在七个前沿编程代理上进行了评估（例如，opus-4.8、gpt-5.5、claude-sonnet-4、各种开源代码模型）。每个代理在沙盒中与用户模拟器一起运行；主要指标是pass@1（首次尝试成功率）、稳定解决率（跨运行的一致性）、平均评判分数（0-1模板平均）、User Correction（每试验平均修正轮数）和Intent Coverage。关键结果：opus-4.8实现了最高的pass@1（48.6%）和稳定解决率（50.6%），同时需要最少的修正（每试验1.38轮）；gpt-5.5排名第二（44.6% pass@1，2.04次修正）。User Correction与pass@1（Pearson -0.92）和稳定解决率（-0.84）呈强负相关，表明更强的代理引发更少的纠正反馈。Intent Coverage在各模型间保持高且稳定（约70-80%），表明模拟器可靠地传达了意图。成本比较（图7）显示gpt-5.5在挂钟时间（10.7分钟）和输出token（29.9k）方面最高效，而opus-4.8消耗了最多的token（74.0k）。消融实验（未显示）验证了模拟器的时机和内容在运行间一致，并且任务集能够区分在静态基准上表现相似的模型。"
+    },
+    "conclusion": {
+      "en": "SWE-Together finds that stronger agents deliver higher final success rates while requiring substantially fewer user corrections, empirically confirming that interactive evaluation captures meaningful quality differences that static pass rates obscure. By introducing a practical metric for this collaborative burden, the benchmark provides a direct proxy for user experience in human-in-the-loop coding. The primary implication for researchers is that post-training objectives, such as RLHF rewards, should explicitly incorporate interaction efficiency alongside final accuracy to minimize the user effort required to steer an agent. This work thus provides a tangible methodology for shifting the evaluation and training of coding agents from isolated code production toward fluent, low-overhead collaboration.",
+      "zh": "SWE-Together发现更强的代理在实现更高最终成功率的同时需要显著更少的用户修正，这经验性地证实了交互式评估捕捉到了静态通过率所掩盖的有意义的质量差异。通过为这种协作负担引入一个实用指标，该基准直接提供了人在环路编程中用户体验的替代指标。对研究人员的主要启示是，后训练目标（如RLHF奖励）应明确纳入交互效率以及最终准确性，以最小化引导代理所需的用户努力。因此，这项工作为将编程代理的评估和训练从孤立的代码生成转向流畅、低开销的协作提供了具体的方法论。"
+    }
+  },
+  "tasks": [
+    {
+      "question": {
+        "en": "How does the multi-turn interactive evaluation in SWE-Together address the limitations of static pass@k metrics, particularly in capturing the true quality of code generation for real-world repository-level tasks?",
+        "zh": "SWE-Together中的多轮交互评估如何解决静态pass@k指标的局限性，特别是在捕捉真实世界仓库级任务代码生成的真正质量方面？"
+      },
+      "reason": {
+        "en": "This question probes the benchmark's evaluation methodology, which directly aligns with the user's interest in metrics that go beyond pass@k on isolated functions. The paper's design measures both correctness and interaction fficiency, providing insights into realistic assessment.",
+        "zh": "这个问题探讨了基准的评估方法，这与用户对超越孤立函数pass@k的指标的兴趣直接一致。论文的设计同时衡量了正确性和交互效率，为真实评估提供了见解。"
+      }
+    },
+    {
+      "question": {
+        "en": "What insights does SWE-Together provide about the relationship between an agent's pass@1 success rate and its required number of corrective feedback turns, and how might this relationship inform post-training techniques like RLHF or preference learning to improve user experience?",
+        "zh": "SWE-Together提供了关于代理的pass@1成功率与其所需纠正反馈轮数之间关系的哪些见解？这种关系如何为RLHF或偏好学习等后训练技术提供信息以改善用户体验？"
+      },
+      "reason": {
+        "en": "The user is interested in post-training methods (RLHF, execution feedback). The paper finds stronger agents need fewer interventions, which can guide training objectives focused on reducing corrective feedback, a proxy for user satisfaction.",
+        "zh": "用户对后训练方法（RLHF、执行反馈）感兴趣。论文发现更强的代理需要更少的干预，这可以指导以减少纠正反馈为目标的训练目标，而纠正反馈是用户满意度的代理指标。"
+      }
+    },
+    {
+      "question": {
+        "en": "How does SWE-Together's user simulator preserve original user intents and provide feedback, and what are the implications of using such simulated interactions for evaluating human-in-the-loop code generation?",
+        "zh": "SWE-Together的用户模拟器如何保留原始用户意图并提供反馈？使用这种模拟交互来评估人在环路的代码生成有什么意义？"
+      },
+      "reason": {
+        "en": "This directly addresses the user's interest in human-in-the-loop usage and realistic evaluation. The simulator is key to replaying interactive sessions, enabling a new paradigm for assessing code agents as collaborators.",
+        "zh": "这直接涉及用户对人在环路使用和真实评估的兴趣。模拟器是重放交互会话的关键，为评估作为协作者的代码代理提供了新的范式。"
+      }
+    },
+    {
+      "question": {
+        "en": "What are the key dimensions of repository-level tasks (e.g., multi-file edits, dependency understanding) that SWE-Together captures, and how do these challenge long-context handling in current coding agents?",
+        "zh": "SWE-Together捕获了仓库级任务的哪些关键维度（例如，多文件编辑、依赖理解）？这些维度如何挑战当前编码代理的长上下文处理能力？"
+      },
+      "reason": {
+        "en": "The user cares about repository-level generation and long-context handling. The paper's tasks are repository-level, requiring agents to understand and modify larger codebases, testing their ability to handle long contexts.",
+        "zh": "用户关心仓库级生成和长上下文处理。论文的任务是仓库级的，要求代理理解并修改更大的代码库，测试它们处理长上下文的能力。"
+      }
+    },
+    {
+      "question": {
+        "en": "Based on SWE-Together's design, what methodological improvements for evaluating code generation agents does it introduce beyond execution-based tests, and how could these be adopted in future benchmarks to better align with real-world software engineering?",
+        "zh": "基于SWE-Together的设计，它在执行测试之外引入了哪些评估代码生成代理的方法论改进？未来基准如何采用这些改进以更好地与真实世界软件工程对齐？"
+      },
+      "reason": {
+        "en": "This question targets the user's interest in new evaluation methodologies. The paper's multi-turn, feedback-aware evaluation offers a template for more holistic assessment, aligning with the user's goal of realistic metrics.",
+        "zh": "这个问题针对用户对新评估方法论的兴趣。论文的多轮、反馈感知评估为更全面的评估提供了模板，与用户对真实指标的目标一致。"
+      }
+    }
+  ],
+  "findings": [
+    {
+      "question": {
+        "en": "How does the multi-turn interactive evaluation in SWE-Together address the limitations of static pass@k metrics, particularly in capturing the true quality of code generation for real-world repository-level tasks?",
+        "zh": "SWE-Together中的多轮交互评估如何解决静态pass@k指标的局限性，特别是在捕捉真实世界仓库级任务代码生成的真正质量方面？"
+      },
+      "reason": {
+        "en": "This question probes the benchmark's evaluation methodology, which directly aligns with the user's interest in metrics that go beyond pass@k on isolated functions. The paper's design measures both correctness and interaction fficiency, providing insights into realistic assessment.",
+        "zh": "这个问题探讨了基准的评估方法，这与用户对超越孤立函数pass@k的指标的兴趣直接一致。论文的设计同时衡量了正确性和交互效率，为真实评估提供了见解。"
+      },
+      "answer": {
+        "en": "SWE-Together addresses limitations of static pass@k metrics by introducing multi-turn interactive evaluation that captures both final correctness and interaction quality. Static benchmarks are criticized because they present “the full task description at the start and evaluate the agent’s submitted code by running executable tests,” missing that “real-world coding assistance, by contrast, is inherently interactive: users often reveal intent incrementally, clarify incomplete requests, refine requirements, and correct prior outputs across turns.” Furthermore, “evaluation primarily measures final-task success, but rarely capture how effectively agents incorporate evolving instructions and how much user effort is required.” SWE-Together counters this by “measur[ing] both final repository correctness and the number of corrective feedback turns required during the interaction,” thus quantifying user burden. The paper notes that “two agents may receive the same final-task score while imposing very different burdens: one may succeed from a coarse initial request, while another may require a detailed specification, repeated reminders, and extensive corrective feedback.” By using a user simulator that releases feedback “only when its triggering conditions arise,” the benchmark attributes outcome differences to agents and reports User Correction as a metric of interaction efficiency. This joint evaluation “separately measures the correctness of the agent’s final repository state and the user-simulator behavior during replay,” providing a richer assessment of real-world collaboration than static pass@k alone.",
+        "zh": "SWE-Together通过引入多轮交互评估来解决静态pass@k指标的局限性，该评估同时捕获最终正确性和交互质量。静态基准受到批评，因为它们“在开始时提供完整的任务描述，并通过运行可执行测试来评估代理提交的代码”，忽略了“相比之下，现实世界的编程辅助本质上是交互式的：用户通常逐步揭示意图，澄清不完整的请求，细化需求，并在多轮中纠正先前的输出。”此外，“评估主要衡量最终任务的成功，但很少捕捉代理如何有效地整合不断变化的指令以及需要多少用户努力。”SWE-Together通过“衡量最终仓库正确性和交互过程中所需的纠正反馈轮数”来对抗这一点，从而量化用户负担。论文指出，“两个代理可能获得相同的最终任务分数，但施加非常不同的负担：一个可能从粗略的初始请求成功，而另一个可能需要详细的规范、重复的提醒和广泛的纠正反馈。”通过使用一个“仅当触发条件出现时才释放反馈”的用户模拟器，该基准将结果差异归因于代理，并将User Correction报告为交互效率的指标。这种联合评估“分别衡量代理最终仓库状态的正确性和重放过程中用户模拟器的行为”，从而提供比静态pass@k更丰富的现实世界协作评估。"
+      },
+      "confidence": 1.0
+    },
+    {
+      "question": {
+        "en": "What insights does SWE-Together provide about the relationship between an agent's pass@1 success rate and its required number of corrective feedback turns, and how might this relationship inform post-training techniques like RLHF or preference learning to improve user experience?",
+        "zh": "SWE-Together提供了关于代理的pass@1成功率与其所需纠正反馈轮数之间关系的哪些见解？这种关系如何为RLHF或偏好学习等后训练技术提供信息以改善用户体验？"
+      },
+      "reason": {
+        "en": "The user is interested in post-training methods (RLHF, execution feedback). The paper finds stronger agents need fewer interventions, which can guide training objectives focused on reducing corrective feedback, a proxy for user satisfaction.",
+        "zh": "用户对后训练方法（RLHF、执行反馈）感兴趣。论文发现更强的代理需要更少的干预，这可以指导以减少纠正反馈为目标的训练目标，而纠正反馈是用户满意度的代理指标。"
+      },
+      "answer": {
+        "en": "SWE-Together provides direct evidence that stronger agents achieve higher pass@1 success rates while requiring fewer corrective feedback turns. The abstract states: 'Experiments with frontier coding agents show that stronger agents generally achieve higher final success rates while requiring fewer interventions, suggesting an improved user experience.' This inverse relationship implies that the number of corrective feedback turns is a meaningful proxy for user satisfaction, as agents that need less steering impose lower user burden. For post-training techniques like RLHF or preference learning, this insight suggests using the count of corrective feedback turns as a reward signal or preference criterion: training objectives can penalize unnecessary interventions, thereby optimizing for both correctness and interaction efficiency. The paper's introduction reinforces this by noting that 'two agents may receive the same final-task score while imposing very different burdens… one may succeed from a coarse initial request, while another may require a detailed specification, repeated reminders, and extensive corrective feedback.' Thus, SWE-Together motivates incorporating interaction quality into training, directly targeting the user experience through reduced corrective feedback.",
+        "zh": "SWE-Together提供了直接证据，表明更强的代理在实现更高的pass@1成功率的同时需要更少的纠正反馈轮数。摘要指出：“Experiments with frontier coding agents show that stronger agents generally achieve higher final success rates while requiring fewer interventions, suggesting an improved user experience.”这种负相关意味着纠正反馈轮数是用户满意度的有意义的代理指标，因为需要较少引导的代理施加较低的用户负担。对于RLHF或偏好学习等后训练技术，这一见解表明使用纠正反馈轮数作为奖励信号或偏好标准：训练目标可以惩罚不必要的干预，从而同时优化正确性和交互效率。论文的引言通过指出“two agents may receive the same final-task score while imposing very different burdens… one may succeed from a coarse initial request, while another may require a detailed specification, repeated reminders, and extensive corrective feedback”来加强这一点。因此，SWE-Together激励将交互质量纳入训练，通过减少纠正反馈直接针对用户体验。"
+      },
+      "confidence": 1.0
+    },
+    {
+      "question": {
+        "en": "How does SWE-Together's user simulator preserve original user intents and provide feedback, and what are the implications of using such simulated interactions for evaluating human-in-the-loop code generation?",
+        "zh": "SWE-Together的用户模拟器如何保留原始用户意图并提供反馈？使用这种模拟交互来评估人在环路的代码生成有什么意义？"
+      },
+      "reason": {
+        "en": "This directly addresses the user's interest in human-in-the-loop usage and realistic evaluation. The simulator is key to replaying interactive sessions, enabling a new paradigm for assessing code agents as collaborators.",
+        "zh": "这直接涉及用户对人在环路使用和真实评估的兴趣。模拟器是重放交互会话的关键，为评估作为协作者的代码代理提供了新的范式。"
+      },
+      "answer": {
+        "en": "SWE-Together's user simulator preserves original user intents through an \"anchored, state-conditional\" design that \"releases feedback only when its triggering conditions arise in the evaluated agent's trajectory,\" thereby \"preserving the original user's objectives and intervention order while adapting feedback timing to each agent.\" Feedback is provided reactively when the coding agent's progress requires it, as the simulator is \"a reactive LLM-based user simulator that preserves the original users' intents and provides feedback when the coding agent's progress requires it.\" This allows the simulator to adapt to each agent's trajectory without drifting from the original intent. The implications for evaluating human-in-the-loop code generation are significant: by moving beyond static, single-turn benchmarks, SWE-Together captures interaction quality and user effort. As the paper states, \"evaluating coding agents therefore requires moving beyond final-task correctness to account for interaction quality and the human effort needed for success.\" It measures both \"final repository correctness and the number of corrective feedback turns required,\" enabling assessment of agents as collaborators. The simulator's consistent preservation of intents across runs is quantified by \"Intent Coverage,\" ensuring outcome differences are attributed to the agents rather than simulator variation. This enables controlled, replayable evaluation that reflects real interactive workflows.",
+        "zh": "SWE-Together的用户模拟器通过一种“锚定、状态条件”的设计来保留原始用户意图，该设计“仅在评估代理的轨迹中出现触发条件时才释放反馈”，从而“在使反馈时机适应每个代理的同时，保留原始用户的目标和干预顺序”。当编码代理的进展需要时，反馈被响应式提供，因为模拟器是“一个基于LLM的响应式用户模拟器，它保留原始用户的意图，并在编码代理的进展需要时提供反馈”。这允许模拟器适应每个代理的轨迹，而不会偏离原始意图。对于评估人在环路代码生成的意义是显著的：通过超越静态的单轮基准，SWE-Together捕获了交互质量和用户努力。正如论文所述，“评估编码代理因此需要超越最终任务正确性，以考虑交互质量和成功所需的人类努力。”它同时衡量“最终仓库正确性和所需的纠正反馈轮数”，从而能够评估作为协作者的代理。模拟器在不同运行中一致保留意图的程度由“Intent Coverage”量化，确保结果差异归因于代理而非模拟器变化。这使得受控、可重放的评估能够反映真实交互工作流。"
+      },
+      "confidence": 1.0
+    },
+    {
+      "question": {
+        "en": "What are the key dimensions of repository-level tasks (e.g., multi-file edits, dependency understanding) that SWE-Together captures, and how do these challenge long-context handling in current coding agents?",
+        "zh": "SWE-Together捕获了仓库级任务的哪些关键维度（例如，多文件编辑、依赖理解）？这些维度如何挑战当前编码代理的长上下文处理能力？"
+      },
+      "reason": {
+        "en": "The user cares about repository-level generation and long-context handling. The paper's tasks are repository-level, requiring agents to understand and modify larger codebases, testing their ability to handle long contexts.",
+        "zh": "用户关心仓库级生成和长上下文处理。论文的任务是仓库级的，要求代理理解并修改更大的代码库，测试它们处理长上下文的能力。"
+      },
+      "answer": {
+        "en": "SWE-Together captures key dimensions of repository-level tasks including multi-turn interactivity, where users reveal intent incrementally and provide corrective feedback across turns; repository-level context understanding, requiring agents to grasp the full codebase state; and evolving instructions, where initial requests are often incomplete. As the paper states, 'users often reveal intent incrementally, clarify incomplete requests, refine requirements, and correct prior outputs across turns,' and 'task-relevant information may be distributed across multiple turns and initial requests may be far less complete than benchmark task descriptions.' These dimensions challenge long-context handling because agents must maintain and integrate a growing conversation history alongside the repository's structure, dependencies, and state, while dynamically adapting to new constraints without losing earlier context. The evaluation also tracks 'the number of corrective feedback turns required,' emphasizing that agents must effectively process long contexts to minimize user steering.",
+        "zh": "SWE-Together捕获了仓库级任务的关键维度，包括多轮交互性（用户逐步揭示意图并在多轮中提供纠正反馈）、仓库级上下文理解（要求代理掌握完整代码库状态）以及不断演变的指令（初始请求通常不完整）。正如论文所述，“users often reveal intent incrementally, clarify incomplete requests, refine requirements, and correct prior outputs across turns”以及“task-relevant information may be distributed across multiple turns and initial requests may be far less complete than benchmark task descriptions”。这些维度挑战长上下文处理，因为代理必须维护和整合不断增长的对话历史以及仓库的结构、依赖关系和状态，同时动态适应新的约束而不丢失早期上下文。评估还跟踪“所需的纠正反馈轮数”，强调代理必须有效处理长上下文以最小化用户引导。"
+      },
+      "confidence": 0.7
+    },
+    {
+      "question": {
+        "en": "Based on SWE-Together's design, what methodological improvements for evaluating code generation agents does it introduce beyond execution-based tests, and how could these be adopted in future benchmarks to better align with real-world software engineering?",
+        "zh": "基于SWE-Together的设计，它在执行测试之外引入了哪些评估代码生成代理的方法论改进？未来基准如何采用这些改进以更好地与真实世界软件工程对齐？"
+      },
+      "reason": {
+        "en": "This question targets the user's interest in new evaluation methodologies. The paper's multi-turn, feedback-aware evaluation offers a template for more holistic assessment, aligning with the user's goal of realistic metrics.",
+        "zh": "这个问题针对用户对新评估方法论的兴趣。论文的多轮、反馈感知评估为更全面的评估提供了模板，与用户对真实指标的目标一致。"
+      },
+      "answer": {
+        "en": "SWE-Together introduces multi-turn, feedback-aware evaluation beyond static execution-based tests. It measures both final repository correctness and 'User Correction, which quantifies the amount of corrective steering provided by the simulated user' alongside 'Intent Coverage' to capture interaction quality. The paper argues that 'evaluating coding agents therefore requires moving beyond final-task correctness to account for interaction quality and the human effort needed for success.' This is achieved via an 'anchored, state-conditional LLM user simulator that preserves the original user’s intent and intervention order while adapting feedback to each evaluated agent’s evolving trajectory.' Future benchmarks could adopt this by incorporating interactive sessions with simulated users, reporting user correction as a metric of human burden, and using trajectory-conditioned feedback to ensure consistent evaluation across agents, thus better aligning with real-world collaborative software engineering.",
+        "zh": "SWE-Together引入了超越静态执行测试的多轮、反馈感知评估。它同时衡量最终仓库正确性和“User Correction，它量化由模拟用户提供的纠正引导量”以及“Intent Coverage”以捕获交互质量。论文主张“评估编码代理因此需要超越最终任务正确性，以考虑交互质量和成功所需的人类努力。”这是通过一个“锚定、状态条件的LLM用户模拟器实现的，该模拟器保留原始用户的意图和干预顺序，同时使反馈适应每个被评估代理不断演变的轨迹。”未来基准可以通过纳入与模拟用户的交互会话、将User Correction作为人类负担的指标报告、以及使用轨迹条件反馈来确保跨代理的一致评估，从而更好地与真实世界协作软件工程对齐。"
+      },
+      "confidence": 1.0
+    }
+  ],
+  "score": 88.75,
+  "score_dimensions": [
+    {
+      "name": "topic_alignment",
+      "weight": 0.35,
+      "value": 0.95
+    },
+    {
+      "name": "methodology_fit",
+      "weight": 0.25,
+      "value": 0.9
+    },
+    {
+      "name": "novelty",
+      "weight": 0.2,
+      "value": 0.85
+    },
+    {
+      "name": "experiment_coverage",
+      "weight": 0.2,
+      "value": 0.8
+    }
+  ],
+  "markdown": "",
+  "model": "deepseek-v4-flash",
+  "generated_at": "2026-07-06T07:18:47Z"
+}

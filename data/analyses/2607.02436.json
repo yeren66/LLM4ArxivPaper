@@ -1,0 +1,185 @@
+{
+  "arxiv_id": "2607.02436",
+  "topic": "LLM for Code Generation",
+  "topic_label": "LLM for Code Generation",
+  "title": {
+    "en": "Reasoning effort, not tool access, buys first-try reliability in agentic code generation: an observational study",
+    "zh": "首次运行可靠性由推理努力而非工具访问决定：一项关于代理代码生成的观察性研究"
+  },
+  "authors": [
+    "Achint Mehta"
+  ],
+  "affiliations": [],
+  "categories": [
+    "cs.SE",
+    "cs.AI"
+  ],
+  "published": "2026-07-02T17:08:21",
+  "updated": "2026-07-02T17:08:21",
+  "abstract": "Agentic coding assistants are increasingly given extra capabilities, such as browser based testing tools and design oriented system prompts, on the assumption that more capability yields better software. This study tested that assumption directly. Ninety independent agent runs built the same application, a real time retrospective board, from one detailed specification, each scored on a fixed 14 criterion functional rubric (42 point maximum) and a visual quality review. The runs spanned several model generations, two agent harnesses, two reasoning effort levels, a testing tool, and two design oriented prompts. Capability tier dominated: frontier models clustered near the ceiling while a low cost local model fell to 24 to 37 points. A criterion level analysis revealed what run totals conceal. Container deployment was the dominant defect, failing first try in 44 percent of runs, with its failure rate shifting sharply across model generations while mean totals moved less than a point. The testing tool raised cost by 42 to 68 percent without improving functional score or reliability, even on interface visible criteria. Raising reasoning effort from High to xHigh lifted first try perfect runs from 28 percent to 89 percent and cut corrective prompts about five fold, for 9 to 29 percent more cost. A design oriented prompt raised visual quality, 4.5 versus 3.0 on a 5 point scale, without lifting function, and a one paragraph paraphrase of its directive reproduced the entire lift. The practical lesson is to match the fix to the failure: most first run failures came from weak reasoning, which a stronger model or more effort prevents, not from visible flaws a checking tool would catch.",
+  "arxiv_url": "https://arxiv.org/abs/2607.02436",
+  "pdf_url": "https://arxiv.org/pdf/2607.02436.pdf",
+  "comment": "22 pages, 5 figures, 10 tables. Dataset and evaluation artifacts: https://doi.org/10.5281/zenodo.21134406",
+  "relevance": {
+    "en": "The paper's whole-application rubric extends evaluation beyond pass@k, relevant to your realistic metrics interest, and its conclusion that reasoning effort dominates reliability challenges tool-centric priorities, but it is tangential to your core post-training focus as it examines inference-time compute rather than training methods.",
+    "zh": "该论文的全应用评分表将评估扩展到pass@k之外，与您对实际指标的兴趣相关，其关于推理努力主导可靠性的结论挑战了以工具为中心的优先级，但它与您核心的后训练焦点相切，因为它研究的是推理时计算而非训练方法。"
+  },
+  "figures": [],
+  "figure": null,
+  "brief_summary": {
+    "en": "Agentic coding assistants are increasingly given extra capabilities—browser-based testing tools and design-oriented prompts—under the untested assumption that more capability yields better software. This observational study directly tests that assumption across 90 agent runs building the same application, systematically varying model generations, reasoning effort, tools, and prompts. The main finding is that first-try reliability is determined by reasoning effort, not tool access: increasing reasoning effort from High to xHigh lifted perfect runs from 28% to 89%, while the testing tool raised cost by up to 68% without improving functional score.\n\nThe study’s 14-criterion rubric revealed that container deployment was the dominant defect, failing first-try in 44% of runs—a pattern invisible to pass@k. Tools and prompts failed to fix this core weakness; only stronger reasoning via larger models or more inference-time compute proved effective. Design-oriented prompts improved visual quality alone, showing that style and function are decoupled. The lesson is to match the fix to the failure: invest in reasoning, not tools, for reliable code generation.",
+    "zh": "代理编码助手正越来越多地被赋予额外能力——基于浏览器的测试工具和面向设计的提示——基于一个未经检验的假设：更多的能力会带来更好的软件。这项观察性研究通过90次代理运行构建同一应用，系统性地改变模型代际、推理努力、工具和提示，直接检验了这一假设。主要发现是：首次运行可靠性由推理努力而非工具访问决定：将推理努力从High提升到xHigh，完美运行率从28%提高到89%，而测试工具则将成本提高了最多68%，但未改善功能得分。\n\n该研究的14项标准评分表显示，容器部署是主要缺陷，在44%的运行中首次尝试失败——这是pass@k无法发现的模式。工具和提示未能修复这一核心弱点；只有通过更大模型或更多推理时计算实现的更强推理才被证明有效。面向设计的提示仅提升了视觉质量，表明风格和功能是解耦的。教训是：对症下药——投资于推理而非工具，以实现可靠的代码生成。"
+  },
+  "core_summary": {
+    "problem": {
+      "en": "Agentic coding assistants are increasingly given extra capabilities—such as browser-based testing tools and design-oriented system prompts—under the assumption that more capability yields better software. This assumption remained untested empirically. The concrete gap is the lack of a controlled study isolating whether tools or reasoning effort drive functional correctness and reliability. In practice, this matters because developers and platform builders invest in tools and prompt engineering without evidence that these address the primary causes of failure, leading to wasted cost and complexity.",
+      "zh": "代理编码助手正越来越多地被赋予额外能力——例如基于浏览器的测试工具和面向设计的系统提示——假设更多的能力会带来更好的软件。这一假设在经验上仍未得到检验。具体的差距是缺乏一项控制研究，以隔离工具或推理努力是否驱动功能正确性和可靠性。在实践中，这很重要，因为开发者和平台构建者投资于工具和提示工程，但没有证据表明它们解决了失败的主要原因，导致成本浪费和复杂性增加。"
+    },
+    "solution": {
+      "en": "The main contribution is an observational study that directly tests the assumption by systematically varying capabilities across 90 independent agent runs building the same application from a fixed specification. The key insight is that high reasoning effort—i.e., model capability and inference-time compute—is the primary determinant of first-try reliability and functional completeness. Tools and design prompts do not improve functional score; they only increase cost or affect visual quality. This contrasts with the prevailing trend of adding features to agents and instead highlights the importance of reasoning quality.",
+      "zh": "主要贡献是一项观察性研究，通过系统性地改变能力（在90次独立代理运行中从固定规格构建同一应用）直接检验了这一假设。关键见解是高推理努力——即模型能力和推理时计算——是首次运行可靠性和功能完整性的主要决定因素。工具和设计提示不会改善功能得分；它们只会增加成本或影响视觉质量。这与为代理添加功能的流行趋势形成对比，而是强调了推理质量的重要性。"
+    },
+    "methodology": {
+      "en": "The study uses a single application: a real-time retrospective board. 90 independent agent runs are conducted with controlled variations across multiple factors: model generation (frontier models like GPT-4/Claude vs. a low-cost local model), agent harness (two different frameworks), reasoning effort (High vs. xHigh, likely corresponding to different inference steps or chain-of-thought depth), presence of a browser-based testing tool, and two design-oriented system prompts. Each run is scored on a 14-criterion functional rubric (42-point maximum) and a 5-point visual quality rating. Cost is measured via API call count or monetary cost, and reliability is captured by the number of corrective prompts needed. The experimental design is observational but controls for confounds through systematic variation. Figures 2 and 3 depict experimental results: Figure 2 shows functional score unchanged and cost increased with the tool; Figure 3 shows the effect of reasoning effort on first-try perfect runs and corrective prompts.",
+      "zh": "该研究使用了一个单一应用：一个实时回顾板。进行了90次独立代理运行，并在多个因素上进行了控制变化：模型代际（前沿模型如GPT-4/Claude与低成本本地模型）、代理框架（两种不同框架）、推理努力（High与xHigh，可能对应不同的推理步骤或思维链深度）、基于浏览器的测试工具的存在，以及两个面向设计的系统提示。每次运行通过14项功能评分表（最高42分）和5分制视觉质量评级进行评分。成本通过API调用次数或货币成本衡量，可靠性通过需要的纠正提示次数衡量。实验设计是观察性的，但通过系统变化控制了混杂因素。图2和图3展示了实验结果：图2显示功能得分不变，成本随工具增加；图3显示推理努力对首次尝试完美运行和纠正提示的影响。"
+    },
+    "experiments": {
+      "en": "The experiments involve 90 runs. Key results: the testing tool raised cost by 42–68% without improving functional score (Figure 2 for Opus 4.7). Raising reasoning effort from High to xHigh on Opus 4.7 lifted first-try perfect runs from 28% (5/18) to 89% (16/18) and cut corrective prompts about five-fold, with cost increasing only 9–29% (Figure 3). A design-oriented prompt improved visual quality (4.5 vs. 3.0 out of 5) but did not affect functional score. Container deployment was the dominant defect, failing first-try in 44% of runs. Frontier models clustered near the ceiling (42 points), while the low-cost local model scored 24–37 across conditions. These patterns held across model generations and agent harnesses.",
+      "zh": "实验涉及90次运行。关键结果：测试工具将成本提高了42–68%，但未改善功能得分（图2，针对Opus 4.7）。将Opus 4.7上的推理努力从High提升到xHigh，首次尝试完美运行率从28%（5/18）提高到89%（16/18），并将纠正提示减少了约五倍，成本仅增加9–29%（图3）。面向设计的提示改善了视觉质量（5分制中4.5对比3.0），但未影响功能得分。容器部署是主要缺陷，在44%的运行中首次尝试失败。前沿模型接近上限（42分），而低成本本地模型在不同条件下得分为24–37。这些模式在模型代际和代理框架中保持一致。"
+    },
+    "conclusion": {
+      "en": "The core finding is that first-try reliability in agentic code generation is determined by reasoning effort, not by tool access or prompt design: increasing reasoning effort from High to xHigh lifted perfect first-try runs from 28% to 89%, while adding a testing tool raised cost without improving functional score. Granular evaluation revealed that container deployment was the dominant defect—a pattern that pass@k would obscure—showing that benchmarks need decomposed functional criteria to diagnose specific failure modes. Style improvements, by contrast, were easily achieved with a brief prompt paraphrase, decoupling visual quality from function and suggesting that reinforcement learning from human feedback should prioritize functional correctness over style. The overarching lesson is to match the fix to the failure: weak reasoning requires more inference effort or stronger models, not additional tools, and investing in reasoning capability is the most direct path to reliability.",
+      "zh": "核心发现是：代理代码生成中的首次运行可靠性由推理努力决定，而非工具访问或提示设计：将推理努力从High提升到xHigh，完美首次运行率从28%提高到89%，而添加测试工具增加了成本但未改善功能得分。细粒度评估揭示了容器部署是主要缺陷——这是一个pass@k会掩盖的模式——表明基准需要分解的功能标准来诊断特定的失败模式。相比之下，风格改进很容易通过简短的提示改写实现，将视觉质量与功能解耦，并表明基于人类反馈的强化学习应优先考虑功能正确性而非风格。总的教训是对症下药：弱推理需要更多的推理努力或更强的模型，而不是额外的工具，投资于推理能力是通往可靠性的最直接路径。"
+    }
+  },
+  "tasks": [
+    {
+      "question": {
+        "en": "The paper uses a 14-criterion functional rubric including container deployment, which was the dominant defect. How does this rubric design compare to pass@k in capturing real-world software engineering quality, and what lessons does it offer for building more nuanced evaluation benchmarks for repository-level code generation?",
+        "zh": "该论文使用了一个包含容器部署的14项功能评分表，而容器部署是主要缺陷。与pass@k相比，这种评分表设计在捕捉真实软件工程质量方面如何？它为构建更细致的仓库级代码生成评估基准提供了哪些经验？"
+      },
+      "reason": {
+        "en": "This question aligns with the user's interest in evaluation methodologies that go beyond pass@k, focusing on compilation, execution, and integration. The paper's detailed rubric provides insights into designing benchmarks that measure real-world reliability.",
+        "zh": "这个问题与用户对超越pass@k的评估方法学的兴趣一致，关注编译、执行和集成。该论文的详细评分表为设计衡量实际可靠性的基准提供了见解。"
+      }
+    },
+    {
+      "question": {
+        "en": "The finding that raising reasoning effort from High to xHigh boosts first-try perfect runs from 28% to 89% suggests that inference-time compute is critical. In light of your interest in post-training with execution feedback, what does this imply about the relative importance of investing in better reasoning during inference versus improving training to internalize those capabilities?",
+        "zh": "将推理努力从High提升到xHigh使首次尝试完美运行率从28%提高到89%的发现表明推理时计算至关重要。鉴于您对基于执行反馈的后训练的兴趣，这对在推理期间投资更好的推理与改进训练以内化这些能力的相对重要性有何启示？"
+      },
+      "reason": {
+        "en": "This directly probes the user's research question on post-training with execution feedback, exploring how to improve correctness on real-world tasks by comparing the impact of inference-time compute versus training methods.",
+        "zh": "这个问题直接探究了用户关于基于执行反馈的后训练的研究问题，通过比较推理时计算与训练方法的影响，探讨如何提高真实世界任务的正确性。"
+      }
+    },
+    {
+      "question": {
+        "en": "The testing tool did not improve functional score even on interface-visible criteria, indicating that 'checking tools' are ineffective if underlying reasoning is weak. How does this challenge the assumption in some RL with execution feedback approaches that providing execution outcomes can significantly improve generation correctness, especially for complex, long-horizon tasks?",
+        "zh": "测试工具即使在界面可见的标准上也未改善功能得分，表明如果底层推理薄弱，'检查工具'是无效的。这在多大程度上挑战了一些基于执行反馈的强化学习方法的假设，即提供执行结果可以显著提高生成正确性，尤其是在复杂、长周期任务上？"
+      },
+      "reason": {
+        "en": "This question connects to the user's interest in RL with execution feedback, examining the limitations of such feedback when reasoning is insufficient, which is relevant for post-training techniques.",
+        "zh": "这个问题与用户对基于执行反馈的强化学习的兴趣相关，考察了当推理不足时这种反馈的局限性，与后训练技术相关。"
+      }
+    },
+    {
+      "question": {
+        "en": "The study shows that a one-paragraph paraphrase of a design-oriented prompt achieved the same visual quality lift as the full prompt, suggesting that style improvements are easy to elicit. Does this imply that preference learning (RLHF) for code might better focus on functional correctness rather than style, since style can be easily influenced by prompt engineering?",
+        "zh": "该研究表明，对面向设计的提示进行一段改写就达到了与完整提示相同的视觉质量提升，表明风格改进很容易引出。这是否意味着代码的偏好学习（RLHF）应该更关注功能正确性而非风格，因为风格可以通过提示工程轻松影响？"
+      },
+      "reason": {
+        "en": "This relates to the user's interest in preference learning for code alignment, highlighting the decoupling of function and style observed in the paper and its implications for RLHF/RLAIF design.",
+        "zh": "这与用户对代码对齐的偏好学习的兴趣相关，强调了论文中观察到的功能与风格的解耦及其对RLHF/RLAIF设计的启示。"
+      }
+    }
+  ],
+  "findings": [
+    {
+      "question": {
+        "en": "The paper uses a 14-criterion functional rubric including container deployment, which was the dominant defect. How does this rubric design compare to pass@k in capturing real-world software engineering quality, and what lessons does it offer for building more nuanced evaluation benchmarks for repository-level code generation?",
+        "zh": "该论文使用了一个包含容器部署的14项功能评分表，而容器部署是主要缺陷。与pass@k相比，这种评分表设计在捕捉真实软件工程质量方面如何？它为构建更细致的仓库级代码生成评估基准提供了哪些经验？"
+      },
+      "reason": {
+        "en": "This question aligns with the user's interest in evaluation methodologies that go beyond pass@k, focusing on compilation, execution, and integration. The paper's detailed rubric provides insights into designing benchmarks that measure real-world reliability.",
+        "zh": "这个问题与用户对超越pass@k的评估方法学的兴趣一致，关注编译、执行和集成。该论文的详细评分表为设计衡量实际可靠性的基准提供了见解。"
+      },
+      "answer": {
+        "en": "The 14-criterion functional rubric captures nuanced quality aspects that pass@k, being a binary success metric, would obscure. The paper reveals that \"a criterion level analysis revealed what run totals conceal: container deployment was the dominant defect, failing first try in 44 percent of runs\"—a pattern invisible to pass@k. This granularity allowed the study to identify that \"the testing tool raised cost by 42 to 68 percent without improving functional score or reliability\" and that \"raising reasoning effort from High to xHigh lifted first try perfect runs from 28 percent to 89 percent.\" For building better benchmarks, the key lesson is \"to match the fix to the failure: most first run failures came from weak reasoning, which a stronger model or more effort prevents, not from visible flaws a checking tool would catch.\" Thus, future repository-level benchmarks should include decomposed, functionally meaningful criteria rather than relying solely on aggregate pass rates, enabling diagnosis of specific failure modes and appropriate intervention.",
+        "zh": "14项功能评分表捕捉了pass@k这种二元成功指标所掩盖的细微质量方面。该论文揭示了“逐项标准分析揭示了运行总数所隐藏的内容：容器部署是主要缺陷，在44%的运行中首次尝试失败”——这是pass@k无法发现的模式。这种粒度使得研究能够识别出“测试工具将成本提高了42%至68%，但未改善功能得分或可靠性”，以及“将推理努力从High提升到xHigh，首次尝试完美运行率从28%提高到89%”。对于构建更好的基准，关键教训是“对症下药：大多数首次运行失败源于弱推理，这可以通过更强的模型或更多努力来预防，而非检查工具能捕捉到的可见缺陷”。因此，未来的仓库级基准应包括分解的、功能上有意义的标准，而不是仅仅依赖聚合的通过率，从而能够诊断特定的失败模式并采取适当的干预措施。"
+      },
+      "confidence": 0.95
+    },
+    {
+      "question": {
+        "en": "The finding that raising reasoning effort from High to xHigh boosts first-try perfect runs from 28% to 89% suggests that inference-time compute is critical. In light of your interest in post-training with execution feedback, what does this imply about the relative importance of investing in better reasoning during inference versus improving training to internalize those capabilities?",
+        "zh": "将推理努力从High提升到xHigh使首次尝试完美运行率从28%提高到89%的发现表明推理时计算至关重要。鉴于您对基于执行反馈的后训练的兴趣，这对在推理期间投资更好的推理与改进训练以内化这些能力的相对重要性有何启示？"
+      },
+      "reason": {
+        "en": "This directly probes the user's research question on post-training with execution feedback, exploring how to improve correctness on real-world tasks by comparing the impact of inference-time compute versus training methods.",
+        "zh": "这个问题直接探究了用户关于基于执行反馈的后训练的研究问题，通过比较推理时计算与训练方法的影响，探讨如何提高真实世界任务的正确性。"
+      },
+      "answer": {
+        "en": "The paper's findings strongly emphasize that increasing inference-time reasoning effort dramatically improves first-try reliability, with perfect runs rising from 28% to 89% when moving from High to xHigh reasoning effort. However, the study does not compare this to post-training with execution feedback or other training methods; it focuses solely on inference-time factors. Therefore, while the results suggest that investing in better reasoning during inference is highly effective for immediate gains, the paper does not provide evidence on whether improving training to internalize those capabilities would be more or less beneficial. The implication is that inference-time compute is a powerful lever, but the relative importance versus training remains an open question that this study does not address.",
+        "zh": "该论文的发现强烈强调，增加推理时推理努力能显著提高首次运行可靠性，当从High推理努力提升到xHigh时，完美运行率从28%上升到89%。然而，该研究并未将其与基于执行反馈的后训练或其他训练方法进行比较；它只关注推理时因素。因此，虽然结果表明在推理期间投资更好的推理对即时收益非常有效，但该论文并未提供证据表明改进训练以内化这些能力是否会或多或少有益。启示是推理时计算是一个强大的杠杆，但其相对于训练的重要性仍然是本研究未解决的一个开放性问题。"
+      },
+      "confidence": 0.4
+    },
+    {
+      "question": {
+        "en": "The testing tool did not improve functional score even on interface-visible criteria, indicating that 'checking tools' are ineffective if underlying reasoning is weak. How does this challenge the assumption in some RL with execution feedback approaches that providing execution outcomes can significantly improve generation correctness, especially for complex, long-horizon tasks?",
+        "zh": "测试工具即使在界面可见的标准上也未改善功能得分，表明如果底层推理薄弱，'检查工具'是无效的。这在多大程度上挑战了一些基于执行反馈的强化学习方法的假设，即提供执行结果可以显著提高生成正确性，尤其是在复杂、长周期任务上？"
+      },
+      "reason": {
+        "en": "This question connects to the user's interest in RL with execution feedback, examining the limitations of such feedback when reasoning is insufficient, which is relevant for post-training techniques.",
+        "zh": "这个问题与用户对基于执行反馈的强化学习的兴趣相关，考察了当推理不足时这种反馈的局限性，与后训练技术相关。"
+      },
+      "answer": {
+        "en": "The paper directly challenges the assumption that execution feedback (e.g., from a testing tool) can significantly improve generation correctness when underlying reasoning is weak. It reports that 'the testing tool raised cost by 42 to 68 percent without improving functional score or reliability, even on interface visible criteria,' and explains that 'most first run failures came from weak reasoning, which a stronger model or more effort prevents, not from visible flaws a checking tool would catch.' This implies that for RL with execution feedback approaches, simply providing execution outcomes is ineffective if the model's reasoning capacity is insufficient; instead, improving reasoning through increased model capability or reasoning effort is what buys reliability.",
+        "zh": "该论文直接挑战了当底层推理薄弱时执行反馈（例如，来自测试工具）可以显著提高生成正确性的假设。它报告称'测试工具将成本提高了42%到68%，但未改善功能得分或可靠性，即使在界面可见的标准上也是如此'，并解释道'大多数首次运行失败源于弱推理，这可以通过更强的模型或更多努力来预防，而非检查工具能捕捉到的可见缺陷'。这意味着对于基于执行反馈的强化学习方法，如果模型的推理能力不足，单纯提供执行结果是无效果的；相反，通过增强模型能力或推理努力来改进推理才是获得可靠性的途径。"
+      },
+      "confidence": 1.0
+    },
+    {
+      "question": {
+        "en": "The study shows that a one-paragraph paraphrase of a design-oriented prompt achieved the same visual quality lift as the full prompt, suggesting that style improvements are easy to elicit. Does this imply that preference learning (RLHF) for code might better focus on functional correctness rather than style, since style can be easily influenced by prompt engineering?",
+        "zh": "该研究表明，对面向设计的提示进行一段改写就达到了与完整提示相同的视觉质量提升，表明风格改进很容易引出。这是否意味着代码的偏好学习（RLHF）应该更关注功能正确性而非风格，因为风格可以通过提示工程轻松影响？"
+      },
+      "reason": {
+        "en": "This relates to the user's interest in preference learning for code alignment, highlighting the decoupling of function and style observed in the paper and its implications for RLHF/RLAIF design.",
+        "zh": "这与用户对代码对齐的偏好学习的兴趣相关，强调了论文中观察到的功能与风格的解耦及其对RLHF/RLAIF设计的启示。"
+      },
+      "answer": {
+        "en": "Yes, the findings imply that preference learning (RLHF) for code should prioritize functional correctness over style. The paper directly shows that style improvements are easily elicited via prompt engineering: \"A design oriented prompt raised visual quality, 4.5 versus 3.0 on a 5 point scale, without lifting function, and a one paragraph paraphrase of its directive reproduced the entire lift.\" Meanwhile, functional correctness depends on reasoning effort, not on style prompts or testing tools: \"The practical lesson is to match the fix to the failure: most first run failures came from weak reasoning, which a stronger model or more effort prevents, not from visible flaws a checking tool would catch.\" This decoupling—style easily adjustable, function requiring reasoning—suggests that RLHF can efficiently focus on functional correctness while leaving style to lightweight prompt engineering.",
+        "zh": "是的，这些发现意味着代码的偏好学习（RLHF）应该优先考虑功能正确性而非风格。该论文直接表明风格改进很容易通过提示工程引出：'面向设计的提示提高了视觉质量，在5分制上从3.0提升到4.5，但未提高功能，而对其指示的一段改写复制了全部提升'。同时，功能正确性取决于推理努力，而不是风格提示或测试工具：'实际教训是：对症下药：大多数首次运行失败源于弱推理，这可以通过更强的模型或更多努力来预防，而非检查工具能捕捉到的可见缺陷'。这种解耦——风格易于调整，功能需要推理——表明RLHF可以高效地专注于功能正确性，同时将风格留给轻量级的提示工程。"
+      },
+      "confidence": 0.8
+    }
+  ],
+  "score": 60.0,
+  "score_dimensions": [
+    {
+      "name": "topic_alignment",
+      "weight": 0.35,
+      "value": 0.65
+    },
+    {
+      "name": "methodology_fit",
+      "weight": 0.25,
+      "value": 0.45
+    },
+    {
+      "name": "novelty",
+      "weight": 0.2,
+      "value": 0.55
+    },
+    {
+      "name": "experiment_coverage",
+      "weight": 0.2,
+      "value": 0.75
+    }
+  ],
+  "markdown": "",
+  "model": "deepseek-v4-flash",
+  "generated_at": "2026-07-06T06:33:22Z"
+}

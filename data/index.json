@@ -1,6 +1,437 @@
 {
   "papers": [
     {
+      "arxiv_id": "2606.30324",
+      "topic": "Automated Program Repair",
+      "topic_label": "Automated Program Repair",
+      "title": {
+        "en": "How do Execution Features Improve Statistical Fault Localization? An Empirical Study",
+        "zh": "执行特征如何改进统计故障定位？一项实证研究"
+      },
+      "authors": [
+        "Marius Smytzek",
+        "Andreas Zeller"
+      ],
+      "score": 62.25000000000001,
+      "published": "2026-06-29",
+      "generated_at": "2026-07-06T07:57:23Z"
+    },
+    {
+      "arxiv_id": "2607.00562",
+      "topic": "Automated Program Repair",
+      "topic_label": "Automated Program Repair",
+      "title": {
+        "en": "Towards Better Linux Kernel Fault Localization: Leveraging Contrastive Reasoning and Hierarchical Context Analysis",
+        "zh": "迈向更好的Linux内核故障定位：利用对比推理和层次上下文分析"
+      },
+      "authors": [
+        "Haichi Wang",
+        "Ruiguo Yu",
+        "Yesong Pang",
+        "Yingquan Zhao",
+        "Junjie Chen",
+        "Jiajun Jiang"
+      ],
+      "score": 67.75,
+      "published": "2026-07-01",
+      "generated_at": "2026-07-06T07:53:22Z"
+    },
+    {
+      "arxiv_id": "2607.00700",
+      "topic": "Automated Program Repair",
+      "topic_label": "Automated Program Repair",
+      "title": {
+        "en": "LLVM-Bench: Benchmarking and Advancing Large Language Models for LLVM Compiler Issue Resolution",
+        "zh": "LLVM-Bench：面向LLVM编译器问题解决的大语言模型基准测试与改进"
+      },
+      "authors": [
+        "Zhao Tian",
+        "Yingquan Zhao",
+        "Chenyao Suo",
+        "Meng Wang",
+        "Junjie Chen"
+      ],
+      "score": 81.5,
+      "published": "2026-07-01",
+      "generated_at": "2026-07-06T07:50:18Z"
+    },
+    {
+      "arxiv_id": "2607.00820",
+      "topic": "Automated Program Repair",
+      "topic_label": "Automated Program Repair",
+      "title": {
+        "en": "Knowledge-Enhanced Agentic Vulnerability Repair",
+        "zh": "知识增强的智能体漏洞修复"
+      },
+      "authors": [
+        "Sicong Cao",
+        "Hao Ma",
+        "Le Yu",
+        "Kangyi Ding",
+        "Xiaolei Liu",
+        "Terry Yue Zhuo"
+      ],
+      "score": 79.75,
+      "published": "2026-07-01",
+      "generated_at": "2026-07-06T07:47:42Z"
+    },
+    {
+      "arxiv_id": "2607.00871",
+      "topic": "Automated Program Repair",
+      "topic_label": "Automated Program Repair",
+      "title": {
+        "en": "Self-Evolving Agents with Anytime-Valid Certificates",
+        "zh": "具有随时有效证书的自进化智能体"
+      },
+      "authors": [
+        "Biswa Sengupta"
+      ],
+      "score": 69.5,
+      "published": "2026-07-01",
+      "generated_at": "2026-07-06T07:44:49Z"
+    },
+    {
+      "arxiv_id": "2607.00990",
+      "topic": "Automated Program Repair",
+      "topic_label": "Automated Program Repair",
+      "title": {
+        "en": "SWE-Doctor: Guiding Software Engineering Agents with Runtime Diagnosis from Multi-Faceted Bug Reproduction Tests",
+        "zh": "SWE-Doctor: 利用多方面缺陷复现测试的运行时诊断指导软件工程智能体"
+      },
+      "authors": [
+        "Yaoqi Guo",
+        "Yang Liu",
+        "Jie M. Zhang",
+        "Yun Ma",
+        "Yiling Lou",
+        "Zhenpeng Chen"
+      ],
+      "score": 90.85000000000001,
+      "published": "2026-07-01",
+      "generated_at": "2026-07-06T07:41:34Z"
+    },
+    {
+      "arxiv_id": "2607.01597",
+      "topic": "Automated Program Repair",
+      "topic_label": "Automated Program Repair",
+      "title": {
+        "en": "A Single Patch Is Not Enough: Deterministic Fusion of Repair Candidates",
+        "zh": "单一补丁不足够：修复候选的确定性融合"
+      },
+      "authors": [
+        "Boyang Yang",
+        "Xiangliang Hu",
+        "Luyao Ren",
+        "Yanjun Chen",
+        "Bach Le",
+        "Tegawendé F. Bissyandé"
+      ],
+      "score": 90.75000000000001,
+      "published": "2026-07-02",
+      "generated_at": "2026-07-06T07:38:11Z"
+    },
+    {
+      "arxiv_id": "2607.01916",
+      "topic": "Automated Program Repair",
+      "topic_label": "Automated Program Repair",
+      "title": {
+        "en": "ContextSniper: AntTrail's Token-Efficient Code Memory for Repository-Level Program Repair",
+        "zh": "ContextSniper: AntTrail的令牌高效代码记忆用于仓库级程序修复"
+      },
+      "authors": [
+        "Chiwang Luk",
+        "Matin Mohammad Najafi",
+        "Zhifeng Jia",
+        "Wei Yang",
+        "Xiuchang Li",
+        "Jinwei Zhu"
+      ],
+      "score": 65.25,
+      "published": "2026-07-02",
+      "generated_at": "2026-07-06T07:35:01Z"
+    },
+    {
+      "arxiv_id": "2607.01929",
+      "topic": "Automated Program Repair",
+      "topic_label": "Automated Program Repair",
+      "title": {
+        "en": "Beyond Textual Repository Exploration: Dual-Modal Structural Reasoning for Agentic Issue Resolution",
+        "zh": "超越文本仓库探索：面向代理问题解决的双模态结构推理"
+      },
+      "authors": [
+        "Jiayi Zhang",
+        "Kai Huang",
+        "Yang Liu",
+        "Chunyang Chen"
+      ],
+      "score": 72.75,
+      "published": "2026-07-02",
+      "generated_at": "2026-07-06T07:31:51Z"
+    },
+    {
+      "arxiv_id": "2607.02032",
+      "topic": "Automated Program Repair",
+      "topic_label": "Automated Program Repair",
+      "title": {
+        "en": "PACE: A Proxy for Agentic Capability Evaluation",
+        "zh": "PACE：智能体能力评估的代理基准"
+      },
+      "authors": [
+        "Yueqi Song",
+        "Lintang Sutawika",
+        "Jiarui Liu",
+        "Lindia Tjuatja",
+        "Jiayi Geng",
+        "Yunze Xiao"
+      ],
+      "score": 61.0,
+      "published": "2026-07-02",
+      "generated_at": "2026-07-06T07:28:53Z"
+    },
+    {
+      "arxiv_id": "2607.02469",
+      "topic": "Automated Program Repair",
+      "topic_label": "Automated Program Repair",
+      "title": {
+        "en": "TestEvo-Bench: An Executable and Live Benchmark for Test and Code Co-Evolution",
+        "zh": "TestEvo-Bench：一个可执行且实时的测试与代码协同演化基准测试"
+      },
+      "authors": [
+        "Jiale Amber Wang",
+        "Kaiyuan Wang",
+        "Pengyu Nie"
+      ],
+      "score": 78.75000000000001,
+      "published": "2026-07-02",
+      "generated_at": "2026-07-06T07:25:57Z"
+    },
+    {
+      "arxiv_id": "2606.29957",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "SWE-Together: Evaluating Coding Agents in Interactive User Sessions",
+        "zh": "SWE-Together: 在交互式用户会话中评估编程代理"
+      },
+      "authors": [
+        "Yifan Wu",
+        "Zhuokai Zhao",
+        "Songlin Li",
+        "Ho Hin Lee",
+        "Jiacheng Zhu",
+        "Shirley Wu"
+      ],
+      "score": 88.75,
+      "published": "2026-06-29",
+      "generated_at": "2026-07-06T07:18:47Z"
+    },
+    {
+      "arxiv_id": "2606.30810",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "Towards Knowledge Alignment in Code LLMs: Contrastive Unlearning for Evolving APIs",
+        "zh": "面向代码大模型中的知识对齐：针对API演化的对比遗忘学习"
+      },
+      "authors": [
+        "Huy Q. Tran",
+        "Dang H. Vu",
+        "Tuyen N. Dinh",
+        "Anh H. D. Nguyen",
+        "Anh N. H. Vu",
+        "Anh M. T. Bui"
+      ],
+      "score": 69.75,
+      "published": "2026-06-29",
+      "generated_at": "2026-07-06T07:14:06Z"
+    },
+    {
+      "arxiv_id": "2606.30963",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "Loc2Repair: A Framework for Evaluating the Impact of File-Level Issue Localization in Repo-Level LLM Repair",
+        "zh": "Loc2Repair: 一个评估文件级问题定位在仓库级LLM修复中影响的框架"
+      },
+      "authors": [
+        "Mohammad Nour Al Awad",
+        "Sergey Ivanov"
+      ],
+      "score": 73.75,
+      "published": "2026-06-29",
+      "generated_at": "2026-07-06T07:03:42Z"
+    },
+    {
+      "arxiv_id": "2606.31206",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "FeatX: Editing Software by Editing Features for Repository-Level Code Evolution",
+        "zh": "FeatX: 通过编辑特征来编辑软件，实现仓库级代码演化"
+      },
+      "authors": [
+        "Xutian Li",
+        "Yifeng Zhu",
+        "Xianlin Zhao",
+        "Yanzhen Zou",
+        "Lu Zhang",
+        "Bing Xie"
+      ],
+      "score": 63.24999999999999,
+      "published": "2026-06-30",
+      "generated_at": "2026-07-06T06:59:42Z"
+    },
+    {
+      "arxiv_id": "2607.00711",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "ClarifyCodeBench: Evaluating LLMs on Clarifying Ambiguous Requirements for Code Generation",
+        "zh": "ClarifyCodeBench: 评估LLMs在代码生成中澄清模糊需求的能力"
+      },
+      "authors": [
+        "Zheng Fang",
+        "Dongming Jin",
+        "Yihong dong",
+        "Yongmin Li",
+        "Kechi Zhang",
+        "Zhi Jin"
+      ],
+      "score": 61.5,
+      "published": "2026-07-01",
+      "generated_at": "2026-07-06T06:57:14Z"
+    },
+    {
+      "arxiv_id": "2607.01181",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "Right in the Right Way: LM Training with Verifiable Rewards and Human Demonstrations",
+        "zh": "以正确的方式做正确的事：基于可验证奖励与人类演示的语言模型训练"
+      },
+      "authors": [
+        "Mehul Damani",
+        "Isha Puri",
+        "Idan Shenfeld",
+        "Jacob Andreas"
+      ],
+      "score": 68.5,
+      "published": "2026-07-01",
+      "generated_at": "2026-07-06T06:53:25Z"
+    },
+    {
+      "arxiv_id": "2607.01232",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "Is One Layer Enough? Training A Single Transformer Layer Can Match Full-Parameter RL Training",
+        "zh": "一层是否足够？训练单个Transformer层可匹配全参数RL训练"
+      },
+      "authors": [
+        "Zijian Zhang",
+        "Rizhen Hu",
+        "Athanasios Glentis",
+        "Dawei Li",
+        "Chung-Yiu Yau",
+        "Hongzhou Lin"
+      ],
+      "score": 71.5,
+      "published": "2026-07-01",
+      "generated_at": "2026-07-06T06:50:49Z"
+    },
+    {
+      "arxiv_id": "2607.01360",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "Benchmarking Code Improvement with Progressive, Adaptive, and Interactive Feedback",
+        "zh": "基于渐进式、自适应和交互式反馈的代码改进基准测试"
+      },
+      "authors": [
+        "Cuong Chi Le",
+        "Aashish Yadavally",
+        "Minh Le-Anh",
+        "Tien N. Nguyen"
+      ],
+      "score": 77.5,
+      "published": "2026-07-01",
+      "generated_at": "2026-07-06T06:47:20Z"
+    },
+    {
+      "arxiv_id": "2607.01764",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "Mastermind: Strategy-grounded Learning for Repository-Scale Vulnerability Reproduction",
+        "zh": "Mastermind：基于策略的仓库级漏洞复现学习"
+      },
+      "authors": [
+        "Mingzhe Du",
+        "Luu Anh Tuan",
+        "Tianyi Wu",
+        "Renyang Liu",
+        "Zhijiang Guo",
+        "Dong Huang"
+      ],
+      "score": 88.75,
+      "published": "2026-07-02",
+      "generated_at": "2026-07-06T06:43:24Z"
+    },
+    {
+      "arxiv_id": "2607.02052",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "Mitigating Package Hallucinations in Large Language Models via Model Editing",
+        "zh": "通过模型编辑缓解大语言模型中的包幻觉"
+      },
+      "authors": [
+        "Shuhan Liu",
+        "Yukai Zhao",
+        "Xing Hu",
+        "Kui Liu",
+        "Xiaohu Yang",
+        "Xin Xia"
+      ],
+      "score": 65.5,
+      "published": "2026-07-02",
+      "generated_at": "2026-07-06T06:39:44Z"
+    },
+    {
+      "arxiv_id": "2607.02390",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "DecompRL: Solving Harder Problems by Learning Modular Code Generation",
+        "zh": "DecompRL：通过学习模块化代码生成解决更难的问题"
+      },
+      "authors": [
+        "Juliette Decugis",
+        "Fabian Gloeckle",
+        "Francis Bach",
+        "Taco Cohen",
+        "Gabriel Synnaeve"
+      ],
+      "score": 77.25,
+      "published": "2026-07-02",
+      "generated_at": "2026-07-06T06:36:25Z"
+    },
+    {
+      "arxiv_id": "2607.02436",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "Reasoning effort, not tool access, buys first-try reliability in agentic code generation: an observational study",
+        "zh": "首次运行可靠性由推理努力而非工具访问决定：一项关于代理代码生成的观察性研究"
+      },
+      "authors": [
+        "Achint Mehta"
+      ],
+      "score": 60.0,
+      "published": "2026-07-02",
+      "generated_at": "2026-07-06T06:33:22Z"
+    },
+    {
       "arxiv_id": "2606.25514",
       "topic": "Automated Program Repair",
       "topic_label": "Automated Program Repair",
@@ -1014,5 +1445,5 @@
       "generated_at": "2026-05-14T14:40:43Z"
     }
   ],
-  "updated_at": "2026-06-29T06:56:51Z"
+  "updated_at": "2026-07-06T07:57:23Z"
 }

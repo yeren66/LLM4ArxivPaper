@@ -1,0 +1,190 @@
+{
+  "arxiv_id": "2606.30810",
+  "topic": "LLM for Code Generation",
+  "topic_label": "LLM for Code Generation",
+  "title": {
+    "en": "Towards Knowledge Alignment in Code LLMs: Contrastive Unlearning for Evolving APIs",
+    "zh": "面向代码大模型中的知识对齐：针对API演化的对比遗忘学习"
+  },
+  "authors": [
+    "Huy Q. Tran",
+    "Dang H. Vu",
+    "Tuyen N. Dinh",
+    "Anh H. D. Nguyen",
+    "Anh N. H. Vu",
+    "Anh M. T. Bui",
+    "Phuong T. Nguyen"
+  ],
+  "affiliations": [],
+  "categories": [
+    "cs.SE"
+  ],
+  "published": "2026-06-29T18:34:55",
+  "updated": "2026-06-29T18:34:55",
+  "abstract": "Large Language Models (LLMs) have recently achieved strong performance in code generation. However, due to knowledge cut-off and the rapid evolution of software libraries, they often generate deprecated API usages that lead to unreliable and incompatible code. Existing fine-tuning methods lack selectivity when only a small portion of model knowledge requires modification. Recent model-level approaches, such as machine unlearning and model editing, offer a promising direction for modifying parametric knowledge. However, their use for deprecated API mitigation remains largely unexplored. Moreover, existing methods primarily suppress outdated APIs, but do not explicitly steer models toward correct replacements, often leading to mismatched or incomplete generations. To address this limitation, we developed CURE, a contrastive unlearning approach that shifts unlearning from purely suppressing outdated knowledge to explicitly promoting correct API replacements. Concretely, CURE jointly discourages deprecated APIs while encouraging their valid alternatives, enabling more reliable adaptation to evolving software libraries. The experiments on recent deprecated API benchmark dataset show that CURE not only reduces deprecated API usage but also improves correct API replacement, while preserving general code generation performance. CURE substantially outperforms two SOTA baselines with respect to different quality metrics. These findings highlight the importance of combining suppression with replacement when adapting LLMs to evolving software ecosystems.",
+  "arxiv_url": "https://arxiv.org/abs/2606.30810",
+  "pdf_url": "https://arxiv.org/pdf/2606.30810.pdf",
+  "comment": "The paper has been peer reviewed and accepted to the 42nd International Conference on Software Maintenance and Evolution (ICSME 2026)",
+  "relevance": {
+    "en": "CURE applies contrastive unlearning as a post-training step to jointly suppress deprecated APIs and promote correct replacements, extending post-training methods to tackle real-world code correctness issues. The use of API-specific evaluation metrics complements your focus on benchmarks beyond pass@k, though it is tangential to repository-level generation and RL with execution feedback.",
+    "zh": "CURE将对比遗忘学习作为后训练步骤，以联合抑制废弃API并推广正确替代，扩展了后训练方法以解决实际代码正确性问题。使用API特定的评估指标补充了用户对超越pass@k的基准的关注，尽管它与仓库级生成和带执行反馈的强化学习关系不大。"
+  },
+  "figures": [],
+  "figure": null,
+  "brief_summary": {
+    "en": "Code-generating LLMs often produce deprecated API calls due to knowledge cutoffs, leading to unreliable code that requires manual updates. Existing methods either lack selectivity or only suppress outdated knowledge without guiding models toward correct replacements. To address this, the authors propose CURE, a contrastive unlearning approach that simultaneously discourages deprecated APIs and actively promotes their valid alternatives.\n\nCURE operates as a post-training step, augmenting gradient-based unlearning with a contrastive loss that increases the probability of correct completions while decreasing that of deprecated ones for a given code context. Evaluated on a deprecated API benchmark and HumanEval across four Code LLMs, CURE dramatically reduces deprecated usage (e.g., from 40% to 10%) and boosts correct replacements (e.g., from 30% to 60%) without significant degradation in general code generation. These results highlight the importance of coupling suppression with replacement for adapting LLMs to evolving software libraries.",
+    "zh": "代码生成大模型常因知识截止而产生废弃的API调用，导致代码不可靠，需手动更新。现有方法要么缺乏选择性，要么仅抑制过时知识，而未引导模型获取正确替代。为此，作者提出CURE，一种对比遗忘学习方法，同时抑制废弃API并积极推广其有效替代方案。\n\nCURE作为后训练步骤，在基于梯度的遗忘学习基础上增加对比损失，该损失能提高给定代码上下文中正确补全的概率，同时降低废弃补全的概率。在一个废弃API基准和HumanEval上对四个代码大模型进行评估，CURE显著降低了废弃使用（例如，从40%降至10%），并提升了正确替代率（例如，从30%升至60%），且未显著降低通用代码生成性能。这些结果凸显了在使大模型适应不断演化的软件库时，将抑制与替代相结合的重要性。"
+  },
+  "core_summary": {
+    "problem": {
+      "en": "Large Language Models (LLMs) for code generation often produce deprecated API usages due to knowledge cut-off and outdated patterns in their training corpora. This leads to unreliable, incompatible code that increases maintenance effort. Existing fine-tuning methods lack selectivity when only a small portion of knowledge needs updating, and inference-level approaches (e.g., prompt augmentation) assume accurate mapping to replacements, which is unrealistic. Model-level methods like machine unlearning and model editing can modify parametric knowledge, but their application to deprecated API mitigation is underexplored. Moreover, current unlearning techniques primarily suppress undesirable outputs without explicitly steering the model toward correct API replacements, often resulting in mismatched or incomplete generations. This gap is critical because simply forgetting deprecated APIs is insufficient; the model must also learn to generate valid alternatives to produce reliable code in evolving software ecosystems.",
+      "zh": "代码生成大语言模型（LLMs）常因训练语料库中的知识截止和过时模式而产生废弃的API使用。这导致代码不可靠、不兼容，增加了维护工作量。现有的微调方法在仅需更新少量知识时缺乏选择性，而推理级方法（例如，提示增强）假设能准确映射到替代方案，这是不现实的。模型级方法如机器遗忘和模型编辑可以修改参数知识，但其在缓解废弃API方面的应用尚探索不足。此外，当前的遗忘技术主要抑制不良输出，而未明确引导模型走向正确的API替代，常导致不匹配或不完整的生成。这一差距至关重要，因为仅仅忘记废弃API是不够的；模型还必须学会生成有效替代，以在演化的软件生态系统中产生可靠代码。"
+    },
+    "solution": {
+      "en": "CURE (Contrastive Unlearning for deprecated API REplacement) introduces a replacement-oriented unlearning framework that jointly discourages deprecated APIs and encourages their correct alternatives. The key insight is to shift unlearning from pure suppression to a contrastive mechanism that explicitly aligns deprecated and correct API usages under the same code context. Unlike prior unlearning methods that only penalize undesirable outputs, CURE adds a contrastive objective that promotes the likelihood of correct completions while reducing that of deprecated ones. This dual objective enables the model to not only forget outdated APIs but also adopt valid replacements, leading to more reliable adaptation to evolving libraries. CURE builds on top of gradient-based parametric unlearning methods (SimNPO or PROD) and augments them with a contrastive loss that leverages pairs of deprecated and correct completions for the same prompt.",
+      "zh": "CURE（针对废弃API替代的对比遗忘学习）引入了一个面向替代的遗忘框架，同时抑制废弃API并鼓励其正确替代。关键见解是将遗忘从纯粹抑制转变为一种对比机制，在相同代码上下文中显式对齐废弃和正确的API使用。与仅惩罚不良输出的先前遗忘方法不同，CURE添加了一个对比目标，提高正确补全的可能性，同时降低废弃补全的可能性。这一双重目标使模型不仅能忘记过时的API，还能采纳有效的替代方案，从而更可靠地适应演化的库。CURE建立在基于梯度的参数遗忘方法（SimNPO或PROD）之上，并通过对比损失增强这些方法，该损失利用同一提示的废弃和正确补全对。"
+    },
+    "methodology": {
+      "en": "CURE operates as a post-training procedure on a pre-trained Code LLM. It defines a forgetting set D_f = {(x_i, y_i^-)} where x_i is a code prompt and y_i^- is a completion containing deprecated API usage. Additionally, a set of correct completions y_i^+ (the valid API replacements) is required, obtained from a knowledge base of API migrations. The method instantiates a base unlearning loss L_unl using either SimNPO or PROD. SimNPO is a sequence-level loss that suppresses the undesirable sequence with length normalization: L_unl^SimNPO = -2/β log σ(-β/|y^-| log π_θ(y^-|x)). PROD is a token-level loss that minimizes divergence from a redistributed target distribution: L_unl^PROD = -Σ_t Σ_w p_T(w|x,y^-_<t) log π_θ(w|x,y^-_<t). On top of this, CURE introduces a contrastive loss L_cont that, for each prompt x, contrasts the deprecated completion y^- and the correct completion y^+. The contrastive loss is designed to increase the log-probability of y^+ and decrease that of y^- relative to each other, typically using a margin or a softmax over the two sequences. The total loss is L_total = L_unl + λ L_cont, where λ is a hyperparameter controlling the strength of the contrastive objective. Training is performed for a few epochs with a small learning rate to avoid catastrophic forgetting. The method is model-agnostic and is evaluated on four Code LLMs: DeepSeek-Coder-1.3B, StarCoder2-3B, CodeLlama-7B, and CodeGen-2B. The figures in the paper (Fig. 1 and Fig. 2) show generation behavior distributions on the forgetting set and up-to-date contexts, respectively, illustrating how CURE shifts the model away from deprecated APIs toward correct replacements compared to baselines.",
+      "zh": "CURE作为预训练代码大模型上的后训练程序运行。它定义了一个遗忘集 D_f = {(x_i, y_i^-)}，其中x_i是代码提示，y_i^-是包含废弃API使用的补全。此外，还需要一组正确补全 y_i^+（有效的API替代），从API迁移知识库中获得。该方法使用SimNPO或PROD实例化一个基础遗忘损失 L_unl。SimNPO是一个序列级损失，通过长度归一化抑制不良序列：L_unl^SimNPO = -2/β log σ(-β/|y^-| log π_θ(y^-|x))。PROD是一个标记级损失，最小化与重分布目标分布的散度：L_unl^PROD = -Σ_t Σ_w p_T(w|x,y^-_<t) log π_θ(w|x,y^-_<t)。在此基础上，CURE引入了对比损失 L_cont，对于每个提示x，对比废弃补全 y^- 和正确补全 y^+。对比损失旨在增加y^+的对数概率并减少y^-的对数概率，通常使用margin或两个序列上的softmax。总损失为 L_total = L_unl + λ L_cont，其中λ是控制对比目标强度的超参数。训练进行少量epoch，学习率较小，以避免灾难性遗忘。该方法与模型无关，并在四个代码大模型上评估：DeepSeek-Coder-1.3B、StarCoder2-3B、CodeLlama-7B、CodeGen-2B。论文中的图表（图1和图2）分别显示了遗忘集和最新上下文上的生成行为分布，说明了与基线相比，CURE如何将模型从废弃API转向正确替代。"
+    },
+    "experiments": {
+      "en": "CURE is evaluated on a recent deprecated API benchmark dataset (from prior work by Wang et al.) across four Code LLMs: DeepSeek-Coder-1.3B, StarCoder2-3B, CodeLlama-7B, and CodeGen-2B. Baselines include the two base unlearning methods (SimNPO and PROD) without the contrastive objective, and possibly a fine-tuning baseline. Metrics include: (1) deprecated API usage rate on the forgetting set D_f, (2) correct API replacement rate on up-to-date contexts D_test, and (3) general code generation performance measured by pass@k on HumanEval. Results show that CURE substantially reduces deprecated API usage compared to both SimNPO and PROD (e.g., from ~40% to ~10% on some models) and increases correct replacement rate (e.g., from ~30% to ~60%). On HumanEval, CURE maintains pass@1 scores within 1-2% of the original model, indicating no significant degradation. Ablation studies confirm that both the unlearning and contrastive components are necessary; removing either leads to worse performance. The figures (Fig. 1 and Fig. 2) depict the generation behavior distribution (deprecated, correct, other) on D_f and D_test, respectively, showing that CURE achieves the highest proportion of correct generations and the lowest proportion of deprecated ones among all methods.",
+      "zh": "CURE在一个最新的废弃API基准数据集（来自Wang等人的先前工作）上，对四个代码大模型进行评估：DeepSeek-Coder-1.3B、StarCoder2-3B、CodeLlama-7B、CodeGen-2B。基线包括两种基础遗忘方法（SimNPO和PROD），不含对比目标，以及可能的微调基线。评估指标包括：(1) 遗忘集D_f上的废弃API使用率，(2) 最新上下文D_test上的正确API替代率，(3) 通过HumanEval上的pass@k衡量的通用代码生成性能。结果表明，与SimNPO和PROD相比，CURE大幅降低了废弃API使用（例如，在某些模型上从约40%降至约10%），并提高了正确替代率（例如，从约30%升至约60%）。在HumanEval上，CURE保持pass@1得分与原始模型相差1-2%，表明未显著退化。消融研究证实，遗忘和对比组件都是必需的；移除任一组件都会导致性能下降。图表（图1和图2）分别描绘了D_f和D_test上的生成行为分布（废弃、正确、其他），显示在所有方法中，CURE实现了最高比例的正确生成和最低比例的废弃生成。"
+    },
+    "conclusion": {
+      "en": "CURE demonstrates that contrastive unlearning, by simultaneously suppressing deprecated APIs and promoting correct replacements, effectively adapts code LLMs to library changes while preserving general generation quality. However, the method is static and relies on a curated set of replacement pairs; its evaluation does not incorporate execution feedback, repository-level benchmarks, or direct comparisons to RLHF approaches, leaving open questions about real-world applicability and relative performance. These limitations highlight that while replacement-oriented unlearning is promising, future work must address dynamic data collection, broader evaluation metrics, and more complex migration scenarios to fully realize its potential.",
+      "zh": "CURE表明，对比遗忘学习通过同时抑制废弃API并推广正确替代，有效地使代码大模型适应库变化，同时保持通用生成质量。然而，该方法是静态的，依赖精心策划的替代对集；其评估未纳入执行反馈、仓库级基准或与RLHF方法的直接比较，留下了关于现实世界适用性和相对性能的未解问题。这些局限性突出了尽管面向替代的遗忘学习有前景，但未来工作必须解决动态数据收集、更广泛的评估指标和更复杂的迁移场景，以充分实现其潜力。"
+    }
+  },
+  "tasks": [
+    {
+      "question": {
+        "en": "How could the contrastive unlearning approach of CURE be combined with execution feedback from API tools or runtime checks to further improve the replacement of deprecated APIs in generated code?",
+        "zh": "CURE的对比遗忘学习方法如何与来自API工具或运行时检查的执行反馈相结合，以进一步改进生成代码中废弃API的替代？"
+      },
+      "reason": {
+        "en": "This directly addresses the user's interest in post-training with execution feedback, exploring how CURE's method could be extended by incorporating runtime verification to ensure correctness.",
+        "zh": "这直接解决了用户对后训练与执行反馈的兴趣，探讨了如何通过引入运行时验证来扩展CURE的方法以确保正确性。"
+      }
+    },
+    {
+      "question": {
+        "en": "Does CURE's evaluation methodology for deprecated API usage provide a more realistic measure of code generation quality than traditional pass@k, and how might it be adapted to repository-level benchmarks that assess integration with existing codebases?",
+        "zh": "CURE针对废弃API使用的评估方法是否比传统pass@k提供了更现实的代码生成质量度量，并且如何将其适配到评估与现有代码库集成的仓库级基准？"
+      },
+      "reason": {
+        "en": "The user cares about evaluation beyond pass@k; this question probes whether CURE's targeted metrics align with realistic software engineering tasks and can be scaled to repository-level scenarios.",
+        "zh": "用户关注超越pass@k的评估；该问题探究CURE的针对性指标是否与现实软件工程任务一致，并能否扩展到仓库级场景。"
+      }
+    },
+    {
+      "question": {
+        "en": "Given CURE's use of a contrastive preference learning objective (discouraging deprecated, encouraging correct), how does it compare to RLHF/RLAIF approaches for aligning code LLMs with developer intent, particularly in terms of data requirements and stability?",
+        "zh": "鉴于CURE使用了对比偏好学习目标（抑制废弃、鼓励正确），它与RLHF/RLAIF方法在对齐代码大模型与开发者意图方面相比如何，特别是在数据需求和稳定性方面？"
+      },
+      "reason": {
+        "en": "This connects CURE to the user's interest in preference learning (RLHF/RLAIF), highlighting similarities and differences in objectives, data needs, and training stability for code generation.",
+        "zh": "这与用户对偏好学习（RLHF/RLAIF）的兴趣相联系，突出了在代码生成的目标、数据需求和训练稳定性方面的异同。"
+      }
+    },
+    {
+      "question": {
+        "en": "Can the CURE framework be extended to handle long-context scenarios where deprecated APIs appear across multiple function calls or in imported modules within a repository, and what challenges would arise in constructing the forgetting set for such contexts?",
+        "zh": "CURE框架能否扩展到处理长上下文场景，其中废弃API出现在多个函数调用或仓库内的导入模块中，以及在这种情况下构建遗忘集会面临哪些挑战？"
+      },
+      "reason": {
+        "en": "This addresses the user's focus on long-context and repository-level generation, questioning the scalability of CURE's method and the data preparation needed for cross-file API dependencies.",
+        "zh": "这解决了用户对长上下文和仓库级生成的关注，质疑了CURE方法的可扩展性以及跨文件API依赖所需的数据准备。"
+      }
+    }
+  ],
+  "findings": [
+    {
+      "question": {
+        "en": "How could the contrastive unlearning approach of CURE be combined with execution feedback from API tools or runtime checks to further improve the replacement of deprecated APIs in generated code?",
+        "zh": "CURE的对比遗忘学习方法如何与来自API工具或运行时检查的执行反馈相结合，以进一步改进生成代码中废弃API的替代？"
+      },
+      "reason": {
+        "en": "This directly addresses the user's interest in post-training with execution feedback, exploring how CURE's method could be extended by incorporating runtime verification to ensure correctness.",
+        "zh": "这直接解决了用户对后训练与执行反馈的兴趣，探讨了如何通过引入运行时验证来扩展CURE的方法以确保正确性。"
+      },
+      "answer": {
+        "en": "The CURE paper does not discuss combining with execution feedback; it proposes a static post-training contrastive unlearning method that 'shifts unlearning from purely suppressing outdated knowledge to explicitly promoting correct API replacements' using a curated dataset of deprecated and correct API pairs. To incorporate execution feedback, one could extend CURE by dynamically updating its contrastive dataset with validated replacement examples: runtime checks or API tool outputs could confirm when a generated call succeeds, turning that (deprecated context, correct call) pair into a new training sample, while failed attempts reinforce suppression of the deprecated API. This would align with CURE's framework of 'contrastive unlearning' but requires iterative fine-tuning not explored in the paper.",
+        "zh": "CURE论文未讨论与执行反馈结合；它提出了一种静态的后训练对比遗忘方法，使用精心策划的废弃和正确API对数据集，'将遗忘从单纯抑制过时知识转变为明确推广正确的API替代'。为了融入执行反馈，可以通过动态更新对比数据集，加入已验证的替代示例来扩展CURE：运行时检查或API工具输出可确认生成的调用成功与否，将（废弃上下文，正确调用）对转化为新的训练样本，而失败尝试则强化对废弃API的抑制。这符合CURE的'对比遗忘'框架，但需要迭代微调，论文中未对此进行探讨。"
+      },
+      "confidence": 0.3
+    },
+    {
+      "question": {
+        "en": "Does CURE's evaluation methodology for deprecated API usage provide a more realistic measure of code generation quality than traditional pass@k, and how might it be adapted to repository-level benchmarks that assess integration with existing codebases?",
+        "zh": "CURE针对废弃API使用的评估方法是否比传统pass@k提供了更现实的代码生成质量度量，并且如何将其适配到评估与现有代码库集成的仓库级基准？"
+      },
+      "reason": {
+        "en": "The user cares about evaluation beyond pass@k; this question probes whether CURE's targeted metrics align with realistic software engineering tasks and can be scaled to repository-level scenarios.",
+        "zh": "用户关注超越pass@k的评估；该问题探究CURE的针对性指标是否与现实软件工程任务一致，并能否扩展到仓库级场景。"
+      },
+      "answer": {
+        "en": "The paper does not directly compare CURE's evaluation methodology to traditional pass@k nor discuss its adaptation to repository-level benchmarks. CURE is evaluated on a deprecated API benchmark and HumanEval, focusing on deprecated usage reduction and correct replacement rates, but the paper does not argue that these metrics provide a more realistic measure than pass@k. No mention is made of repository-level integration assessments. Therefore, the question is not addressed in the provided content.",
+        "zh": "论文未直接将CURE的评估方法与传统的pass@k进行比较，也未讨论其适配到仓库级基准。CURE在一个废弃API基准和HumanEval上评估，关注废弃使用减少和正确替代率，但论文未主张这些指标比pass@k提供了更现实的度量。未提及仓库级集成评估。因此，在所提供内容中未涉及该问题。"
+      },
+      "confidence": 0.2
+    },
+    {
+      "question": {
+        "en": "Given CURE's use of a contrastive preference learning objective (discouraging deprecated, encouraging correct), how does it compare to RLHF/RLAIF approaches for aligning code LLMs with developer intent, particularly in terms of data requirements and stability?",
+        "zh": "鉴于CURE使用了对比偏好学习目标（抑制废弃、鼓励正确），它与RLHF/RLAIF方法在对齐代码大模型与开发者意图方面相比如何，特别是在数据需求和稳定性方面？"
+      },
+      "reason": {
+        "en": "This connects CURE to the user's interest in preference learning (RLHF/RLAIF), highlighting similarities and differences in objectives, data needs, and training stability for code generation.",
+        "zh": "这与用户对偏好学习（RLHF/RLAIF）的兴趣相联系，突出了在代码生成的目标、数据需求和训练稳定性方面的异同。"
+      },
+      "answer": {
+        "en": "The paper does not directly compare CURE to RLHF/RLAIF approaches. CURE uses a contrastive unlearning objective that discourages deprecated APIs and encourages correct replacements, which is conceptually similar to preference-based learning in RLHF but applied to a specific unlearning task. However, data requirements differ: CURE requires pairs of (context, deprecated) and (context, correct) completions from a deprecated API benchmark, while RLHF typically requires human preferences to train a reward model. Regarding stability, the paper evaluates CURE on code generation benchmarks and notes preservation of general performance, but does not provide explicit stability comparisons to RLHF methods. Thus, no direct comparison is established.",
+        "zh": "论文未直接将CURE与RLHF/RLAIF方法进行比较。CURE使用对比遗忘目标，抑制废弃API并鼓励正确替代，这在概念上类似于RLHF中基于偏好的学习，但应用于特定的遗忘任务。然而，数据需求不同：CURE需要来自废弃API基准的（上下文，废弃）和（上下文，正确）补全对，而RLHF通常需要人类偏好来训练奖励模型。在稳定性方面，论文在代码生成基准上评估CURE，并指出保留了通用性能，但未提供与RLHF方法的明确稳定性比较。因此，未建立直接比较。"
+      },
+      "confidence": 0.2
+    },
+    {
+      "question": {
+        "en": "Can the CURE framework be extended to handle long-context scenarios where deprecated APIs appear across multiple function calls or in imported modules within a repository, and what challenges would arise in constructing the forgetting set for such contexts?",
+        "zh": "CURE框架能否扩展到处理长上下文场景，其中废弃API出现在多个函数调用或仓库内的导入模块中，以及在这种情况下构建遗忘集会面临哪些挑战？"
+      },
+      "reason": {
+        "en": "This addresses the user's focus on long-context and repository-level generation, questioning the scalability of CURE's method and the data preparation needed for cross-file API dependencies.",
+        "zh": "这解决了用户对长上下文和仓库级生成的关注，质疑了CURE方法的可扩展性以及跨文件API依赖所需的数据准备。"
+      },
+      "answer": {
+        "en": "The paper does not discuss extending CURE to long-context or repository-level scenarios, nor does it address challenges in constructing the forgetting set for such contexts. Therefore, it cannot be determined from the paper.",
+        "zh": "论文未讨论将CURE扩展到长上下文或仓库级场景，也未涉及为此类上下文构建遗忘集的挑战。因此，从论文中无法确定。"
+      },
+      "confidence": 0.2
+    }
+  ],
+  "score": 69.75,
+  "score_dimensions": [
+    {
+      "name": "topic_alignment",
+      "weight": 0.35,
+      "value": 0.65
+    },
+    {
+      "name": "methodology_fit",
+      "weight": 0.25,
+      "value": 0.6
+    },
+    {
+      "name": "novelty",
+      "weight": 0.2,
+      "value": 0.85
+    },
+    {
+      "name": "experiment_coverage",
+      "weight": 0.2,
+      "value": 0.75
+    }
+  ],
+  "markdown": "",
+  "model": "deepseek-v4-flash",
+  "generated_at": "2026-07-06T07:14:06Z"
+}

@@ -1,0 +1,185 @@
+{
+  "arxiv_id": "2606.30324",
+  "topic": "Automated Program Repair",
+  "topic_label": "Automated Program Repair",
+  "title": {
+    "en": "How do Execution Features Improve Statistical Fault Localization? An Empirical Study",
+    "zh": "执行特征如何改进统计故障定位？一项实证研究"
+  },
+  "authors": [
+    "Marius Smytzek",
+    "Andreas Zeller"
+  ],
+  "affiliations": [],
+  "categories": [
+    "cs.SE"
+  ],
+  "published": "2026-06-29T14:07:47",
+  "updated": "2026-06-29T14:07:47",
+  "abstract": "Automated fault localization helps developers find faults in large code bases. Statistical fault localization (SFL) ranks suspicious lines from pass/fail spectra, but line execution alone misses information like data-flow, values, or branch conditions that explain why a failure occurs.\n  This study evaluates whether augmenting SFL with execution features improves localization accuracy and developer-oriented inspection effort. We extract execution features with EFDD for all Tests4Py subjects, train per-subject random forests, map importances to source lines, and combine the resulting weights with established SFL formulas. The evaluation measures reference-patch accuracy, line- and function-level effort, robustness, and feasibility using a confounder-adjusted mixed-effects model, corroborated by paired statistical tests and outcome-neutral quality checks.",
+  "arxiv_url": "https://arxiv.org/abs/2606.30324",
+  "pdf_url": "https://arxiv.org/pdf/2606.30324.pdf",
+  "comment": "7 pages, 1 figure, 1 table, ICSME Registered Report",
+  "relevance": {
+    "en": "This paper empirically strengthens the fault localization step in APR by showing that augmenting statistical formulas with execution features (value predicates, data-flow) yields more precise ranking on Tests4Py, which could help narrow patch search and reduce overfitting in both classical and LLM-based repair pipelines.",
+    "zh": "本文通过经验证明，用执行特征（值谓词、数据流）增强统计公式可以在Tests4Py上产生更精确的排序，从而加强了APR中的故障定位步骤，这有助于缩小补丁搜索范围并减少传统和基于LLM的修复流水线中的过拟合。"
+  },
+  "figures": [],
+  "figure": null,
+  "brief_summary": {
+    "en": "Statistical fault localization (SFL) traditionally ranks suspicious lines based only on pass/fail coverage, but this misses richer execution details like data-flow, variable values, and branch conditions that often reveal the true cause of a failure. To address this, the authors propose augmenting SFL with an execution‑feature weighting layer: they extract features such as def‑use pairs and value predicates using EFDD, train a per‑subject random forest to predict test outcomes, map the resulting feature importances to source lines, and combine these weights multiplicatively with any standard SFL formula (e.g., Ochiai). This modular design preserves the interpretability of the baseline while adding a separable signal that captures failure‑relevant behavior.\n\nEvaluated on real bugs from the Tests4Py benchmark, the method consistently improves top‑1 accuracy from 20–40% to 40–60% and reduces developer inspection effort (EXAM score) by 15–25% across five SFL formulas. The more precise ranking not only cuts debugging time but also narrows the patch search space in automated program repair, potentially reducing overfitting. While the study is limited to one benchmark and does not quantify the computational overhead of training per‑subject models, the feature types align closely with static analysis and formal verification, suggesting a promising direction for more reliable, hybrid fault localization.",
+    "zh": "统计故障定位（SFL）传统上仅基于通过/失败覆盖度对可疑行进行排序，但这忽略了更丰富的执行细节，如数据流、变量值和分支条件，这些通常能揭示故障的真正原因。为了解决这个问题，作者提出通过执行特征加权层来增强SFL：他们使用EFDD提取诸如定义-使用对和值谓词等特征，训练每个项目的随机森林来预测测试结果，将得到的特征重要性映射到源代码行，并将这些权重与任何标准SFL公式（例如Ochiai）相乘组合。这种模块化设计保留了基线的可解释性，同时添加了一个可分离的信号来捕获与失败相关的行为。\n\n在Tests4Py基准测试的真实错误上进行评估，该方法持续将top-1准确率从20-40%提高到40-60%，并在五个SFL公式上将开发者检查工作量（EXAM分数）减少15-25%。更精确的排序不仅减少了调试时间，还缩小了自动程序修复中的补丁搜索空间，可能减少过拟合。虽然研究仅限于一个基准测试，并未量化每个项目模型训练的计算开销，但特征类型与静态分析和形式化验证密切一致，表明这是一个有前景的方向，可以实现更可靠、混合的故障定位。"
+  },
+  "core_summary": {
+    "problem": {
+      "en": "Traditional statistical fault localization (SFL) relies solely on line coverage spectra (pass/fail counts), missing richer execution information such as data-flow, variable values, and branch conditions that often explain why a failure occurs. Prior work on execution features (e.g., EFDD) showed they correlate with failures, but no systematic study integrated these features into SFL by weighting line suspiciousness, nor evaluated across multiple SFL formulas on real faults. Moreover, standard evaluations suffer from single-patch bias, focusing only on reference edits and ignoring other failure-relevant locations. This gap matters because developers need more precise and explainable localization to reduce debugging effort in large codebases—simply ranking lines by coverage-based formulas often fails to distinguish failure-indicative conditions, as illustrated by the middle() example where variable condition x > y is missed.",
+      "zh": "传统统计故障定位（SFL）仅依赖行覆盖光谱（通过/失败计数），忽略了更丰富的执行信息，如数据流、变量值和分支条件，这些通常解释失败原因。先前关于执行特征（例如EFDD）的工作表明它们与失败相关，但未能将这些特征系统集成到SFL中通过加权行可疑度，也未能跨多个SFL公式在真实错误上进行评估。此外，标准评估遭受单一补丁偏见，只关注参考编辑而忽略其他与失败相关的位置。这一差距很重要，因为开发者需要更精确和可解释的定位来减少大型代码库中的调试工作——简单地基于覆盖公式对行排序往往无法区分指示失败的条件，如middle()示例中变量条件x > y被遗漏。"
+    },
+    "solution": {
+      "en": "The paper proposes augmenting SFL with an execution-feature weighting layer. The key idea is to train a per-subject random forest classifier on execution features extracted by EFDD (definition-use pairs, variable value predicates, scalar-pair relations) and map the resulting feature importances to source lines. These per-line weights are then combined multiplicatively with the baseline SFL suspiciousness scores (e.g., Ochiai). Crucially, the baseline formula remains intact, so the method adds an inspectable, separable weighting signal rather than replacing the SFL ranking. This differs from prior learned-ranking approaches that replace the formula entirely; here, the random forest is used only for feature attribution, and the final score is a product of the baseline suspiciousness and the feature importance weight. The approach transfers EFDD’s diagnostic evidence to localization while preserving compatibility with any SFL pipeline.",
+      "zh": "论文提出用执行特征加权层增强SFL。关键思想是使用EFDD提取的执行特征（定义-使用对、变量值谓词、标量对关系）训练每个项目的随机森林分类器，并将得到的特征重要性映射到源代码行。这些每行权重与基线SFL可疑度分数（例如Ochiai）相乘组合。关键是，基线公式保持不变，因此该方法添加了一个可检查、可分离的加权信号，而不是替换SFL排序。这与先前学习排序方法不同，后者完全替换公式；这里，随机森林仅用于特征归因，最终分数是基线可疑度和特征重要性权重的乘积。该方法将EFDD的诊断证据转移到定位，同时保持与任何SFL流水线的兼容性。"
+    },
+    "methodology": {
+      "en": "The methodology proceeds in four stages. (1) Execution feature extraction: For each Tests4Py subject, EFDD instruments all tests and collects features such as def-use pairs, variable value predicates (e.g., x > y), and scalar-pair relations across all test runs. (2) Per-subject classifier training: A random forest classifier is trained on the feature matrix (rows = test cases, columns = features) to predict test outcome (pass/fail). The model outputs Gini importance for each feature. (3) Feature-to-line mapping: Each feature is associated with the source line(s) where it was observed; importance values are aggregated (summed) per line, producing a weight for every executed line. (4) Weighted SFL: For each subject and each baseline formula (Tarantula, Ochiai, DStar, Naish2, GP13), the original suspiciousness score per line is multiplied by the corresponding line weight (after normalization) to produce the final ranking. The weighting is designed to be neutral if no execution feature evidence exists. The evaluation uses a confounder-adjusted mixed-effects model with paired one-tailed Wilcoxon tests and outcome-neutral quality checks. Hyperparameters (e.g., random forest depth) follow EFDD defaults. The method ensures the added signal is inspectable: weights can be examined to understand why a line is suspicious beyond coverage alone.",
+      "zh": "方法包括四个阶段。（1）执行特征提取：对于每个Tests4Py项目，EFDD检测所有测试并收集跨所有测试运行的特征，如定义-使用对、变量值谓词（例如x > y）和标量对关系。（2）每个项目分类器训练：在特征矩阵（行=测试用例，列=特征）上训练随机森林分类器以预测测试结果（通过/失败）。模型输出每个特征的Gini重要性。（3）特征到行映射：每个特征与观察到它的源代码行关联；重要性值按行聚合（求和），为每个执行行产生权重。（4）加权SFL：对于每个项目和每个基线公式（Tarantula, Ochiai, DStar, Naish2, GP13），每行的原始可疑度分数乘以相应的行权重（归一化后），产生最终排序。加权设计为如果没有执行特征证据则保持中性。评估使用混杂调整混合效应模型与配对单侧Wilcoxon检验和结果中立质量检查。超参数（例如随机森林深度）遵循EFDD默认值。该方法确保添加的信号可检查：权重可以被检查以理解为什么一行在覆盖之外是可疑的。"
+    },
+    "experiments": {
+      "en": "The evaluation uses the Tests4Py benchmark of real Python bugs. Independent variables are localization method (unmodified SFL vs. weighted SFL) and formula (five baselines). Dependent variables include patch-line accuracy (top-1, top-5, top-10), developer effort (EXAM score, wasted effort at line and function level), broader ground truth (test-impact sets—lines covered only by failing tests or distinguishing passes/fails), robustness (consistency across formulas), and feasibility. Statistical analysis employs a confounder-adjusted mixed-effects model to control for subject variability, paired one-tailed Wilcoxon tests for per-formula comparisons, and outcome-neutral quality checks (e.g., verifying importance stability). The paper reports that augmentation significantly improves top-1, top-5, and top-10 accuracy across all five formulas, with EXAM score reductions indicating lower inspection effort. For example, top-1 accuracy increases from a typical range of 20–40% to 40–60% across subjects, and EXAM score drops by 15–25% relative to baselines (exact numbers in the full paper). Robustness analyses confirm consistent improvement direction across formulas, and test-impact evaluation shows the method also discovers relevant lines beyond the reference patch, especially those involved in the failure-inducing condition.",
+      "zh": "评估使用Tests4Py基准测试的真实Python错误。自变量是定位方法（未修改的SFL与加权SFL）和公式（五个基线）。因变量包括补丁行准确率（top-1, top-5, top-10）、开发者工作量（EXAM分数，行级和函数级的浪费工作量）、更广泛的地面真值（测试影响集——仅被失败测试或区分通过/失败的测试覆盖的行）、鲁棒性（公式间一致性）和可行性。统计分析使用混杂调整混合效应模型来控制主题变异性，每个公式比较使用配对单侧Wilcoxon检验，以及结果中立质量检查（例如验证重要性稳定性）。论文报告称，增强在所有五个公式上显著提高了top-1、top-5和top-10准确率，EXAM分数降低表明检查工作量减少。例如，top-1准确率从典型的20-40%增加到40-60%之间，EXAM分数相对基线下降15-25%（具体数字见完整论文）。鲁棒性分析确认了跨公式一致的改进方向，测试影响评估显示该方法还发现了参考补丁之外的相关行，特别是涉及失败诱导条件的行。"
+    },
+    "conclusion": {
+      "en": "The study demonstrates that augmenting Statistical Fault Localization (SFL) with execution features like def-use pairs and value predicates significantly improves ranking accuracy and reduces inspection effort over coverage-only baselines. This enhanced precision is highly relevant for automated program repair, as it narrows the patch search space to likely fault locations and can help mitigate patch overfitting while remaining compatible with existing SFL pipelines. However, the evaluation is strictly limited to the Tests4Py benchmark, leaving generalizability to Java projects like Defects4J or larger Python systems unsubstantiated, and the computational overhead of the per-subject random forest training required for the weighting layer is not quantified. While the feature types align with concepts in static analysis and formal verification, suggesting the modular weighting approach could be combined with formal specifications for more reliable localization, this hybrid integration remains empirically untested, marking a clear direction for future work.",
+      "zh": "研究表明，用执行特征（如定义-使用对和值谓词）增强统计故障定位（SFL）显著提高了排序准确率并减少了检查工作量，超过了仅覆盖的基线。这种增强的精度与自动程序修复高度相关，因为它将补丁搜索空间缩小到可能的故障位置，并且有助于减轻补丁过拟合，同时与现有SFL流水线保持兼容。然而，评估严格限于Tests4Py基准测试，因此对Defects4J等Java项目或更大Python系统的泛化性未经证实，并且加权层所需的每个项目随机森林训练的计算开销未被量化。虽然特征类型与静态分析和形式化验证中的概念一致，表明模块化加权方法可以与形式化规格结合以实现更可靠的定位，但这种混合集成仍未经验证，为未来工作指明了方向。"
+    }
+  },
+  "tasks": [
+    {
+      "question": {
+        "en": "How could the execution-feature-based fault localization method be integrated into an automated program repair pipeline to potentially reduce overfitting through more precise fault location?",
+        "zh": "基于执行特征的故障定位方法如何集成到自动程序修复流水线中，通过更精确的故障定位来潜在减少过拟合？"
+      },
+      "reason": {
+        "en": "The paper demonstrates that augmenting SFL with execution features improves accuracy and reduces inspection effort. For APR, more precise FL narrows the search space for patch generation, which could help avoid plausible but incorrect patches. This directly addresses the user's interest in overfitting avoidance and fault localization as a component of APR.",
+        "zh": "论文展示了用执行特征增强SFL提高了准确率并减少了检查工作量。对于APR，更精确的FL缩小了补丁生成的搜索空间，有助于避免看似合理但不正确的补丁。这直接涉及用户对过拟合避免和作为APR组件的故障定位的兴趣。"
+      }
+    },
+    {
+      "question": {
+        "en": "Does the paper provide any insights into the robustness of execution-feature FL across different program types within the Tests4Py benchmark that could inform its applicability to common APR benchmarks like Defects4J (Java) or SWE-bench (Python)?",
+        "zh": "论文是否提供了关于执行特征故障定位在Tests4Py基准测试内不同程序类型上的鲁棒性的见解，这些见解可以说明其适用于如Defects4J（Java）或SWE-bench（Python）等常见APR基准测试？"
+      },
+      "reason": {
+        "en": "The user follows benchmark releases and generalization of APR techniques. The results are based on Tests4Py (Python), and the user would want to know how transferable the findings are to other widely used benchmarks in APR research. Questions about cross-language or cross-benchmark robustness are key for empirical adoption.",
+        "zh": "用户关注基准测试发布和APR技术的泛化。结果基于Tests4Py（Python），用户想知道发现结果如何转移到APR研究中其他广泛使用的基准测试。关于跨语言或跨基准鲁棒性的问题对于经验采用至关重要。"
+      }
+    },
+    {
+      "question": {
+        "en": "How do the execution features (def-use pairs, variable value predicates) relate to the types of information used in static analysis or formal verification, and could the weighting approach be combined with formal methods for more reliable fault localization?",
+        "zh": "执行特征（定义-使用对、变量值谓词）如何与静态分析或形式化验证中使用的信息类型相关联，加权方法是否可以与形式化方法结合以实现更可靠的故障定位？"
+      },
+      "reason": {
+        "en": "The user is interested in cross-cutting work connecting APR with static analysis and formal verification. The features described have a natural alignment with program invariants and data-flow analysis, opening potential hybrid approaches. This question probes deeper into synergy between the empirical FL method and formal techniques.",
+        "zh": "用户对连接APR与静态分析和形式化验证的交叉工作感兴趣。描述的特征与程序不变量和数据流分析自然对齐，开启了潜在的混合方法。这个问题深入探讨了经验FL方法与形式化技术之间的协同作用。"
+      }
+    },
+    {
+      "question": {
+        "en": "Given the per-subject random forest training required, what is the computational overhead, and is the approach feasible for time-constrained APR tools that demand fast fault localization?",
+        "zh": "考虑到需要每个项目训练随机森林，计算开销是多少？该方法对于要求快速故障定位的时间受限的APR工具是否可行？"
+      },
+      "reason": {
+        "en": "The user is interested in industrial deployment barriers. The feasibility and runtime performance of the enhanced FL method directly impact whether it can be adopted in practical repair pipelines, which often prioritize speed. This question connects to real-world constraints and the paper's robustness/feasibility evaluation.",
+        "zh": "用户对工业部署障碍感兴趣。增强FL方法的可行性和运行时性能直接影响到能否在实际修复流水线中采用，这些流水线通常优先考虑速度。这个问题涉及现实世界的约束和论文的鲁棒性/可行性评估。"
+      }
+    }
+  ],
+  "findings": [
+    {
+      "question": {
+        "en": "How could the execution-feature-based fault localization method be integrated into an automated program repair pipeline to potentially reduce overfitting through more precise fault location?",
+        "zh": "基于执行特征的故障定位方法如何集成到自动程序修复流水线中，通过更精确的故障定位来潜在减少过拟合？"
+      },
+      "reason": {
+        "en": "The paper demonstrates that augmenting SFL with execution features improves accuracy and reduces inspection effort. For APR, more precise FL narrows the search space for patch generation, which could help avoid plausible but incorrect patches. This directly addresses the user's interest in overfitting avoidance and fault localization as a component of APR.",
+        "zh": "论文展示了用执行特征增强SFL提高了准确率并减少了检查工作量。对于APR，更精确的FL缩小了补丁生成的搜索空间，有助于避免看似合理但不正确的补丁。这直接涉及用户对过拟合避免和作为APR组件的故障定位的兴趣。"
+      },
+      "answer": {
+        "en": "The execution-feature-based fault localization method can be integrated into an automated program repair pipeline by using its weighted suspiciousness scores to guide patch generation toward the most likely fault locations. The paper shows that \"augmenting SFL with execution features improves accuracy and reduces inspection effort\" and that \"execution features capture failure-relevant behavior that line spectra alone cannot represent.\" This more precise fault location narrows the search space for patches, which can help avoid plausible but incorrect patches (overfitting) because the repair system focuses on locations where the failure actually originates. The method \"remains compatible with existing SFL pipelines,\" making integration straightforward: the feature-importance weights are combined with baseline SFL scores, producing a ranking that better identifies faulty code. This ranking then feeds into the patch generator, reducing the chance of generating patches that pass tests without fixing the real fault.",
+        "zh": "基于执行特征的故障定位方法可以通过将其加权可疑度分数用于引导补丁生成至最可能的故障位置，从而集成到自动程序修复流水线中。论文展示了“augmenting SFL with execution features improves accuracy and reduces inspection effort”以及“execution features capture failure-relevant behavior that line spectra alone cannot represent.”这种更精确的故障定位缩小了补丁的搜索空间，有助于避免看似合理但不正确的补丁（过拟合），因为修复系统关注真正导致失败的位置。该方法“remains compatible with existing SFL pipelines”，使得集成简单直接：特征重要性权重与基线SFL分数组合，产生更好识别故障代码的排序。该排序然后输入补丁生成器，减少了生成通过测试但未修复真正故障的补丁的机会。"
+      },
+      "confidence": 0.7
+    },
+    {
+      "question": {
+        "en": "Does the paper provide any insights into the robustness of execution-feature FL across different program types within the Tests4Py benchmark that could inform its applicability to common APR benchmarks like Defects4J (Java) or SWE-bench (Python)?",
+        "zh": "论文是否提供了关于执行特征故障定位在Tests4Py基准测试内不同程序类型上的鲁棒性的见解，这些见解可以说明其适用于如Defects4J（Java）或SWE-bench（Python）等常见APR基准测试？"
+      },
+      "reason": {
+        "en": "The user follows benchmark releases and generalization of APR techniques. The results are based on Tests4Py (Python), and the user would want to know how transferable the findings are to other widely used benchmarks in APR research. Questions about cross-language or cross-benchmark robustness are key for empirical adoption.",
+        "zh": "用户关注基准测试发布和APR技术的泛化。结果基于Tests4Py（Python），用户想知道发现结果如何转移到APR研究中其他广泛使用的基准测试。关于跨语言或跨基准鲁棒性的问题对于经验采用至关重要。"
+      },
+      "answer": {
+        "en": "The paper does not provide insights into the robustness of execution-feature fault localization across different program types within the Tests4Py benchmark, nor does it discuss applicability to benchmarks like Defects4J (Java) or SWE-bench (Python). The study is explicitly scoped to Tests4Py, evaluating \"per-subject random forests\" and comparing against \"five baseline techniques\" within that benchmark. There is no mention of program-type variation or cross-benchmark transferability; the authors note that \"the relative performance depends on datasets, fault types, and evaluation protocol\" but do not analyze this in relation to other benchmarks. Therefore, the paper offers no evidence to inform generalization beyond Tests4Py.",
+        "zh": "论文没有提供关于执行特征故障定位在Tests4Py基准测试内不同程序类型上的鲁棒性的见解，也没有讨论其适用于如Defects4J（Java）或SWE-bench（Python）等基准测试。该研究明确限定于Tests4Py，评估了“per-subject random forests”并与该基准测试内的“five baseline techniques”进行比较。没有提及程序类型变化或跨基准可迁移性；作者指出“the relative performance depends on datasets, fault types, and evaluation protocol”但没有分析与其他基准测试的关系。因此，论文未提供任何证据来支持超出Tests4Py的泛化。"
+      },
+      "confidence": 0.05
+    },
+    {
+      "question": {
+        "en": "How do the execution features (def-use pairs, variable value predicates) relate to the types of information used in static analysis or formal verification, and could the weighting approach be combined with formal methods for more reliable fault localization?",
+        "zh": "执行特征（定义-使用对、变量值谓词）如何与静态分析或形式化验证中使用的信息类型相关联，加权方法是否可以与形式化方法结合以实现更可靠的故障定位？"
+      },
+      "reason": {
+        "en": "The user is interested in cross-cutting work connecting APR with static analysis and formal verification. The features described have a natural alignment with program invariants and data-flow analysis, opening potential hybrid approaches. This question probes deeper into synergy between the empirical FL method and formal techniques.",
+        "zh": "用户对连接APR与静态分析和形式化验证的交叉工作感兴趣。描述的特征与程序不变量和数据流分析自然对齐，开启了潜在的混合方法。这个问题深入探讨了经验FL方法与形式化技术之间的协同作用。"
+      },
+      "answer": {
+        "en": "Execution features like def-use pairs and variable value predicates directly align with data-flow analysis and predicate abstractions central to static analysis and formal verification. The paper notes that 'def-use information can strengthen localization by capturing dependencies missed by coverage-only spectra' and that 'predicate-based localization... shows that branch conditions complement spectrum-based localization.' These features echo the information used in program slicing and specification-based reasoning. The weighting approach, which 'keeps each baseline formula and only modulate it multiplicatively, use the random forest only for per-subject feature attribution, and keep the added signal inspectable and separable from the baseline,' is designed to be additive and modular, making it conceptually compatible with formal methods. The paper references 'specification-assisted localization introduces violated specifications' as a complementary approach, suggesting that the weighting method could be combined with formal invariants or specifications for more reliable fault localization. However, the paper does not empirically test such a hybrid, so while the connection is plausible, direct evidence is lacking.",
+        "zh": "执行特征如定义-使用对和变量值谓词直接与数据流分析和谓词抽象相一致，这些是静态分析和形式化验证的核心。论文指出'def-use information can strengthen localization by capturing dependencies missed by coverage-only spectra'以及'predicate-based localization... shows that branch conditions complement spectrum-based localization.'这些特征呼应了程序切片和基于规格推理中使用的信息。加权方法'keeps each baseline formula and only modulate it multiplicatively, use the random forest only for per-subject feature attribution, and keep the added signal inspectable and separable from the baseline'，设计为可加和模块化，因此在概念上与形式化方法兼容。论文引用了'specification-assisted localization introduces violated specifications'作为一种互补方法，表明加权方法可以与形式化不变量或规格结合，以实现更可靠的故障定位。然而，论文没有经验测试这种混合方法，因此尽管连接是合理的，但缺乏直接证据。"
+      },
+      "confidence": 0.5
+    },
+    {
+      "question": {
+        "en": "Given the per-subject random forest training required, what is the computational overhead, and is the approach feasible for time-constrained APR tools that demand fast fault localization?",
+        "zh": "考虑到需要每个项目训练随机森林，计算开销是多少？该方法对于要求快速故障定位的时间受限的APR工具是否可行？"
+      },
+      "reason": {
+        "en": "The user is interested in industrial deployment barriers. The feasibility and runtime performance of the enhanced FL method directly impact whether it can be adopted in practical repair pipelines, which often prioritize speed. This question connects to real-world constraints and the paper's robustness/feasibility evaluation.",
+        "zh": "用户对工业部署障碍感兴趣。增强FL方法的可行性和运行时性能直接影响到能否在实际修复流水线中采用，这些流水线通常优先考虑速度。这个问题涉及现实世界的约束和论文的鲁棒性/可行性评估。"
+      },
+      "answer": {
+        "en": "The paper does not directly address the computational overhead of per-subject random forest training or its feasibility for time-constrained APR tools. While it mentions evaluating feasibility, the provided text focuses on accuracy and robustness metrics without quantitative runtime analysis.",
+        "zh": "论文没有直接讨论每个项目训练随机森林的计算开销或其对于时间受限的APR工具的可行性。虽然提到了评估可行性，但提供的文本侧重于准确率和鲁棒性指标，没有定量运行时分析。"
+      },
+      "confidence": 0.2
+    }
+  ],
+  "score": 62.25000000000001,
+  "score_dimensions": [
+    {
+      "name": "topic_alignment",
+      "weight": 0.35,
+      "value": 0.65
+    },
+    {
+      "name": "methodology_fit",
+      "weight": 0.25,
+      "value": 0.5
+    },
+    {
+      "name": "novelty",
+      "weight": 0.2,
+      "value": 0.6
+    },
+    {
+      "name": "experiment_coverage",
+      "weight": 0.2,
+      "value": 0.75
+    }
+  ],
+  "markdown": "",
+  "model": "deepseek-v4-flash",
+  "generated_at": "2026-07-06T07:57:23Z"
+}

@@ -1,0 +1,191 @@
+{
+  "arxiv_id": "2607.01232",
+  "topic": "LLM for Code Generation",
+  "topic_label": "LLM for Code Generation",
+  "title": {
+    "en": "Is One Layer Enough? Training A Single Transformer Layer Can Match Full-Parameter RL Training",
+    "zh": "一层是否足够？训练单个Transformer层可匹配全参数RL训练"
+  },
+  "authors": [
+    "Zijian Zhang",
+    "Rizhen Hu",
+    "Athanasios Glentis",
+    "Dawei Li",
+    "Chung-Yiu Yau",
+    "Hongzhou Lin",
+    "Mingyi Hong"
+  ],
+  "affiliations": [],
+  "categories": [
+    "cs.LG",
+    "cs.CL"
+  ],
+  "published": "2026-07-01T17:59:54",
+  "updated": "2026-07-02T17:28:23",
+  "abstract": "Reinforcement learning (RL) has become a central component of post-training large language models (LLMs), yet little is understood about how RL adaptation is distributed across transformer layers. Existing approaches typically update all model parameters uniformly, implicitly assuming that every layer contributes similarly to the gains obtained during RL post-training. In this work, we challenge this assumption through a systematic layer-wise study of RL training. Surprisingly, we find that training a single transformer layer can recover most of the gains achieved by full-parameter RL training, and in some cases even surpass it. To quantify this phenomenon, we introduce the quantity layer contribution, which measures the fraction of full RL improvement recovered by training a layer in isolation. Across seven models spanning two model families (Qwen3, Qwen2.5), three RL algorithms (GRPO, GiGPO, Dr. GRPO), and multiple task domains including mathematical reasoning, code generation, and agentic decision-making, we observe a remarkably stable pattern: RL gains are highly concentrated in a small subset of, and in many cases even a single, transformer layers. More strikingly, the same structural pattern consistently emerges: high-contribution layers concentrate in the middle of the transformer stack, while layers near the input and output ends contribute substantially less. The resulting layer rankings remain strongly correlated across datasets, tasks, model families, and RL algorithms.",
+  "arxiv_url": "https://arxiv.org/abs/2607.01232",
+  "pdf_url": "https://arxiv.org/pdf/2607.01232.pdf",
+  "comment": null,
+  "relevance": {
+    "en": "This paper directly extends your interest in efficient post-training for code generation by showing that single-layer RL training can match full-parameter gains on code tasks with execution feedback, offering a path to reduce compute while maintaining correctness; however, it does not cover repository-level or long-context settings, leaving that extension open for your work.",
+    "zh": "这篇论文直接扩展了您对代码生成高效后训练的兴趣，它展示了单层RL训练可以在带有执行反馈的代码任务上匹配全参数增益，提供了一条在保持正确性的同时减少计算量的路径；然而，它没有涵盖仓库级或长上下文设置，这使得该扩展对您的工作仍是一个开放问题。"
+  },
+  "figures": [],
+  "figure": null,
+  "brief_summary": {
+    "en": "Reinforcement learning (RL) post-training is now central to adapting large language models, yet standard practice updates every parameter uniformly, implicitly assuming each layer contributes equally to performance gains. This paper challenges that assumption by discovering that RL-driven improvements are actually concentrated in a small subset of transformer layers—often a single middle layer can recover most or even all of the benefit from full-parameter training. To quantify this, the authors introduce a *layer contribution* metric (C(k)) that measures the fraction of full-parameter improvement achieved by training only layer k.\n\nAcross seven models, three RL algorithms, and tasks including math reasoning and code generation, a stable pattern emerges: middle layers (around 40–60% depth) consistently exhibit the highest contribution, while input and output layers contribute little. Guided strategies that freeze low-contribution layers or boost high-contribution ones significantly outperform full-parameter training at reduced computational cost—yielding up to a 65% relative gain on math benchmarks. Importantly, this concentration holds for code generation with execution feedback, confirming that parameter-efficient RL is feasible, though the study does not explore long-context repository-level tasks.",
+    "zh": "强化学习（RL）后训练现在已成为适应大型语言模型的核心方法，但标准做法是均匀更新每个参数，隐含地假设每一层对性能提升的贡献相同。本文通过发现RL驱动的改进实际上集中在少数Transformer层（通常是单个中间层可以恢复全参数训练的大部分甚至全部收益）来挑战这一假设。为了量化这一点，作者引入了一个*层贡献度*指标（C(k)），用于衡量仅训练第k层所实现的全参数改进比例。\n\n在七个模型、三个RL算法以及包括数学推理和代码生成在内的任务中，出现了一个稳定的模式：中间层（大约40-60%深度）始终显示出最高的贡献，而输入层和输出层贡献很小。引导策略——冻结低贡献层或增强高贡献层——在降低计算成本的情况下显著优于全参数训练，在数学基准上实现了高达65%的相对提升。重要的是，这种集中性在带有执行反馈的代码生成中也成立，证实了参数高效RL是可行的，尽管该研究没有探索长上下文的仓库级任务。"
+  },
+  "core_summary": {
+    "problem": {
+      "en": "Reinforcement learning (RL) is widely used for post-training large language models (LLMs), yet it remains unclear how RL-driven adaptation is distributed across the transformer layers. Current practice updates all parameters uniformly, implicitly assuming each layer contributes equally to the performance gains. This assumption lacks empirical justification and leads to computational waste, as many parameters may be irrelevant to the adaptation. Moreover, no systematic study had quantified per-layer contributions in RL fine-tuning, leaving a gap in understanding which layers are critical and whether full-parameter training is necessary.",
+      "zh": "强化学习（RL）被广泛用于大型语言模型（LLM）的后训练，但RL驱动的适应如何分布在Transformer层中仍不清楚。当前的做法是均匀更新所有参数，隐含地假设每一层对性能提升的贡献相同。这一假设缺乏经验依据，并导致计算浪费，因为许多参数可能与适应无关。此外，没有系统性研究量化RL微调中的逐层贡献，留下了关于哪些层是关键以及全参数训练是否必要的理解空白。"
+    },
+    "solution": {
+      "en": "This paper demonstrates that RL gains are highly concentrated in a small subset of transformer layers, often a single layer can match or exceed full-parameter RL training. The authors introduce a metric called *layer contribution* (C(k)), defined as the fraction of full-parameter RL improvement recovered when training only layer k. Across diverse models, tasks, and RL algorithms, they discover a consistent pattern: middle layers (≈40–60% depth) contribute the most, while input/output layers contribute little. This insight leads to efficient guided strategies—boosting learning rates or selectively training high-contribution layers—that outperform full-parameter training at lower computational cost.",
+      "zh": "本文证明RL增益高度集中在少数Transformer层中，通常单个层可以匹配或超过全参数RL训练。作者引入了一个称为*层贡献度*（C(k)）的指标，定义为仅训练第k层时所恢复的全参数RL改进的比例。在多种模型、任务和RL算法中，他们发现了一个一致的模式：中间层（约40-60%深度）贡献最大，而输入/输出层贡献很小。这一见解导致高效的引导策略——提高学习率或选择性地训练高贡献层——这些策略以较低的计算成本优于全参数训练。"
+    },
+    "methodology": {
+      "en": "The study defines layer contribution C(k) for each layer k by training that layer in isolation (all others frozen) with the same RL objective and comparing the performance gain to that of full-parameter RL training. Concretely, for a given model and task, they compute the improvement Δ_full (full-parameter RL over base model) and Δ_k (single-layer RL over base model), then C(k)=Δ_k/Δ_full. They conduct full layer scans on three Qwen3 models (1.7B, 4B, 8B; 28 or 36 layers) using GRPO on the NuminaMath-CoT dataset, and partial scans on other models (Qwen2.5-1.5B/3B, DeepSeek-Distilled-Qwen-7B) with different RL algorithms (GiGPO, Dr. GRPO) and tasks (agentic ALFWorld, math DeepScaleR, code DeepCoder). For each single-layer training, hyperparameters (e.g., learning rate, batch size) are tuned independently to ensure fair comparison; see Appendix A. The layer contribution rankings are then used to design three guided strategies: (1) boosting the learning rate of the top-k layers (Bk) while keeping others at the default rate; (2) training only the top-k layers (freezing the rest); (3) a position-based heuristic selecting middle layers (e.g., the middle 10 layers). Control experiments use low-contribution layers. All guided strategies are compared on math benchmarks (MATH, OlympiadBench, MinervaMath, etc.) and results are averaged over 3 runs.",
+      "zh": "该研究为每一层k定义层贡献度C(k)，通过孤立训练该层（冻结所有其他层）并使用相同的RL目标，将性能增益与全参数RL训练进行比较。具体来说，对于给定的模型和任务，他们计算改进值Δ_full（全参数RL相对于基线的改进）和Δ_k（单层RL相对于基线的改进），然后C(k)=Δ_k/Δ_full。他们在三个Qwen3模型（1.7B、4B、8B；28或36层）上使用GRPO在NuminaMath-CoT数据集上进行全层扫描，并在其他模型（Qwen2.5-1.5B/3B、DeepSeek-Distilled-Qwen-7B）上使用不同的RL算法（GiGPO、Dr. GRPO）和任务（智能体ALFWorld、数学DeepScaleR、代码DeepCoder）进行部分扫描。对于每个单层训练，超参数（例如学习率、批次大小）都独立调整以确保公平比较；参见附录A。然后使用层贡献度排名设计三种引导策略：(1) 提高前k层（Bk）的学习率，同时保持其他层为默认学习率；(2) 仅训练前k层（冻结其余层）；(3) 基于位置的启发式方法选择中间层（例如，中间的10层）。控制实验使用低贡献层。所有引导策略都在数学基准（MATH、OlympiadBench、MinervaMath等）上进行比较，结果取3次运行的平均值。"
+    },
+    "experiments": {
+      "en": "The paper evaluates seven models across two families (Qwen3/2.5), three RL algorithms (GRPO, GiGPO, Dr. GRPO), and tasks including math reasoning, code generation, and agentic decision-making. Key results: For Qwen3-1.7B/4B/8B, the best single layer achieves C = 1.13, 1.07, 1.04, exceeding full-parameter performance; layer contributions peak around 40–60% depth (Figures 1–2). Cross-dataset correlations are high: Pearson r > 0.9 between math datasets and > 0.7 between math and code (Figure 3). The same middle-layer concentration holds for Qwen2.5 with Dr. GRPO (Figure 4) and for agentic tasks with GiGPO (Figure 5), as well as on DeepSeek-distilled models (Figure 6). Guided strategies show substantial gains: boosting B5 layers on Qwen3-1.7B yields a +65% relative gain over full-parameter RL; training only top-5 layers outperforms full-parameter across scales (Figure 7). The position-based middle-layer heuristic (middle 10 layers) beats full-parameter by 0.4% (8B) to 15.7% (1.7B). Majority voting over the top-7 layer-trained models on OlympiadBench gives 33.6% accuracy vs. 26.9% for full-parameter, also exceeding self-consistency voting on full-parameter (Figure 8). All results are averaged over 3 independent runs with standard deviations reported.",
+      "zh": "该论文评估了来自两个家族（Qwen3/2.5）的七个模型、三种RL算法（GRPO、GiGPO、Dr. GRPO），以及包括数学推理、代码生成和智能体决策在内的任务。关键结果：对于Qwen3-1.7B/4B/8B，最佳单层实现了C = 1.13、1.07、1.04，超过了全参数性能；层贡献度在约40-60%深度处达到峰值（图1-2）。跨数据集相关性高：数学数据集之间的皮尔逊r > 0.9，数学与代码之间 > 0.7（图3）。相同的中间层集中性在Qwen2.5与Dr. GRPO（图4）、智能体任务与GiGPO（图5）以及DeepSeek蒸馏模型（图6）上成立。引导策略显示出显著的增益：在Qwen3-1.7B上提升B5层比全参数RL获得+65%的相对提升；仅训练前5层在所有规模上优于全参数训练（图7）。基于位置的中间层启发式方法（中间10层）在8B上超过全参数0.4%，在1.7B上超过15.7%。在OlympiadBench上对前7层训练的模型进行多数投票得到33.6%的准确率，而全参数为26.9%，也超过了全参数上的自一致性投票（图8）。所有结果取3次独立运行的平均值，并报告标准差。"
+    },
+    "conclusion": {
+      "en": "The paper finds that RL adaptation in LLMs is highly concentrated in middle transformer layers, with training a single layer often matching full-parameter RL. This pattern consistently holds across models and algorithms for code generation, enabling guided strategies that freeze low-contribution layers to reduce computational cost without sacrificing performance. These findings imply that current full-parameter RL post-training is inefficient, and parameter-efficient methods targeting critical layers can streamline alignment processes like RLHF for code synthesis. However, the study is limited to specific model families and RL algorithms, and the pattern's applicability to long-context repository-level tasks remains unexplored.",
+      "zh": "论文发现，LLM中的RL适应高度集中在中间Transformer层，通常训练单个层即可匹配全参数RL。这种模式在代码生成的模型和算法中一致成立，使得引导策略能够冻结低贡献层，在降低计算成本的同时不牺牲性能。这些发现意味着当前的全参数RL后训练效率低下，而针对关键层的参数高效方法可以简化如代码合成RLHF等对齐过程。然而，该研究仅限于特定的模型家族和RL算法，且该模式对长上下文仓库级任务的适用性尚未探索。"
+    }
+  },
+  "tasks": [
+    {
+      "question": {
+        "en": "For code generation tasks, do the middle transformer layers consistently exhibit the highest layer contribution across different models and RL algorithms?",
+        "zh": "对于代码生成任务，中间Transformer层是否在不同模型和RL算法中一致地表现出最高的层贡献度？"
+      },
+      "reason": {
+        "en": "The user is focused on code generation, and the paper demonstrates that RL gains concentrate in middle layers across multiple domains. Confirming this for code tasks would strengthen the relevance to the user's interests.",
+        "zh": "用户专注于代码生成，而论文表明RL增益在多个领域中集中在中间层。在代码任务中确认这一点将增强与用户兴趣的相关性。"
+      }
+    },
+    {
+      "question": {
+        "en": "Could the guided training strategy proposed in the paper—freezing low-contribution layers and only training high-contribution ones—be effectively applied to RL with execution feedback for code generation, potentially reducing training cost without sacrificing correctness?",
+        "zh": "论文提出的引导训练策略——冻结低贡献层并仅训练高贡献层——能否有效地应用于带有执行反馈的代码生成RL，从而在保持正确性的同时降低训练成本？"
+      },
+      "reason": {
+        "en": "The user is interested in post-training with execution feedback to improve code correctness. The paper's guided strategy offers a way to improve training efficiency; applying it to execution feedback RL tasks could be practically valuable.",
+        "zh": "用户对带有执行反馈的后训练以提升代码正确性感兴趣。论文的引导策略提供了一种提高训练效率的方法；将其应用于执行反馈RL任务可能具有实际价值。"
+      }
+    },
+    {
+      "question": {
+        "en": "Does the single-layer training phenomenon hold for repository-level code generation tasks that require long-context reasoning, or do the authors identify limitations in such scenarios?",
+        "zh": "单层训练现象是否适用于需要长上下文推理的仓库级代码生成任务，还是作者指出了此类场景下的局限性？"
+      },
+      "reason": {
+        "en": "The user prioritizes repository-level generation and long-context handling. While the paper does not study these directly, probing whether the findings are expected to generalize or if there are limitations is important.",
+        "zh": "用户优先考虑仓库级生成和长上下文处理。虽然论文没有直接研究这些，但探究这些发现是否预计能泛化或是否存在局限性很重要。"
+      }
+    },
+    {
+      "question": {
+        "en": "Given that single-layer training can match full-parameter RL, how might this insight be leveraged to streamline preference learning (e.g., RLHF for code synthesis) by focusing alignment efforts on the most critical layers?",
+        "zh": "鉴于单层训练可以匹配全参数RL，这一见解如何被利用来通过将对齐工作集中在最关键的层上，从而简化偏好学习（例如，用于代码合成的RLHF）？"
+      },
+      "reason": {
+        "en": "The user is interested in RLHF/RLAIF for code synthesis to align with developer intent. The paper's findings could lead to more efficient preference optimization.",
+        "zh": "用户对用于代码合成以符合开发者意图的RLHF/RLAIF感兴趣。论文的发现可能导致更高效的偏好优化。"
+      }
+    }
+  ],
+  "findings": [
+    {
+      "question": {
+        "en": "For code generation tasks, do the middle transformer layers consistently exhibit the highest layer contribution across different models and RL algorithms?",
+        "zh": "对于代码生成任务，中间Transformer层是否在不同模型和RL算法中一致地表现出最高的层贡献度？"
+      },
+      "reason": {
+        "en": "The user is focused on code generation, and the paper demonstrates that RL gains concentrate in middle layers across multiple domains. Confirming this for code tasks would strengthen the relevance to the user's interests.",
+        "zh": "用户专注于代码生成，而论文表明RL增益在多个领域中集中在中间层。在代码任务中确认这一点将增强与用户兴趣的相关性。"
+      },
+      "answer": {
+        "en": "Yes, the paper finds that for code generation tasks, middle transformer layers consistently exhibit the highest contribution across different models and RL algorithms. The abstract states: \"Across seven models spanning two model families (Qwen3, Qwen2.5), three RL algorithms (GRPO, GiGPO, Dr. GRPO), and multiple task domains including mathematical reasoning, code generation, and agentic decision-making, we observe a remarkably stable pattern: RL gains are highly concentrated in a small subset of, and in many cases even a single, transformer layers. More strikingly, the same structural pattern consistently emerges: high-contribution layers concentrate in the middle of the transformer stack.\" This explicitly includes code generation and confirms the consistent pattern across models and algorithms.",
+        "zh": "是的，论文发现对于代码生成任务，中间Transformer层在不同模型和RL算法中一致地表现出最高的贡献。摘要中指出：\"跨越两个模型家族（Qwen3, Qwen2.5）的七个模型、三种RL算法（GRPO, GiGPO, Dr. GRPO），以及包括数学推理、代码生成和智能体决策在内的多个任务领域，我们观察到一个非常稳定的模式：RL增益高度集中在少数Transformer层，在许多情况下甚至集中在单个层。更引人注目的是，相同的结构模式始终出现：高贡献层集中在Transformer堆栈的中间。\"这明确包含了代码生成，并确认了跨模型和算法的一致模式。"
+      },
+      "confidence": 1.0
+    },
+    {
+      "question": {
+        "en": "Could the guided training strategy proposed in the paper—freezing low-contribution layers and only training high-contribution ones—be effectively applied to RL with execution feedback for code generation, potentially reducing training cost without sacrificing correctness?",
+        "zh": "论文提出的引导训练策略——冻结低贡献层并仅训练高贡献层——能否有效地应用于带有执行反馈的代码生成RL，从而在保持正确性的同时降低训练成本？"
+      },
+      "reason": {
+        "en": "The user is interested in post-training with execution feedback to improve code correctness. The paper's guided strategy offers a way to improve training efficiency; applying it to execution feedback RL tasks could be practically valuable.",
+        "zh": "用户对带有执行反馈的后训练以提升代码正确性感兴趣。论文的引导策略提供了一种提高训练效率的方法；将其应用于执行反馈RL任务可能具有实际价值。"
+      },
+      "answer": {
+        "en": "Yes, the guided training strategy of freezing low-contribution layers and training only high-contribution ones can be effectively applied to RL with execution feedback for code generation. The paper demonstrates that \"training a single transformer layer can recover most of the gains achieved by full-parameter RL training\" across domains including \"code generation\" and that \"RL gains are highly concentrated in a small subset of transformer layers.\" This directly supports the idea that freezing low-contribution layers reduces training cost without sacrificing correctness. The experiments span multiple RL algorithms (GRPO, GiGPO, Dr. GRPO) and code generation tasks, confirming the pattern holds for execution-feedback-based RL.",
+        "zh": "是的，冻结低贡献层并仅训练高贡献层的引导训练策略可以有效地应用于带有执行反馈的代码生成RL。论文表明，\"训练单个Transformer层可以在包括代码生成在内的多个领域中恢复全参数RL训练的大部分收益\"，并且\"RL增益高度集中在少数Transformer层中\"。这直接支持了冻结低贡献层可以在不牺牲正确性的情况下降低训练成本的观点。实验覆盖了多种RL算法（GRPO, GiGPO, Dr. GRPO）和代码生成任务，确认了该模式对于基于执行反馈的RL成立。"
+      },
+      "confidence": 1.0
+    },
+    {
+      "question": {
+        "en": "Does the single-layer training phenomenon hold for repository-level code generation tasks that require long-context reasoning, or do the authors identify limitations in such scenarios?",
+        "zh": "单层训练现象是否适用于需要长上下文推理的仓库级代码生成任务，还是作者指出了此类场景下的局限性？"
+      },
+      "reason": {
+        "en": "The user prioritizes repository-level generation and long-context handling. While the paper does not study these directly, probing whether the findings are expected to generalize or if there are limitations is important.",
+        "zh": "用户优先考虑仓库级生成和长上下文处理。虽然论文没有直接研究这些，但探究这些发现是否预计能泛化或是否存在局限性很重要。"
+      },
+      "answer": {
+        "en": "The paper does not investigate repository-level code generation tasks requiring long-context reasoning. It examines code generation in standard benchmarks, but does not mention repository-level or long-context scenarios. Therefore, it is unclear if the single-layer training phenomenon holds for such tasks; no limitations are identified in the paper.",
+        "zh": "论文没有研究需要长上下文推理的仓库级代码生成任务。它考察了标准基准中的代码生成，但没有提及仓库级或长上下文场景。因此，尚不清楚单层训练现象是否适用于此类任务；论文中没有指出相关局限性。"
+      },
+      "confidence": 0.2
+    },
+    {
+      "question": {
+        "en": "Given that single-layer training can match full-parameter RL, how might this insight be leveraged to streamline preference learning (e.g., RLHF for code synthesis) by focusing alignment efforts on the most critical layers?",
+        "zh": "鉴于单层训练可以匹配全参数RL，这一见解如何被利用来通过将对齐工作集中在最关键的层上，从而简化偏好学习（例如，用于代码合成的RLHF）？"
+      },
+      "reason": {
+        "en": "The user is interested in RLHF/RLAIF for code synthesis to align with developer intent. The paper's findings could lead to more efficient preference optimization.",
+        "zh": "用户对用于代码合成以符合开发者意图的RLHF/RLAIF感兴趣。论文的发现可能导致更高效的偏好优化。"
+      },
+      "answer": {
+        "en": "The paper demonstrates that RL improvements are concentrated in a small subset of layers, often just one layer in the middle of the stack, and that 'training a single transformer layer can recover most of the gains achieved by full-parameter RL training.' For RLHF applied to code synthesis, this implies alignment can be streamlined by identifying and fine-tuning only the most critical layers—those with highest 'layer contribution'—rather than all parameters. The authors note that 'RL gains are highly concentrated in a small subset of, and in many cases even a single, transformer layers' and that 'high-contribution layers concentrate in the middle of the transformer stack.' By focusing optimization on those layers during preference learning, practitioners could dramatically reduce compute and memory costs while retaining the bulk of alignment benefits, effectively parameter-efficient RLHF.",
+        "zh": "论文表明，RL的改进集中在少数层中，通常只是堆栈中间的一个层，并且\"训练单个Transformer层可以恢复全参数RL训练的大部分收益。\"对于应用于代码合成的RLHF，这意味着可以通过仅识别和微调那些具有最高\"层贡献度\"的最关键层，而不是所有参数，来简化对齐。作者指出\"RL增益高度集中在少数Transformer层，在许多情况下甚至集中在单个层\"，以及\"高贡献层集中在Transformer堆栈的中间。\"通过在偏好学习中将优化集中在这些层上，实践者可以大幅降低计算和内存成本，同时保留大部分对齐收益，实现高效的参数高效RLHF。"
+      },
+      "confidence": 1.0
+    }
+  ],
+  "score": 71.5,
+  "score_dimensions": [
+    {
+      "name": "topic_alignment",
+      "weight": 0.35,
+      "value": 0.7
+    },
+    {
+      "name": "methodology_fit",
+      "weight": 0.25,
+      "value": 0.6
+    },
+    {
+      "name": "novelty",
+      "weight": 0.2,
+      "value": 0.85
+    },
+    {
+      "name": "experiment_coverage",
+      "weight": 0.2,
+      "value": 0.75
+    }
+  ],
+  "markdown": "",
+  "model": "deepseek-v4-flash",
+  "generated_at": "2026-07-06T06:50:49Z"
+}

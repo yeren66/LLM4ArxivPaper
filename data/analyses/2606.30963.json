@@ -1,0 +1,186 @@
+{
+  "arxiv_id": "2606.30963",
+  "topic": "LLM for Code Generation",
+  "topic_label": "LLM for Code Generation",
+  "title": {
+    "en": "Loc2Repair: A Framework for Evaluating the Impact of File-Level Issue Localization in Repo-Level LLM Repair",
+    "zh": "Loc2Repair: 一个评估文件级问题定位在仓库级LLM修复中影响的框架"
+  },
+  "authors": [
+    "Mohammad Nour Al Awad",
+    "Sergey Ivanov"
+  ],
+  "affiliations": [],
+  "categories": [
+    "cs.SE",
+    "cs.AI"
+  ],
+  "published": "2026-06-29T22:44:23",
+  "updated": "2026-06-29T22:44:23",
+  "abstract": "Repository-grounded automated repair is often reported as a single end-to-end capability, which hides distinct failure modes such as poor file targeting, incorrect patch synthesis, and failed iterative debugging. We present Loc2Repair, a modular evaluation framework for controlled analysis of repository-grounded repair pipelines, and use it to isolate file-level issue localization as an upstream variable. Loc2Repair decouples localization and repair under a shared runtime, artifact schema, and evaluation harness, allowing researchers to combine different localization models and repair backbones under matched conditions. Using three repair backbones on SWE-bench Verified, we compare baseline repair without explicit localization, repair guided by predicted localization from two localizers, and repair guided by gold modified-file sets. Explicit localization consistently improves resolved rate across all backbones: pooled performance increases from 44.7% for baseline repair to 48.9% and 49.1% with predicted localization, and to 52.4% with gold localization. Localization also reduces mean elapsed time overall: in pooled paired analysis, mean elapsed time decreases by 100.94 s and 52.25 s for the two predicted-localization settings, and by 154.45 s with gold guidance, although token effects remain heterogeneous across models. Overall, Loc2Repair shows file-level localization is a consistent repair lever, improving effectiveness and mean latency in pooled analysis, while gold-guided failures expose headroom beyond localization.",
+  "arxiv_url": "https://arxiv.org/abs/2606.30963",
+  "pdf_url": "https://arxiv.org/pdf/2606.30963.pdf",
+  "comment": "To appear in the Proceedings of the Generative Code Intelligence Workshop (GeCoIn 2026), co-located with the 35th International Joint Conference on Artificial Intelligence (IJCAI-ECAI 2026), Bremen, Germany, August 15--17, 2026",
+  "relevance": {
+    "en": "Loc2Repair isolates file-level localization as an independent variable in repository-level repair, enabling stage-attributed evaluation that goes beyond end-to-end pass@k; its framework directly supports your interest in designing post-training reward signals by making repair success a targetable signal for improving localization.",
+    "zh": "Loc2Repair将文件级定位作为仓库级修复中的一个独立变量，实现了超越端到端pass@k的分阶段归因评估；其框架通过使修复成功成为改进定位的可优化信号，直接支持了您在设计后训练奖励信号方面的兴趣。"
+  },
+  "figures": [],
+  "figure": null,
+  "brief_summary": {
+    "en": "Automated repository-level repair is often treated as a monolithic capability, which conflates failures in file targeting, patch synthesis, and iterative debugging. To isolate these stages, Loc2Repair introduces a modular evaluation framework that decouples file-level issue localization from repair under a shared runtime and evaluation harness. This design treats localization as an explicit intervention, allowing researchers to measure its isolated impact on downstream repair effectiveness and efficiency.\n\nUsing three repair backbones on SWE-bench Verified, the framework compares repair with no localization, predicted localization from two lightweight models, and oracle gold file sets. Explicit localization consistently improves resolved rates: pooled performance rises from 44.7% to 48.9–49.1% with predicted localization and 52.4% with gold files, while also reducing mean elapsed time. Still, even perfect file targeting leaves room for improvement in patch generation and debugging, exposing headroom beyond localization that end-to-end reporting would hide. These insights highlight the value of stage-aware evaluation and suggest that post-training techniques like reinforcement learning could directly optimize localization using repair success as a reward.",
+    "zh": "自动化仓库级修复通常被视为一个单一的整体能力，这混淆了文件定位、补丁合成和迭代调试中的失败。为了分离这些阶段，Loc2Repair引入了一个模块化评估框架，在共享运行时和评估工具下将文件级问题定位与修复解耦。该设计将定位视为一种显式的干预，允许研究人员测量其对下游修复有效性和效率的孤立影响。\n\n在SWE-bench Verified上使用三个修复主干，该框架比较了无定位、来自两个轻量级模型的预测定位以及神谕黄金文件集的修复效果。显式定位一致地提高了解决率：汇总性能从44.7%提升到预测定位的48.9–49.1%和黄金文件的52.4%，同时平均耗时也减少了。尽管如此，即使完美的文件定位也为补丁生成和调试留下了改进空间，暴露出了端到端报告会隐藏的超出现有定位的余量。这些见解强调了分阶段评估的价值，并表明强化学习等后训练技术可以直接以修复成功作为奖励来优化定位。"
+  },
+  "core_summary": {
+    "problem": {
+      "en": "Repository-grounded automated repair is typically evaluated as a monolithic end-to-end capability, which conflates distinct failure modes: poor file targeting, incorrect patch synthesis, and failure during iterative debugging. Prior work either focuses on localization in isolation or integrates localization and repair into a single pipeline, making it impossible to attribute end-to-end outcomes to specific stages. Without a mechanism to isolate the impact of file-level issue localization, researchers and practitioners cannot determine whether a repair failure stems from searching the wrong files, generating an incorrect patch, or failing to validate and iterate. This lack of attribution hinders progress in building modular, debuggable repair agents. The practical gap is the absence of a reusable framework that decouples localization and repair under controlled conditions, allowing systematic measurement of how changes in file targeting affect downstream repair effectiveness and efficiency.",
+      "zh": "基于仓库的自动化修复通常被评估为单一的整体端到端能力，这混淆了不同的失败模式：文件定位不佳、补丁合成错误以及迭代调试失败。先前的工作要么孤立地关注定位，要么将定位和修复整合到单个流程中，使得无法将端到端结果归因于特定阶段。如果没有机制来隔离文件级问题定位的影响，研究人员和实践者无法确定修复失败是由于搜索了错误的文件、生成了错误的补丁，还是未能验证和迭代。这种归因的缺乏阻碍了构建模块化、可调试的修复智能体的进展。实际差距在于缺乏一个在受控条件下解耦定位和修复的可重用框架，允许系统地测量文件定位的变化如何影响下游修复的有效性和效率。"
+    },
+    "solution": {
+      "en": "Loc2Repair is a modular evaluation framework that decouples file-level issue localization from repository-grounded repair under a shared runtime, artifact schema, and evaluation harness. The key insight is to treat localization as an explicit intervention variable: by holding the repair backbone fixed and varying only the localization input, the framework enables controlled, attributable comparisons. Unlike prior work that reports end-to-end performance, Loc2Repair introduces stage-aware analysis, allowing researchers to plug in different localizers and repair backbones, run identical protocols, and quantify the isolated contribution of file targeting. The framework's architecture separates localization (read-only file prediction) and repair (editing and validation) into swappable stages, with structured artifact storage for cross-combination analysis. The main contribution is not a new repair system but an evaluation methodology that reveals how much file-level localization improves or degrades downstream repair, using both predicted and oracle (gold) localization as calibrated reference points.",
+      "zh": "Loc2Repair是一个模块化评估框架，在共享运行时、工件模式和评估工具下将文件级问题定位与基于仓库的修复解耦。关键见解是将定位视为一个显式的干预变量：通过固定修复主干并仅改变定位输入，该框架实现了可控的、可归因的比较。与先前报告端到端性能的工作不同，Loc2Repair引入了分阶段分析，允许研究人员插入不同的定位器和修复主干，运行相同的协议，并量化文件定位的孤立贡献。该框架的架构将定位（只读文件预测）和修复（编辑和验证）分离为可交换的阶段，并具有结构化的工件存储用于交叉组合分析。主要贡献不是一个新修复系统，而是一种评估方法，它揭示了文件级定位在多大程度上改善或降低了下游修复，使用预测定位和神谕（黄金）定位作为校准参考点。"
+    },
+    "methodology": {
+      "en": "Loc2Repair is built around a mini-SWE-agent scaffold that executes repository interaction loops on SWE-bench Verified instances. Each task starts from a repository snapshot and issue description. The framework decouples the pipeline into two stages: a localization stage that is prompt-constrained to only inspect files and return a structured list of predicted files, and a repair stage that uses the full agent capabilities (inspect, edit, execute, test, submit patch). Artifacts from each stage (localization output, repair outcome, telemetry) are stored in a shared schema. For this study, four experimental arms are defined per repair backbone: baseline (no explicit localization), Pred-Qwen4B (localization hints from a Qwen 4B model), Pred-Gemma4E4B (localization hints from a Gemma 4E4B model), and Gold (oracle file sets from benchmark references). Three repair backbones are used: Gemma4, Qwen3.5, and GLM-4.7 (as inferred from Figure 1). Localization models are lightweight (4B parameters) and produce file lists that are injected into the repair agent's context. Evaluation is performed on the SWE-bench Verified subset of 345 instances for which gold modified-file sets exist. The primary metric is resolved rate; secondary metrics are mean elapsed time and token usage. Pooled analysis across backbones combines paired differences to estimate aggregate effects. The framework design allows future extensions with additional localizers and repair models under identical conditions.",
+      "zh": "Loc2Repair围绕一个mini-SWE-agent框架构建，该框架在SWE-bench Verified实例上执行仓库交互循环。每个任务从仓库快照和问题描述开始。该框架将流程解耦为两个阶段：一个定位阶段，受提示约束仅检查文件并返回结构化的预测文件列表；一个修复阶段，使用完整的智能体能力（检查、编辑、执行、测试、提交补丁）。每个阶段的工件（定位输出、修复结果、遥测）存储在共享模式中。在本研究中，每个修复主干定义了四个实验组：基线（无显式定位）、Pred-Qwen4B（来自Qwen 4B模型的定位提示）、Pred-Gemma4E4B（来自Gemma 4E4B模型的定位提示）和Gold（来自基准参考的神谕文件集）。使用了三个修复主干：Gemma4、Qwen3.5和GLM-4.7（从图1推断）。定位模型是轻量级的（4B参数），并生成注入到修复智能体上下文中的文件列表。评估在SWE-bench Verified的子集上进行，该子集包含345个存在黄金修改文件集的实例。主要指标是解决率；次要指标是平均耗时和令牌使用。跨主干汇总分析结合了配对差异来估计总体效果。该框架设计允许未来在相同条件下扩展额外的定位器和修复模型。"
+    },
+    "experiments": {
+      "en": "The experiments are conducted on a subset of SWE-bench Verified consisting of 345 instances where gold modified-file sets are available. Three repair backbones (Gemma4, Qwen3.5, GLM-4.7) are each evaluated in four conditions: baseline (no localization), Pred-Qwen4B, Pred-Gemma4E4B, and Gold. Pooled results across all backbones show that explicit localization consistently improves resolved rate: baseline achieves 44.7%, Pred-Qwen4B reaches 48.9%, Pred-Gemma4E4B reaches 49.1%, and Gold achieves 52.4%. Localization also reduces mean elapsed time in pooled paired analysis: by 100.94 s for Pred-Qwen4B, 52.25 s for Pred-Gemma4E4B, and 154.45 s for Gold, compared to baseline. Token usage effects are heterogeneous across models; for example, GLM-4.7 sees increased elapsed time under predicted localization despite effectiveness gains. Figure 1 visualizes the effectiveness–latency trade-off per backbone, showing that Gemma4 and Qwen3.5 benefit in both metrics, while GLM-4.7's latency increases. No explicit ablation study is reported beyond the cross-condition comparisons, which themselves serve as a controlled experiment isolating localization quality.",
+      "zh": "实验在SWE-bench Verified的一个子集上进行，该子集包含345个存在黄金修改文件集的实例。三个修复主干（Gemma4、Qwen3.5、GLM-4.7）分别在四个条件下评估：基线（无定位）、Pred-Qwen4B、Pred-Gemma4E4B和Gold。所有主干的汇总结果显示，显式定位一致地提高了解决率：基线达到44.7%，Pred-Qwen4B达到48.9%，Pred-Gemma4E4B达到49.1%，Gold达到52.4%。在汇总配对分析中，定位还减少了平均耗时：与基线相比，Pred-Qwen4B减少了100.94秒，Pred-Gemma4E4B减少了52.25秒，Gold减少了154.45秒。令牌使用效果在不同模型中存在异质性；例如，GLM-4.7在预测定位下尽管有效性提升，但耗时增加。图1可视化了每个主干的有效性-延迟权衡，显示Gemma4和Qwen3.5在两个指标上都受益，而GLM-4.7的延迟增加。除了作为隔离定位质量的受控实验的跨条件比较外，没有报告明确的消融研究。"
+    },
+    "conclusion": {
+      "en": "Loc2Repair establishes that file-level issue localization is a consistent and measurable lever for improving repository-grounded repair, with explicit localization boosting resolved rates by 4–5 percentage points and gold localization reaching 52.4%, highlighting significant headroom beyond current models. This decoupled evaluation demonstrates that localization not only enhances success rates but also reduces elapsed time, yet end-to-end reporting alone conceals its contribution. The findings suggest that post-training techniques like reinforcement learning could directly optimize localization using repair success as a reward, potentially closing the gap between predicted and ideal file targeting. However, even perfect localization leaves failures from incorrect patch synthesis and iterative debugging, underscoring the need for stage-aware evaluation and improvements in repair backbones alongside localization.",
+      "zh": "Loc2Repair证实，文件级问题定位是改善基于仓库修复的一致且可衡量的手段，显式定位将解决率提高了4-5个百分点，黄金定位达到52.4%，凸显了超越当前模型的显著余量。这种解耦评估表明，定位不仅提高了成功率，还减少了耗时，但仅端到端报告隐藏了其贡献。这些发现表明，像强化学习这样的后训练技术可以直接以修复成功作为奖励来优化定位，可能缩小预测定位与理想文件定位之间的差距。然而，即使完美的定位也会留下来自错误补丁合成和迭代调试的失败，这强调了在定位之外还需要分阶段评估和改进修复主干。"
+    }
+  },
+  "tasks": [
+    {
+      "question": {
+        "en": "How does Loc2Repair's decoupled evaluation framework enable a controlled analysis of file-level localization as an upstream variable in repo-level repair, and what specific insights does it provide about the contribution of localization to overall repair success?",
+        "zh": "Loc2Repair的解耦评估框架如何实现将文件级定位作为仓库级修复中的上游变量进行受控分析，并且它提供了哪些关于定位对整体修复成功贡献的具体见解？"
+      },
+      "reason": {
+        "en": "This question directly targets the user's interest in evaluation methodologies that go beyond pass@k, by probing how the framework isolates component contributions and yields nuanced insights about repair pipelines.",
+        "zh": "这个问题直接针对用户对超越pass@k的评估方法的兴趣，通过探究框架如何隔离组件贡献并产生关于修复流程的细致见解。"
+      }
+    },
+    {
+      "question": {
+        "en": "Given that Loc2Repair treats localization as an intervention and measures its impact on repair outcomes, what lessons does this offer for post-training techniques (e.g., RL with execution feedback) that might learn to improve localization or repair directly?",
+        "zh": "既然Loc2Repair将定位视为一种干预措施并衡量其对修复结果的影响，这对于可能直接学习改进定位或修复的后训练技术（例如，带有执行反馈的强化学习）提供了哪些启示？"
+      },
+      "reason": {
+        "en": "Connects the paper's findings to the user's interest in post-training with execution feedback, exploring how explicit localization improvements could be learned or leveraged in such methods.",
+        "zh": "将论文的发现与用户对带有执行反馈的后训练的兴趣联系起来，探讨显式定位改进如何在这样的方法中被学习或利用。"
+      }
+    },
+    {
+      "question": {
+        "en": "The paper notes that gold localization does not guarantee repair success, indicating headroom beyond localization. What are the main failure modes in the repair backbone after correct localization, and how can future work address these through better integration with execution feedback or long-context understanding?",
+        "zh": "论文指出，黄金定位并不能保证修复成功，表明存在超出定位的余量。在正确定位之后，修复主干的主要失败模式是什么，未来的工作如何通过与执行反馈或长上下文理解的更好集成来解决这些问题？"
+      },
+      "reason": {
+        "en": "Aligns with the user's focus on real-world tasks and post-training, by examining residual errors beyond file targeting and suggesting avenues for improvement via execution feedback.",
+        "zh": "与用户对现实世界任务和后训练的关注一致，通过检查文件定位之外的残留错误，并提出通过执行反馈进行改进的途径。"
+      }
+    },
+    {
+      "question": {
+        "en": "How does the SWE-bench Verified benchmark, used in Loc2Repair, capture real-world repository-level challenges, and what additional evaluation dimensions (e.g., compilation, test pass rate, human-in-the-loop criteria) could be incorporated to better assess post-training methods?",
+        "zh": "Loc2Repair中使用的SWE-bench Verified基准如何捕捉现实世界中的仓库级挑战，并且可以纳入哪些额外的评估维度（例如，编译、测试通过率、人在回路中的标准）来更好地评估后训练方法？"
+      },
+      "reason": {
+        "en": "Directly addresses the user's interest in new evaluation methodologies that measure integration and realism, while also linking to potential improvements for post-training evaluation.",
+        "zh": "直接回应用户对衡量集成度和真实性的新评估方法的兴趣，同时也联系到后训练评估的潜在改进。"
+      }
+    }
+  ],
+  "findings": [
+    {
+      "question": {
+        "en": "How does Loc2Repair's decoupled evaluation framework enable a controlled analysis of file-level localization as an upstream variable in repo-level repair, and what specific insights does it provide about the contribution of localization to overall repair success?",
+        "zh": "Loc2Repair的解耦评估框架如何实现将文件级定位作为仓库级修复中的上游变量进行受控分析，并且它提供了哪些关于定位对整体修复成功贡献的具体见解？"
+      },
+      "reason": {
+        "en": "This question directly targets the user's interest in evaluation methodologies that go beyond pass@k, by probing how the framework isolates component contributions and yields nuanced insights about repair pipelines.",
+        "zh": "这个问题直接针对用户对超越pass@k的评估方法的兴趣，通过探究框架如何隔离组件贡献并产生关于修复流程的细致见解。"
+      },
+      "answer": {
+        "en": "Loc2Repair's decoupled evaluation framework enables controlled analysis by decoupling localization and repair under a shared runtime, artifact schema, and evaluation harness, allowing researchers to combine different localization models and repair backbones under matched conditions. This isolates file-level localization as an upstream variable, as the framework compares conditions: baseline repair without explicit localization, repair guided by predicted localization from two localizers, and repair guided by gold modified-file sets. Specific insights from the study include: explicit localization consistently improves resolved rate across all backbones, with pooled performance increasing from 44.7% for baseline repair to 48.9% and 49.1% with predicted localization, and to 52.4% with gold localization. Additionally, localization reduces mean elapsed time overall: in pooled paired analysis, mean elapsed time decreases by 100.94s and 52.25s for the two predicted-localization settings, and by 154.45s with gold guidance, although token effects remain heterogeneous across models. Gold-guided failures also expose headroom beyond localization, highlighting that end-to-end reporting alone would hide these stage-specific insights.",
+        "zh": "Loc2Repair的解耦评估框架通过在共享运行时、工件模式和评估工具下将定位和修复解耦，实现了受控分析，允许研究人员在匹配条件下组合不同的定位模型和修复主干。这隔离了文件级定位作为上游变量，因为该框架比较了多种条件：无显式定位的基线修复、由两个定位器的预测定位指导的修复，以及由黄金修改文件集指导的修复。研究的具体见解包括：显式定位一致地提高了所有主干的解决率，汇总性能从基线修复的44.7%上升到预测定位的48.9%和49.1%，以及黄金定位的52.4%。此外，定位总体上减少了平均耗时：在汇总配对分析中，两个预测定位设置的平均耗时分别减少了100.94秒和52.25秒，黄金指导减少了154.45秒，尽管不同模型的令牌效果仍然存在异质性。黄金指导下的失败也暴露了超出现有定位的余量，强调了仅靠端到端报告会隐藏这些分阶段见解。"
+      },
+      "confidence": 1.0
+    },
+    {
+      "question": {
+        "en": "Given that Loc2Repair treats localization as an intervention and measures its impact on repair outcomes, what lessons does this offer for post-training techniques (e.g., RL with execution feedback) that might learn to improve localization or repair directly?",
+        "zh": "既然Loc2Repair将定位视为一种干预措施并衡量其对修复结果的影响，这对于可能直接学习改进定位或修复的后训练技术（例如，带有执行反馈的强化学习）提供了哪些启示？"
+      },
+      "reason": {
+        "en": "Connects the paper's findings to the user's interest in post-training with execution feedback, exploring how explicit localization improvements could be learned or leveraged in such methods.",
+        "zh": "将论文的发现与用户对带有执行反馈的后训练的兴趣联系起来，探讨显式定位改进如何在这样的方法中被学习或利用。"
+      },
+      "answer": {
+        "en": "Loc2Repair demonstrates that file-level localization is a consistent lever for improving repair outcomes: 'explicit localization consistently improves resolved rate across all backbones' and 'localization also reduces mean elapsed time overall.' This suggests that post-training techniques like RL with execution feedback could directly optimize localization quality by using repair success as a reward signal, since localization gains translate to better repair without changing the repair backbone. The finding that 'gold-localized repair provides an oracle-style intervention, estimating remaining headroom under substantially stronger file targeting' indicates significant untapped potential, meaning RL could learn to close the gap between predicted and gold localization. Furthermore, the framework's stage-aware analysis 'exposes headroom that end-to-end reporting alone would hide,' implying that RL can be focused on the localization stage using overall repair feedback, potentially improving both effectiveness and efficiency.",
+        "zh": "Loc2Repair表明，文件级定位是改善修复结果的一致杠杆：‘显式定位一致地提高了所有主干的解决率’和‘定位总体上减少了平均耗时’。这表明，像带有执行反馈的RL这样的后训练技术可以直接通过以修复成功作为奖励信号来优化定位质量，因为定位增益转化为更好的修复，而无需改变修复主干。‘黄金定位修复提供了一种神谕式的干预，估计了在更强文件定位下的剩余余量’这一发现表明存在巨大的未开发潜力，意味着RL可以学习缩小预测定位与黄金定位之间的差距。此外，该框架的分阶段分析‘暴露了仅靠端到端报告会隐藏的余量’，暗示RL可以专注于定位阶段，使用整体修复反馈，有可能同时提高有效性和效率。"
+      },
+      "confidence": 0.8
+    },
+    {
+      "question": {
+        "en": "The paper notes that gold localization does not guarantee repair success, indicating headroom beyond localization. What are the main failure modes in the repair backbone after correct localization, and how can future work address these through better integration with execution feedback or long-context understanding?",
+        "zh": "论文指出，黄金定位并不能保证修复成功，表明存在超出定位的余量。在正确定位之后，修复主干的主要失败模式是什么，未来的工作如何通过与执行反馈或长上下文理解的更好集成来解决这些问题？"
+      },
+      "reason": {
+        "en": "Aligns with the user's focus on real-world tasks and post-training, by examining residual errors beyond file targeting and suggesting avenues for improvement via execution feedback.",
+        "zh": "与用户对现实世界任务和后训练的关注一致，通过检查文件定位之外的残留错误，并提出通过执行反馈进行改进的途径。"
+      },
+      "answer": {
+        "en": "The paper identifies three failure modes in repair pipelines: poor file targeting, incorrect patch synthesis, and failed iterative debugging. Since gold localization eliminates file targeting errors, the remaining modes after correct localization are incorrect patch synthesis and failed iterative debugging, as the paper notes that agents can 'synthesize an incorrect patch after reaching the right files, or fail to recover through iterative validation and debugging.' The paper does not explicitly propose future work using execution feedback or long-context understanding, but it provides the Loc2Repair framework to enable stage-aware analysis that exposes headroom beyond localization. This implies that future work could use the framework to systematically vary repair backbones or incorporate execution feedback to address these residual failure modes.",
+        "zh": "论文识别了修复流程中的三种失败模式：文件定位不佳、补丁合成错误和迭代调试失败。由于黄金定位消除了文件定位错误，正确定位后剩余的模式是补丁合成错误和迭代调试失败，正如论文所指出的，智能体可以‘在到达正确文件后合成错误的补丁，或者无法通过迭代验证和调试恢复。’论文没有明确提出使用执行反馈或长上下文理解的未来工作，但它提供了Loc2Repair框架，以实现暴露超出定位余量的分阶段分析。这意味着未来的工作可以使用该框架系统地改变修复主干或纳入执行反馈来解决这些残留的失败模式。"
+      },
+      "confidence": 0.7
+    },
+    {
+      "question": {
+        "en": "How does the SWE-bench Verified benchmark, used in Loc2Repair, capture real-world repository-level challenges, and what additional evaluation dimensions (e.g., compilation, test pass rate, human-in-the-loop criteria) could be incorporated to better assess post-training methods?",
+        "zh": "Loc2Repair中使用的SWE-bench Verified基准如何捕捉现实世界中的仓库级挑战，并且可以纳入哪些额外的评估维度（例如，编译、测试通过率、人在回路中的标准）来更好地评估后训练方法？"
+      },
+      "reason": {
+        "en": "Directly addresses the user's interest in new evaluation methodologies that measure integration and realism, while also linking to potential improvements for post-training evaluation.",
+        "zh": "直接回应用户对衡量集成度和真实性的新评估方法的兴趣，同时也联系到后训练评估的潜在改进。"
+      },
+      "answer": {
+        "en": "The SWE-bench Verified benchmark captures real-world repository-level challenges by providing full repository snapshots and issue descriptions that require agents to \"inspect files, execute commands, run tests, and propose patches for realistic issues\" (Section 1). Loc2Repair leverages these tasks to conduct stage-aware evaluation, decoupling localization and repair under a shared runtime and artifact schema. The paper argues that \"end-to-end reporting alone is too coarse for scientific diagnosis\" (Section 1), implying that additional evaluation dimensions—beyond the resolved rate—such as stage-specific success (localization accuracy, repair correctness conditioned on localization), operational costs (runtime, token usage), and failure mode decomposition could better assess post-training methods. While the paper does not explicitly propose compilation or human-in-the-loop criteria, its modular framework demonstrates the value of granular attribution, which aligns with the call for more nuanced evaluation of integration and realism.",
+        "zh": "SWE-bench Verified基准通过提供完整的仓库快照和问题描述来捕捉现实世界中的仓库级挑战，这些描述要求智能体“检查文件、执行命令、运行测试，并为现实问题提出补丁”（第1节）。Loc2Repair利用这些任务进行分阶段评估，在共享运行时和工件模式下解耦定位和修复。论文认为“仅靠端到端报告对于科学诊断来说过于粗糙”（第1节），这意味着额外的评估维度——超出解决率——例如分阶段成功（定位准确率、基于定位的修复正确性）、运营成本（运行时间、令牌使用）和失败模式分解，可以更好地评估后训练方法。虽然论文没有明确提出编译或人在回路中的标准，但其模块化框架展示了细粒度归因的价值，这与对集成度和真实性进行更细致评估的呼吁一致。"
+      },
+      "confidence": 0.7
+    }
+  ],
+  "score": 73.75,
+  "score_dimensions": [
+    {
+      "name": "topic_alignment",
+      "weight": 0.35,
+      "value": 0.65
+    },
+    {
+      "name": "methodology_fit",
+      "weight": 0.25,
+      "value": 0.8
+    },
+    {
+      "name": "novelty",
+      "weight": 0.2,
+      "value": 0.7
+    },
+    {
+      "name": "experiment_coverage",
+      "weight": 0.2,
+      "value": 0.85
+    }
+  ],
+  "markdown": "",
+  "model": "deepseek-v4-flash",
+  "generated_at": "2026-07-06T07:03:42Z"
+}
