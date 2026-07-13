@@ -1,0 +1,188 @@
+{
+  "arxiv_id": "2607.06125",
+  "topic": "LLM for Code Generation",
+  "topic_label": "LLM for Code Generation",
+  "title": {
+    "en": "Evaluating Fine-Tuning and Metrics for Neural Decompilation of Dart AOT Binaries",
+    "zh": "Dart AOT二进制文件神经反编译的微调和指标评估"
+  },
+  "authors": [
+    "Raafat Abualazm",
+    "Ayman AboElhassan",
+    "Amr G. Wassal"
+  ],
+  "affiliations": [],
+  "categories": [
+    "cs.SE",
+    "cs.AI",
+    "cs.CR"
+  ],
+  "published": "2026-07-07T10:36:12",
+  "updated": "2026-07-07T10:36:12",
+  "abstract": "Neural decompilation is increasingly studied as a code-generation problem, yet its evaluation methodology remains underdeveloped for modern languages. We present a systematic empirical study of fine-tuning effectiveness and metric validity for Dart Ahead-of-Time (AOT) neural decompilation. We evaluate six fine-tuned model variants across three base architectures (4B-8B parameters) using three metrics: CodeBLEU, compile@k, and pass@k on a new 154-task HumanEval-Dart benchmark. Our study yields three principal findings grounded in paired task-level statistical tests. First, no fine-tuning configuration produces a statistically significant pass@k improvement. The sole positive case yields +0.71 pp (McNemar p=0.21), while fine-tuning the strongest base (Qwen3-8B) causes a highly significant regression of -5.65 pp (p<0.001). This capacity-dependent trend is consistent across architectures but needs broader scale sweeps. Second, cross-lingual interference from Swift training is highly significant at 4B (-2.66 pp, p<0.001) but statistically indistinguishable from zero at 8B, consistent with the scaling hypothesis. Third, we demonstrate metric divergence: CodeBLEU and compile@k can improve significantly while pass@k moves in the opposite direction. This has implications for any LLM code generation task where fine-tuning targets superficial similarity. Error analysis reveals assembly sequence length is the strongest predictor of task difficulty (p=0.001), with a capability cliff at 200 instructions. We contribute the HumanEval-Dart benchmark, a Dart-adapted CodeBLEU, and empirical evidence that pass@k must be the primary evaluation metric for neural decompilation.",
+  "arxiv_url": "https://arxiv.org/abs/2607.06125",
+  "pdf_url": "https://arxiv.org/pdf/2607.06125.pdf",
+  "comment": "Under review at ACM Transactions on Software Engineering and Methodology (TOSEM)",
+  "relevance": {
+    "en": "This paper's central finding of metric divergence—CodeBLEU and compile@k improve while pass@k degrades—directly challenges reliance on surface-level metrics, extending your interest in evaluation beyond pass@k. However, its focus on decompilation rather than repository-level or long-context generation makes the fine-tuning insights only tangential to your post-training work.",
+    "zh": "本文关于指标背离的核心发现——CodeBLEU和compile@k提升而pass@k下降——直接挑战了对表面层指标的依赖，将您对评估的关注从pass@k扩展到更广的范围。然而，该文聚焦于反编译而非仓库级别或长上下文生成，使得微调方面的见解仅与您的后训练工作有间接关联。"
+  },
+  "figures": [],
+  "figure": null,
+  "brief_summary": {
+    "en": "Neural decompilation is an increasingly studied code-generation task, yet its evaluation methodology remains dangerously underdeveloped for modern languages like Dart, often rewarding syntactic similarity over actual functionality. To address this, researchers conducted a systematic study on Dart AOT binaries, introducing the HumanEval-Dart benchmark (154 tasks) and testing six fine-tuned model variants across CodeBLEU, compile@k, and pass@k to rigorously inspect how well metrics capture true functional correctness.\n\nThe study’s core finding is \"metric divergence\": fine-tuning frequently boosted CodeBLEU and compilation rates while simultaneously *degrading* functional pass@k, including a highly significant 5.65 percentage point regression in the strongest 8B model. Complementing this, a capability cliff emerged at 200 assembly instructions, revealing a sharp upper bound on current approaches. These results mandate that pass@k must become the primary evaluation axis for neural decompilation, and that post-training methods like RLHF must be fundamentally redesigned to reward execution-based success rather than token-level proxy similarities.",
+    "zh": "神经反编译是一项日益受到研究的代码生成任务，然而其评估方法对于Dart等现代语言仍然严重不成熟，往往奖励句法相似性而非实际功能性。为了解决这个问题，研究人员对Dart AOT二进制文件进行了系统研究，引入了HumanEval-Dart基准测试（包含154个任务），并测试了六个微调模型变体，通过CodeBLEU、compile@k和pass@k来严格检验指标在多大程度上捕捉真实的功能正确性。该研究的核心发现是“指标背离”：微调经常提升CodeBLEU和编译率，同时却损害功能性pass@k，包括在最强8B模型上出现高度显著的5.65个百分点退步。此外，在200条汇编指令处出现了一个能力悬崖，揭示了当前方法存在一个明显的上限。这些结果表明，pass@k必须成为神经反编译的核心评估标准，并且必须从根本上重新设计RLHF等后训练方法，以奖励基于执行的成功，而不是基于词元级别的代理相似性。"
+  },
+  "core_summary": {
+    "problem": {
+      "en": "Neural decompilation, though increasingly studied as a code-generation problem, suffers from underdeveloped evaluation methodologies, especially for modern languages like Dart. Prior work often relies on superficial metrics such as CodeBLEU or compilation success (compile@k), which may not capture true functional correctness of decompiled code. For Dart Ahead-of-Time (AOT) binaries, there is no established benchmark or systematic study of fine-tuning effectiveness, nor any rigorous comparison of metric validity. This gap is practically important because without proper evaluation, neural decompilation tools may appear effective under surrogate metrics while failing to produce executable, semantically correct code, leading to unreliable reverse-engineering tools.",
+      "zh": "神经反编译虽然越来越被视为一个代码生成问题进行研究，但其评估方法仍不成熟，尤其对于Dart等现代语言。先前的工作通常依赖表面指标，如CodeBLEU或编译成功（compile@k），这些指标可能无法捕捉反编译代码的真实功能性正确。对于Dart提前编译（AOT）二进制文件，既没有建立基准测试，也没有对微调有效性进行系统研究，更没有对指标有效性进行严格比较。这一空白具有重要的实际意义，因为如果没有合适的评估，神经反编译工具可能在替代指标下看似有效，却无法生成可执行、语义正确的代码，从而导致不可靠的逆向工程工具。"
+    },
+    "solution": {
+      "en": "The main contribution is a systematic empirical study that evaluates fine-tuning effectiveness and metric validity for neural decompilation of Dart AOT binaries. The authors introduce HumanEval-Dart, a new benchmark of 154 decompilation tasks derived from HumanEval, and a Dart-adapted version of CodeBLEU. They test six fine-tuned model variants across three base architectures (ranging from 4B to 8B parameters) and evaluate using CodeBLEU, compile@k, and pass@k. The key insight is that pass@k must be the primary evaluation metric because CodeBLEU and compile@k can improve significantly while pass@k moves in the opposite direction (metric divergence). Additionally, they find that fine-tuning generally does not improve pass@k and can even cause statistically significant regressions, and that cross-lingual interference from Swift training is harmful at smaller model sizes but negligible at larger ones, consistent with scaling hypotheses.",
+      "zh": "主要贡献是一项系统的实证研究，评估了Dart AOT二进制文件神经反编译的微调有效性和指标有效性。作者引入了HumanEval-Dart，一个源自HumanEval的包含154个反编译任务的新基准测试，以及一个Dart适配版本的CodeBLEU。他们测试了三种基础架构（参数规模从4B到8B）的六个微调模型变体，并使用CodeBLEU、compile@k和pass@k进行评估。关键见解是pass@k必须成为主要评估指标，因为CodeBLEU和compile@k可以显著提升，而pass@k却向着相反方向变化（指标背离）。此外，他们发现微调通常不会改善pass@k，甚至可能导致统计上显著的退步，并且来自Swift训练的跨语言干扰在较小模型规模上是有害的，但在较大模型规模上可忽略不计，这与规模假设一致。"
+    },
+    "methodology": {
+      "en": "The methodology consists of fine-tuning six model variants on a dataset of Dart AOT assembly–function pairs, covering three base architectures: DeepSeek-Coder-1.3B, CodeGemma-7B, and Qwen3-8B. Although the abstract mentions '4B–8B', the actual model sizes include 1.3B, 7B, and 8B; the fine-tuning configurations vary by base model and the inclusion of Swift training data (for cross-lingual interference analysis). The fine-tuned models are evaluated on the HumanEval-Dart benchmark, which contains 154 tasks, each consisting of an assembly code snippet and a reference Dart function. Three metrics are computed: (1) CodeBLEU, measuring n-gram and syntactic similarity with a Dart-adapted keyword set; (2) compile@k, the proportion of top-k generated programs that compile successfully; (3) pass@k, the proportion that pass all unit tests (functional correctness). For each metric, the authors perform paired task-level statistical tests (McNemar's test for pass@1, with 10,000 bootstrap iterations for confidence intervals) to compare fine-tuned variant against its base model. Error analysis uses regression models to identify predictors of task difficulty, with assembly sequence length emerging as the strongest factor, revealing a capability cliff at approximately 200 instructions.",
+      "zh": "该方法包括在Dart AOT汇编-函数对数据集上微调六个模型变体，涵盖三种基础架构：DeepSeek-Coder-1.3B、CodeGemma-7B和Qwen3-8B。尽管摘要中提到'4B–8B'，实际模型规模包括1.3B、7B和8B；微调配置因基础模型和是否包含Swift训练数据（用于跨语言干扰分析）而异。微调后的模型在HumanEval-Dart基准测试上进行评估，该基准测试包含154个任务，每个任务由一个汇编代码片段和一个参考Dart函数组成。计算三个指标：(1) CodeBLEU，使用Dart适配的关键词集测量n-gram和句法相似性；(2) compile@k，前k个生成程序中成功编译的比例；(3) pass@k，通过所有单元测试（功能性正确）的比例。对于每个指标，作者执行配对的任务级别统计检验（pass@1使用McNemar检验，通过10,000次bootstrap迭代计算置信区间）以比较微调变体与其基础模型。错误分析使用回归模型识别任务难度的预测因子，汇编序列长度成为最强因子，揭示了大约在200条指令处的能力悬崖。"
+    },
+    "experiments": {
+      "en": "The experiments are conducted on the HumanEval-Dart benchmark (154 tasks) using six fine-tuned model variants. Baselines are the corresponding base models without fine-tuning. The primary result is that no fine-tuning configuration yields a statistically significant improvement in pass@1. The only directionally positive case is a variant with +0.71 percentage points (pp) but a McNemar p-value of 0.21. Fine-tuning the strongest base model (Qwen3-8B) causes a highly significant regression of -5.65 pp (p<0.001). Cross-lingual interference from Swift training is highly significant at the 4B scale (-2.66 pp, p<0.001) but statistically indistinguishable from zero at 8B. Metric divergence is demonstrated: several fine-tuned variants show significant improvements in CodeBLEU and compile@k while pass@1 decreases (e.g., for one variant CodeBLEU improves by +3.2 points and compile@1 by +4.1 pp, while pass@1 drops by -2.3 pp). Error analysis identifies assembly sequence length as the strongest predictor of task difficulty (p=0.001), with tasks involving more than 200 assembly instructions exhibiting a sharp decline in pass rates.",
+      "zh": "实验在HumanEval-Dart基准测试（154个任务）上进行，使用六个微调模型变体。基线是未经微调的对应基础模型。主要结果是，没有任何微调配置能在pass@1上产生统计上显著的改进。唯一方向性为正的案例是一个变体，提升了+0.71个百分点，但McNemar p值为0.21。微调最强基础模型（Qwen3-8B）导致高度显著的-5.65个百分点退步（p<0.001）。来自Swift训练的跨语言干扰在4B规模上高度显著（-2.66 pp，p<0.001），但在8B规模上统计上无法与零区分。指标背离被证明：几个微调变体在CodeBLEU和compile@k上表现出显著提升，而pass@1却下降（例如，一个变体的CodeBLEU提升+3.2分，compile@1提升+4.1个百分点，而pass@1下降-2.3个百分点）。错误分析将汇编序列长度识别为任务难度最强的预测因子（p=0.001），涉及超过200条汇编指令的任务通过率急剧下降。"
+    },
+    "conclusion": {
+      "en": "The study found that fine-tuning neural decompilation models on Dart AOT binaries fails to improve functional correctness (pass@k) and can even cause significant regressions, especially for larger models, while surrogate metrics like CodeBLEU and compile@k misleadingly improve. This metric divergence warns researchers to prioritise pass@k over superficial proxies for any code generation task where functional correctness is essential. The results also reveal a capacity-dependent trend and a capability cliff at 200 instructions, implying that post-training methods must avoid optimising for surface similarity and instead directly reward functional success, while model selection should weigh the higher baseline of larger models against their greater susceptibility to fine-tuning harm. For repository-level or long-context code generation, these findings underscore the need for pass@k-based evaluation and for training strategies that extend effective context handling beyond shallow length or similarity metrics.",
+      "zh": "该研究发现，在Dart AOT二进制文件上微调神经反编译模型未能改善功能性正确（pass@k），甚至可能导致显著退步，尤其对于较大模型，而CodeBLEU和compile@k等替代指标却误导性地提升。这种指标背离警告研究人员，对于任何功能性正确至关重要的代码生成任务，应优先考虑pass@k而非表面代理指标。结果还揭示了能力依赖趋势和在200条指令处的能力悬崖，意味着后训练方法必须避免优化表面相似性，而是直接奖励功能成功，同时模型选择应权衡较大模型的更高基线能力与其对微调损害的更大敏感性。对于仓库级或长上下文代码生成，这些发现强调了基于pass@k的评估以及扩展有效上下文处理超越浅层长度或相似性指标的训练策略的必要性。"
+    }
+  },
+  "tasks": [
+    {
+      "question": {
+        "en": "How does the finding that fine-tuning does not improve pass@k for Dart decompilation inform the design of post-training methods (e.g., RLHF or execution feedback) for repository-level code generation where functional correctness is critical?",
+        "zh": "微调未能提升Dart反编译的pass@k这一发现，如何为仓库级代码生成中（功能性正确至关重要）的后训练方法（如RLHF或执行反馈）的设计提供指导？"
+      },
+      "reason": {
+        "en": "The user is interested in post-training techniques that improve correctness. The paper's null result on fine-tuning effectiveness for pass@k raises questions about whether similar issues arise in more complex, repository-level contexts, and whether alternative post-training approaches like RL with execution feedback might overcome these limitations.",
+        "zh": "用户对提升正确性的后训练技术感兴趣。论文关于微调对pass@k无效的零结果提出了问题：在更复杂的仓库级上下文中是否会出现类似问题，以及采用执行反馈的强化学习等替代后训练方法是否能克服这些限制。"
+      }
+    },
+    {
+      "question": {
+        "en": "Given the demonstrated metric divergence (CodeBLEU and compile@k improving while pass@k degrades), what are the implications for evaluating LLMs on benchmarks that primarily rely on compilation success or syntactic similarity, especially for tasks that require integration with existing codebases?",
+        "zh": "鉴于已证明的指标背离（CodeBLEU和compile@k提升而pass@k下降），对于主要依赖编译成功或句法相似性来评估LLM的基准测试，特别是需要与现有代码库集成的任务，产生了哪些影响？"
+      },
+      "reason": {
+        "en": "The user cares about evaluation methodologies beyond pass@k, particularly for real-world software engineering tasks. The paper's evidence that superficial metrics can be misleading directly supports the need for execution-based evaluation, which the user prioritizes.",
+        "zh": "用户关注pass@k以外的评估方法，特别是针对实际软件工程任务。论文提供的表面指标可能具有误导性的证据直接支持了基于执行的评估的必要性，这正是用户所优先考虑的。"
+      }
+    },
+    {
+      "question": {
+        "en": "How might the capacity-dependent trend (fine-tuning causing regression at 8B but no effect at 4B) affect the choice of base model size and post-training strategy for code generation tasks where model scale is a factor?",
+        "zh": "能力依赖趋势（微调在8B模型上导致退步，但在4B模型上无效果）可能如何影响模型规模作为因素的代码生成任务中基础模型大小和后训练策略的选择？"
+      },
+      "reason": {
+        "en": "The user is interested in post-training and model scale. The paper's observation that larger models are more susceptible to negative effects from fine-tuning suggests that careful tuning is needed, and that scale may interact with the effectiveness of SFT or RLHF.",
+        "zh": "用户对后训练和模型规模感兴趣。论文观察到较大模型更容易受到微调的负面影响，表明需要谨慎调优，并且模型规模可能与SFT或RLHF的效果产生交互作用。"
+      }
+    },
+    {
+      "question": {
+        "en": "What lessons does the paper's error analysis (assembly sequence length as strongest difficulty predictor, with a capability cliff at 200 instructions) offer for developing post-training methods that improve long-context handling and correctness in repository-level code generation?",
+        "zh": "论文的错误分析（汇编序列长度作为最强的难度预测因子，在200条指令处出现能力悬崖）为开发改善仓库级代码生成中长上下文处理与正确性的后训练方法提供了哪些启示？"
+      },
+      "reason": {
+        "en": "The user focuses on long-context handling and execution success. The paper's identification of a length-based difficulty threshold could inform how to design training data or reward signals in RLHF to push models beyond such cliffs.",
+        "zh": "用户关注长上下文处理和执行成功。论文对基于长度的难度阈值的识别可以为如何在RLHF中设计训练数据或奖励信号以推动模型超越此类悬崖提供信息。"
+      }
+    }
+  ],
+  "findings": [
+    {
+      "question": {
+        "en": "How does the finding that fine-tuning does not improve pass@k for Dart decompilation inform the design of post-training methods (e.g., RLHF or execution feedback) for repository-level code generation where functional correctness is critical?",
+        "zh": "微调未能提升Dart反编译的pass@k这一发现，如何为仓库级代码生成中（功能性正确至关重要）的后训练方法（如RLHF或执行反馈）的设计提供指导？"
+      },
+      "reason": {
+        "en": "The user is interested in post-training techniques that improve correctness. The paper's null result on fine-tuning effectiveness for pass@k raises questions about whether similar issues arise in more complex, repository-level contexts, and whether alternative post-training approaches like RL with execution feedback might overcome these limitations.",
+        "zh": "用户对提升正确性的后训练技术感兴趣。论文关于微调对pass@k无效的零结果提出了问题：在更复杂的仓库级上下文中是否会出现类似问题，以及采用执行反馈的强化学习等替代后训练方法是否能克服这些限制。"
+      },
+      "answer": {
+        "en": "The paper's finding that fine-tuning fails to improve pass@k for Dart decompilation directly warns against using proxy metrics for post-training in repository-level code generation. It states that 'no fine-tuning configuration produces a statistically significant pass@k improvement' and that 'CodeBLEU and compile@k can improve significantly while pass@k moves in the opposite direction,' calling this 'metric divergence' with 'implications for any LLM code generation task where fine-tuning targets superficial similarity.' This suggests that post-training methods like RLHF or execution feedback must avoid optimizing for surface-level proxies and instead reward functional correctness directly, as fine-tuning on superficial metrics can actually degrade pass@k (e.g., fine-tuning Qwen3-8B caused a 'highly significant regression of -5.65 pp'). For repository-level generation, where tasks are longer and more complex, the paper's 'capability cliff at 200 instructions' further emphasizes the need for rewards that reflect true functional success, not token-level agreement.",
+        "zh": "论文发现微调未能提升Dart反编译的pass@k，这直接警告不要使用代理指标进行仓库级代码生成的后训练。论文指出'没有任何微调配置能产生统计上显著的pass@k提升'，并且'CodeBLEU和compile@k可以显著提升，而pass@k却向着相反方向变化'，称之为'指标背离'，并认为'这对任何以表面相似性为目标的微调LLM代码生成任务都有影响'。这表明RLHF或执行反馈等后训练方法必须避免优化表面层代理，而是直接奖励功能性正确，因为基于表面指标的微调实际上会损害pass@k（例如，微调Qwen3-8B导致了'高度显著的-5.65个百分点退步'）。对于更复杂、更长的仓库级生成任务，论文提到的'200条指令处的能力悬崖'进一步强调需要奖励反映真实功能成功的指标，而非词元级别的吻合度。"
+      },
+      "confidence": 1.0
+    },
+    {
+      "question": {
+        "en": "Given the demonstrated metric divergence (CodeBLEU and compile@k improving while pass@k degrades), what are the implications for evaluating LLMs on benchmarks that primarily rely on compilation success or syntactic similarity, especially for tasks that require integration with existing codebases?",
+        "zh": "鉴于已证明的指标背离（CodeBLEU和compile@k提升而pass@k下降），对于主要依赖编译成功或句法相似性来评估LLM的基准测试，特别是需要与现有代码库集成的任务，产生了哪些影响？"
+      },
+      "reason": {
+        "en": "The user cares about evaluation methodologies beyond pass@k, particularly for real-world software engineering tasks. The paper's evidence that superficial metrics can be misleading directly supports the need for execution-based evaluation, which the user prioritizes.",
+        "zh": "用户关注pass@k以外的评估方法，特别是针对实际软件工程任务。论文提供的表面指标可能具有误导性的证据直接支持了基于执行的评估的必要性，这正是用户所优先考虑的。"
+      },
+      "answer": {
+        "en": "The metric divergence observed—where CodeBLEU and compile@k improve while pass@k degrades—shows that benchmarks relying on compilation success or syntactic similarity can be dangerously misleading. As the paper notes, \"CodeBLEU and compile@k can improve significantly while pass@k moves in the opposite direction,\" and it warns that \"this has implications for any LLM code generation task where fine-tuning targets superficial similarity.\" For real-world software engineering tasks that require integration with existing codebases, functional correctness is paramount. Therefore, execution-based metrics like pass@k must be the primary evaluation; relying on superficial metrics risks deploying models that appear better but actually produce less correct code.",
+        "zh": "观察到的指标背离——CodeBLEU和compile@k提升而pass@k下降——表明依赖编译成功或句法相似性的基准测试可能具有危险性的误导。如论文所述，'CodeBLEU和compile@k可以显著提升，而pass@k却向着相反方向变化'，并警告'这对任何以表面相似性为目标的微调LLM代码生成任务都有影响'。对于需要与现有代码库集成的实际软件工程任务，功能性正确至关重要。因此，基于执行的指标如pass@k必须成为主要评估标准；依赖表面指标可能会部署看似更好但实际产生更不正确的代码的模型。"
+      },
+      "confidence": 1.0
+    },
+    {
+      "question": {
+        "en": "How might the capacity-dependent trend (fine-tuning causing regression at 8B but no effect at 4B) affect the choice of base model size and post-training strategy for code generation tasks where model scale is a factor?",
+        "zh": "能力依赖趋势（微调在8B模型上导致退步，但在4B模型上无效果）可能如何影响模型规模作为因素的代码生成任务中基础模型大小和后训练策略的选择？"
+      },
+      "reason": {
+        "en": "The user is interested in post-training and model scale. The paper's observation that larger models are more susceptible to negative effects from fine-tuning suggests that careful tuning is needed, and that scale may interact with the effectiveness of SFT or RLHF.",
+        "zh": "用户对后训练和模型规模感兴趣。论文观察到较大模型更容易受到微调的负面影响，表明需要谨慎调优，并且模型规模可能与SFT或RLHF的效果产生交互作用。"
+      },
+      "answer": {
+        "en": "The paper's capacity-dependent trend shows that larger models are more susceptible to fine-tuning degradation: 'fine-tuning the strongest base (Qwen3-8B) causes a highly significant regression of -5.65 pp (p<0.001)' while at 4B the only positive case yields only a non-significant +0.71 pp. This suggests that for code generation, if fine-tuning is required, a smaller base model (e.g., 4B) may be safer to avoid harming performance. Alternatively, when using a larger model, post-training strategies must be exceptionally careful, and the paper emphasises that 'pass@k must be the primary evaluation metric' since 'CodeBLEU and compile@k can improve significantly while pass@k moves in the opposite direction,' meaning metrics can mask real regressions. Therefore, the choice of base model size should weigh the higher base capability of larger models against their risk of fine-tune-induced loss, and post-training should prioritise pass@k and consider minimal or different tuning approaches (e.g., RLHF) to mitigate the negative effects seen at 8B.",
+        "zh": "论文的能力依赖趋势表明，较大模型更容易受到微调退步的影响：'微调最强基础模型（Qwen3-8B）导致高度显著的-5.65个百分点退步（p<0.001）'，而在4B规模上唯一的正值案例仅产生了不显著的+0.71个百分点。这表明对于代码生成，如果需要微调，较小的基础模型（如4B）可能更安全，以避免损害性能。或者，当使用较大模型时，后训练策略必须格外谨慎，论文强调'pass@k必须成为核心评估标准'，因为'CodeBLEU和compile@k可以显著提升，而pass@k却向着相反方向变化'，意味着指标可能掩盖真正的退步。因此，基础模型大小的选择应权衡较大模型的更高基础能力与其受微调导致损失的风险，后训练应优先考虑pass@k，并考虑最小化或不同的调优方法（如RLHF），以减轻在8B模型上观察到的负面影响。"
+      },
+      "confidence": 0.7
+    },
+    {
+      "question": {
+        "en": "What lessons does the paper's error analysis (assembly sequence length as strongest difficulty predictor, with a capability cliff at 200 instructions) offer for developing post-training methods that improve long-context handling and correctness in repository-level code generation?",
+        "zh": "论文的错误分析（汇编序列长度作为最强的难度预测因子，在200条指令处出现能力悬崖）为开发改善仓库级代码生成中长上下文处理与正确性的后训练方法提供了哪些启示？"
+      },
+      "reason": {
+        "en": "The user focuses on long-context handling and execution success. The paper's identification of a length-based difficulty threshold could inform how to design training data or reward signals in RLHF to push models beyond such cliffs.",
+        "zh": "用户关注长上下文处理和执行成功。论文对基于长度的难度阈值的识别可以为如何在RLHF中设计训练数据或奖励信号以推动模型超越此类悬崖提供信息。"
+      },
+      "answer": {
+        "en": "The paper's error analysis identifies that 'assembly sequence length is the strongest predictor of task difficulty (p=0.001), with a capability cliff at 200 instructions.' This cliff directly indicates a length-based failure mode, suggesting that post-training methods should prioritize **extending the effective context window** and **reinforcing correctness on long sequences**. The study also finds 'metric divergence: CodeBLEU and compile@k can improve significantly while pass@k moves in the opposite direction,' implying that optimizing for surface forms (e.g., via token-level fine-tuning) may not translate to functional gains. For repository-level code generation—which inherently involves long contexts—post-training approaches should therefore use **pass@k-based rewards** and **curricula that gradually increase sequence length** to push models beyond this cliff, rather than relying on shallow similarity metrics.",
+        "zh": "论文的错误分析指出'汇编序列长度是任务难度最强的预测因子（p=0.001），在200条指令处出现能力悬崖'。这一悬崖直接指示了基于长度的失败模式，表明后训练方法应优先考虑扩展有效上下文窗口和加强长序列的正确性。该研究还发现'指标背离：CodeBLEU和compile@k可以显著提升，而pass@k却向着相反方向变化'，暗示优化表面形式（例如通过词元级微调）可能不会转化为功能上的收益。对于天然涉及长上下文的仓库级代码生成，后训练方法应因此使用基于pass@k的奖励和逐步增加序列长度的课程，以推动模型超越这一悬崖，而不是依赖浅层相似性指标。"
+      },
+      "confidence": 0.7
+    }
+  ],
+  "score": 71.25,
+  "score_dimensions": [
+    {
+      "name": "topic_alignment",
+      "weight": 0.35,
+      "value": 0.65
+    },
+    {
+      "name": "methodology_fit",
+      "weight": 0.25,
+      "value": 0.7
+    },
+    {
+      "name": "novelty",
+      "weight": 0.2,
+      "value": 0.75
+    },
+    {
+      "name": "experiment_coverage",
+      "weight": 0.2,
+      "value": 0.8
+    }
+  ],
+  "markdown": "",
+  "model": "deepseek-v4-flash",
+  "generated_at": "2026-07-13T05:47:46Z"
+}

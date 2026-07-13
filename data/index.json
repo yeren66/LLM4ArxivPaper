@@ -1,6 +1,272 @@
 {
   "papers": [
     {
+      "arxiv_id": "2607.06065",
+      "topic": "Automated Program Repair",
+      "topic_label": "Automated Program Repair",
+      "title": {
+        "en": "SWE-Review: Closing the Loop on Issue Resolution with Agentic Code Review",
+        "zh": "SWE-Review：通过智能代理代码审查实现问题解决的闭环"
+      },
+      "authors": [
+        "Ruoyu Wang",
+        "Jierun Chen",
+        "Shaowei Wang",
+        "Chaofan Tao",
+        "Sidi Yang",
+        "Yuxin Jiang"
+      ],
+      "score": 64.5,
+      "published": "2026-07-07",
+      "generated_at": "2026-07-13T06:30:40Z"
+    },
+    {
+      "arxiv_id": "2607.06184",
+      "topic": "Automated Program Repair",
+      "topic_label": "Automated Program Repair",
+      "title": {
+        "en": "What Resolve Rate Hides: Trajectory Structure Diagnostics for Coding Agents",
+        "zh": "解决率掩盖了什么：编码代理的轨迹结构诊断"
+      },
+      "authors": [
+        "Rui Shu",
+        "Chun Yong Chong",
+        "Xin Zhou",
+        "Yun Peng",
+        "Zihan Wu",
+        "Xu Han"
+      ],
+      "score": 67.5,
+      "published": "2026-07-07",
+      "generated_at": "2026-07-13T06:27:03Z"
+    },
+    {
+      "arxiv_id": "2607.07593",
+      "topic": "Automated Program Repair",
+      "topic_label": "Automated Program Repair",
+      "title": {
+        "en": "What Makes a Good Bug Report for an AI Agent?",
+        "zh": "什么使AI代理的错误报告变得良好？"
+      },
+      "authors": [
+        "Lara Khatib",
+        "Noble Saji Mathews",
+        "Meiyappan Nagappan",
+        "Pengyu Nie",
+        "Thomas Zimmermann"
+      ],
+      "score": 80.25,
+      "published": "2026-07-08",
+      "generated_at": "2026-07-13T06:23:10Z"
+    },
+    {
+      "arxiv_id": "2607.07882",
+      "topic": "Automated Program Repair",
+      "topic_label": "Automated Program Repair",
+      "title": {
+        "en": "Bug Report Specification Refinement with Trajectory Guidance for Automated Program Repair",
+        "zh": "利用轨迹引导的缺陷报告规范精化用于自动程序修复"
+      },
+      "authors": [
+        "S M Farah Al Fahim",
+        "Md Nakhla Rafi",
+        "Md Ahasanuzzaman",
+        "Zeyang Ma",
+        "Dong Jae Kim",
+        "Shaowei Wang"
+      ],
+      "score": 88.5,
+      "published": "2026-07-08",
+      "generated_at": "2026-07-13T06:18:29Z"
+    },
+    {
+      "arxiv_id": "2607.07946",
+      "topic": "Automated Program Repair",
+      "topic_label": "Automated Program Repair",
+      "title": {
+        "en": "DeepSWE: Measuring Frontier Coding Agents on Original, Long-Horizon Engineering Tasks",
+        "zh": "DeepSWE: 在原创、长期工程任务上测评前沿编码智能体"
+      },
+      "authors": [
+        "Wenqi Huang",
+        "Charley Lee",
+        "Leonard Tng",
+        "Serena Ge"
+      ],
+      "score": 72.75,
+      "published": "2026-07-08",
+      "generated_at": "2026-07-13T06:15:26Z"
+    },
+    {
+      "arxiv_id": "2607.09553",
+      "topic": "Automated Program Repair",
+      "topic_label": "Automated Program Repair",
+      "title": {
+        "en": "Writing Bug Reports for Software Repair Agents: What Information Matters Most?",
+        "zh": "为软件修复代理编写错误报告：哪些信息最重要？"
+      },
+      "authors": [
+        "Vincenzo Luigi Bruno",
+        "Alessandro Giagnorio",
+        "Daniele Bifolco",
+        "Leon Wienges",
+        "Massimiliano Di Penta",
+        "Gabriele Bavota"
+      ],
+      "score": 75.5,
+      "published": "2026-07-10",
+      "generated_at": "2026-07-13T06:11:58Z"
+    },
+    {
+      "arxiv_id": "2607.05471",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "KAT-Coder-V2.5 Technical Report",
+        "zh": "KAT-Coder-V2.5 技术报告"
+      },
+      "authors": [
+        "Bo Huang",
+        "Fengxiang Li",
+        "Hao Xu",
+        "Haoyang Huang",
+        "Hongyi Fu",
+        "Jinhua Hao"
+      ],
+      "score": 89.85000000000001,
+      "published": "2026-07-06",
+      "generated_at": "2026-07-13T06:06:24Z"
+    },
+    {
+      "arxiv_id": "2607.05121",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "From Failing to Passing: Evolving Natural Language Prompt Optimization Rules for LLM Code Generation",
+        "zh": "从失败到成功：演化用于LLM代码生成的自然语言提示优化规则"
+      },
+      "authors": [
+        "Amal Akli",
+        "Melissa Akli",
+        "Cedric Richter",
+        "Mike Papadakis",
+        "Yves Le Traon"
+      ],
+      "score": 63.5,
+      "published": "2026-07-06",
+      "generated_at": "2026-07-13T06:02:40Z"
+    },
+    {
+      "arxiv_id": "2607.05197",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "Is Three the Magic Number? An Empirical Evaluation of LLM-Based Repair Loops",
+        "zh": "三是魔法数字吗？基于LLM的修复循环的实证评估"
+      },
+      "authors": [
+        "Tobias Kiecker",
+        "Eik Reichmann",
+        "Hosung Kang",
+        "Gabin An",
+        "Lars Grunske"
+      ],
+      "score": 62.25000000000001,
+      "published": "2026-07-06",
+      "generated_at": "2026-07-13T05:59:20Z"
+    },
+    {
+      "arxiv_id": "2607.05785",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "Can Large Language Models Generate Observability-Aware Code?",
+        "zh": "大型语言模型能否生成可观测性感知的代码？"
+      },
+      "authors": [
+        "Yongliang Tao",
+        "Hongyu Zhang",
+        "Pengfei Gao",
+        "Minghua Ma",
+        "Zhiyu Fan",
+        "Yu Kang"
+      ],
+      "score": 63.0,
+      "published": "2026-07-07",
+      "generated_at": "2026-07-13T05:54:36Z"
+    },
+    {
+      "arxiv_id": "2607.05810",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "SCOPE: Leveraging Subgoal Critiques for Code Generation",
+        "zh": "SCOPE: 利用子目标批评进行代码生成"
+      },
+      "authors": [
+        "Yueke Zhang",
+        "Yifan Zhang",
+        "Zihan Fang",
+        "Kevin Leach",
+        "Wei Zhang",
+        "Yu Huang"
+      ],
+      "score": 70.75,
+      "published": "2026-07-07",
+      "generated_at": "2026-07-13T05:51:37Z"
+    },
+    {
+      "arxiv_id": "2607.06125",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "Evaluating Fine-Tuning and Metrics for Neural Decompilation of Dart AOT Binaries",
+        "zh": "Dart AOT二进制文件神经反编译的微调和指标评估"
+      },
+      "authors": [
+        "Raafat Abualazm",
+        "Ayman AboElhassan",
+        "Amr G. Wassal"
+      ],
+      "score": 71.25,
+      "published": "2026-07-07",
+      "generated_at": "2026-07-13T05:47:46Z"
+    },
+    {
+      "arxiv_id": "2607.07748",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "Selective Left-Shift: Turning Test-Time Compute and Difficulty-based Curation into Training Data for Low-Resource Code Generation",
+        "zh": "Selective Left-Shift：将测试时计算和基于难度的筛选转化为低资源代码生成的训练数据"
+      },
+      "authors": [
+        "Didula Samaraweera",
+        "Anjana Supun",
+        "Srinath Perera"
+      ],
+      "score": 63.24999999999999,
+      "published": "2026-07-08",
+      "generated_at": "2026-07-13T05:44:05Z"
+    },
+    {
+      "arxiv_id": "2607.08691",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "ProjAgent: Procedural Similarity Retrieval for Repository-Level Code Generation",
+        "zh": "ProjAgent: 仓库级代码生成的过程相似性检索"
+      },
+      "authors": [
+        "QiHong Chen",
+        "Aaron Imani",
+        "Iftekhar Ahmed"
+      ],
+      "score": 72.25,
+      "published": "2026-07-09",
+      "generated_at": "2026-07-13T05:39:49Z"
+    },
+    {
       "arxiv_id": "2606.30324",
       "topic": "Automated Program Repair",
       "topic_label": "Automated Program Repair",
@@ -1445,5 +1711,5 @@
       "generated_at": "2026-05-14T14:40:43Z"
     }
   ],
-  "updated_at": "2026-07-06T07:57:23Z"
+  "updated_at": "2026-07-13T06:30:40Z"
 }

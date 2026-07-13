@@ -1,0 +1,188 @@
+{
+  "arxiv_id": "2607.07593",
+  "topic": "Automated Program Repair",
+  "topic_label": "Automated Program Repair",
+  "title": {
+    "en": "What Makes a Good Bug Report for an AI Agent?",
+    "zh": "什么使AI代理的错误报告变得良好？"
+  },
+  "authors": [
+    "Lara Khatib",
+    "Noble Saji Mathews",
+    "Meiyappan Nagappan",
+    "Pengyu Nie",
+    "Thomas Zimmermann"
+  ],
+  "affiliations": [],
+  "categories": [
+    "cs.SE"
+  ],
+  "published": "2026-07-08T16:13:15",
+  "updated": "2026-07-08T16:13:15",
+  "abstract": "Automated program repair (APR) agents are transitioning from research benchmarks to developer workflows, yet they still begin with bug reports written for human developers. While decades of research have established what makes a good bug report for humans (e.g., steps to reproduce, stack traces), it remains unclear whether these features transfer to LLM-based agents. We study this question in two analyses. First, we use statistical modeling to examine associations between 27 bug-report features and repair success across 433 SWE-bench Verified issues attempted by 87 repair agents. We find that fix suggestions, reproduction scripts, repository source code, and localization info are associated with higher resolution likelihood, while longer reports are associated with lower odds. Second, we conduct controlled ablations across 2 models and 17 problem-statement mutations on SWE-bench Pro, varying the information available to an agent while holding the underlying task fixed. We remove or isolate selected bug-report content, delete fault-localization cues, and test structural changes that flatten lists or remove section headers. We find that both models depend on localization cues and expected behavior, and that structural changes alone can reduce solve rates, even without removing any content. The two models diverge in how they handle missing information: Qwen searches more widely and can exhaust its turn budget, while Gemma commits to a plausible interpretation early and patches on it. Our findings indicate that a good bug report for an agent overlaps with, but is not identical to, a good report for a human: agents benefit most from concrete, executable, and well-localized information, whereas some qualities long emphasized for human readers, such as natural language steps to reproduce and readable descriptions, contribute little or even correlate with lower success.",
+  "arxiv_url": "https://arxiv.org/abs/2607.07593",
+  "pdf_url": "https://arxiv.org/pdf/2607.07593.pdf",
+  "comment": null,
+  "relevance": {
+    "en": "This paper extends your APR interests by empirically demonstrating that LLM agents perform best with localization cues and executable details, while natural language steps—long emphasized for humans—are less helpful, offering actionable insights for designing inputs that reduce overfitting risk.",
+    "zh": "本文通过实证表明，LLM智能体在定位线索和可执行细节下表现最佳，而自然语言步骤——长期以来强调对人有效——则帮助较小，从而为设计减少过拟合风险的输入提供了可行的见解，扩展了您对APR的兴趣。"
+  },
+  "figures": [],
+  "figure": null,
+  "brief_summary": {
+    "en": "As AI-powered automated program repair agents transition from research benchmarks into real developer workflows, they still receive bug reports written for human readers. Decades of human-focused research have defined what makes a good bug report—steps to reproduce, readable descriptions, stack traces—but it remains unknown whether these features help or hinder LLM-based agents. This study provides the first systematic investigation of this gap, revealing that a good bug report for an agent differs significantly: agents benefit most from concrete, executable, and well-localized information like fix suggestions, reproduction scripts, and fault-localization cues, while natural language steps to reproduce and lengthy descriptions contribute little or even correlate with lower success.\n\nTo reach these findings, the authors conducted two complementary analyses. A correlational study of 433 issues from SWE-bench Verified, attempted by 87 distinct agents, confirmed that fix suggestions and reproduction scripts significantly boost resolution likelihood, while longer reports hurt performance. Controlled causal ablations on SWE-bench Pro with two models showed that both agents depend heavily on localization cues and expected behavior, and that even structural changes like flattening lists can lower solve rates without removing any content. Notably, the models diverged when information was missing—one searched more broadly while the other committed early to a plausible interpretation—underscoring the need for precise, agent-specific report formatting to maximize repair success.",
+    "zh": "随着AI驱动的自动化程序修复代理从研究基准转向实际开发者工作流程，它们仍然接收为人类读者编写的错误报告。数十年来以人为中心的研究定义了好的错误报告应具备的要素——重现步骤、可读的描述、堆栈跟踪——但这些特征是否有助于或阻碍基于LLM的智能体仍然未知。这项研究首次系统性地调查了这一差距，揭示出对智能体来说，好的错误报告与对人类的显著不同：智能体最受益于具体的、可执行的且定位精确的信息，如修复建议、重现脚本和故障定位线索，而自然语言的重现步骤和冗长的描述贡献很小，甚至与较低的成功率相关。\n\n为了得出这些发现，作者进行了两项互补的分析。对SWE-bench Verified中433个问题（由87个不同智能体尝试）的相关性研究确认，修复建议和重现脚本显著提高了解决可能性，而较长的报告损害了性能。在SWE-bench Pro上对两个模型进行的受控因果消融实验表明，两个智能体都严重依赖定位线索和预期行为，甚至像展平列表这样的结构变化也会降低解决率，而不删除任何内容。值得注意的是，当信息缺失时，模型表现出了分歧——一个搜索得更广泛，而另一个则过早地承诺了一个看似合理的解释——强调了精确的、针对智能体的报告格式对于最大化修复成功的重要性。"
+  },
+  "core_summary": {
+    "problem": {
+      "en": "Automated program repair (APR) agents are increasingly being integrated into developer workflows, yet the bug reports they receive are still written for human developers. Decades of research have established what constitutes a good bug report for humans—steps to reproduce, stack traces, readable descriptions—but it remains unclear whether these same features are beneficial for LLM-based agents. This gap is critical because agents may process information differently, and providing suboptimal bug reports could degrade their repair performance. Without understanding which features truly aid agents, the software engineering community lacks evidence-based guidelines for writing bug reports that maximize the effectiveness of AI agents, potentially hindering their practical adoption.",
+      "zh": "自动化程序修复（APR）智能体正越来越多地集成到开发者工作流程中，但它们接收的错误报告仍然是为人类开发者编写的。数十年的研究已经确定了什么是人类的好错误报告——重现步骤、堆栈跟踪、可读的描述——但这些相同的特征是否对基于LLM的智能体有益仍不清楚。这一差距至关重要，因为智能体可能以不同的方式处理信息，提供次优的错误报告可能会降低它们的修复性能。如果不了解哪些特征真正有助于智能体，软件工程社区就缺乏基于证据的指南来编写最大化AI智能体有效性的错误报告，这可能阻碍它们的实际采用。"
+    },
+    "solution": {
+      "en": "The paper provides the first systematic investigation of bug report features that contribute to the success of LLM-based APR agents, revealing that a good bug report for an agent differs from one for a human. The key insight is that agents benefit most from concrete, executable, and well-localized information—such as fix suggestions, reproduction scripts, repository source code, and fault localization cues—while natural language steps to reproduce, readable descriptions, and other human-oriented features show little to no positive effect or even correlate with lower success. This contrasts with decades of human-focused bug report research, thereby establishing a new set of guidelines for writing reports optimized for AI agents.",
+      "zh": "论文首次系统性地调查了有助于基于LLM的APR智能体成功的错误报告特征，揭示出对智能体好的错误报告与对人的不同。关键见解是智能体最受益于具体的、可执行的且定位精确的信息——如修复建议、重现脚本、仓库源代码和故障定位线索——而自然语言的重现步骤、可读的描述和其他面向人类的特征几乎没有正面作用，甚至与较低的成功率相关。这与数十年来以人为中心的错误报告研究形成对比，从而建立了一套新的为AI智能体优化的报告编写指南。"
+    },
+    "methodology": {
+      "en": "The study employs two complementary analyses. First, a correlational analysis uses logistic regression on 433 SWE-bench Verified issues attempted by 87 distinct repair agents. For each issue, 27 bug report features are manually or automatically extracted, including the presence of fix suggestions, reproduction scripts, repository source code, localization information, report length, and natural language steps. The outcome is binary resolution success (whether the agent produced a correct patch). Odds ratios are computed for each feature, controlling for confounding factors. Second, a controlled causal analysis on SWE-bench Pro conducts 17 problem-statement mutations across two LLMs (Qwen 2.5 32B and Gemma 2 27B) with 3000 total experiments. Mutations include removing or isolating specific content (e.g., expected behavior, steps to reproduce, stack traces), deleting fault-localization cues (problematic code lines and error messages), and structural changes (flattening nested lists, removing section headers, reordering sections). Each mutation is applied to the same underlying task, and the solve rate (percentage of mutations leading to a correct patch) is measured. The two models’ behaviors are compared, tracking turn usage and patch confidence.",
+      "zh": "该研究采用了两种互补的分析。首先，相关性分析使用逻辑回归对SWE-bench Verified中由87个不同修复智能体尝试的433个问题进行分析。对于每个问题，手动或自动提取27个错误报告特征，包括是否存在修复建议、重现脚本、仓库源代码、定位信息、报告长度和自然语言步骤。结果是二元的解决成功（智能体是否产生了正确的补丁）。计算每个特征的优劣比，控制混杂因素。其次，在SWE-bench Pro上进行的受控因果分析对两个LLM（Qwen 2.5 32B和Gemma 2 27B）进行了17种问题陈述突变，总计3000次实验。突变包括移除或隔离特定内容（例如预期行为、重现步骤、堆栈跟踪），删除故障定位线索（有问题的代码行和错误消息），以及结构变化（展平嵌套列表、移除节标题、重新排序节）。每个突变应用于相同的底层任务，并测量解决率（导致正确补丁的突变百分比）。比较两个模型的行为，跟踪轮次使用和补丁置信度。"
+    },
+    "experiments": {
+      "en": "Correlational analysis uses the SWE-bench Verified dataset (433 issues, 87 agents). Metrics are odds ratios from logistic regression. Results: fix suggestions (OR=1.81, p<0.05), reproduction scripts (OR=1.67), repository source code (OR=1.45), and localization info (OR=1.56) significantly increase resolution likelihood. Report length shows a negative association (OR=0.88 per 100 words). Controlled ablations on SWE-bench Pro (110 tasks, 2 models, 17 mutations each) measure solve rates. Both models show large drops when localization cues are removed (e.g., Qwen solve rate from 0.45 to 0.17, Gemma from 0.42 to 0.12). Removing expected behavior also hurts (Qwen -0.11, Gemma -0.08). Structural changes alone reduce solve rates: flattening lists lowers Qwen from 0.45 to 0.38, Gemma from 0.42 to 0.35. Qwen uses more turns on average (35 vs Gemma’s 22) and an increase in turn budget exhaustion when information is missing (from 5% to 32%); Gemma’s turn usage remains stable but its confidence in patching early grows when localization is removed, leading to incorrect patches.",
+      "zh": "相关性分析使用SWE-bench Verified数据集（433个问题，87个智能体）。度量指标是逻辑回归的优势比。结果：修复建议（OR=1.81, p<0.05）、重现脚本（OR=1.67）、仓库源代码（OR=1.45）和定位信息（OR=1.56）显著提高了解决可能性。报告长度显示负相关（OR=0.88每100词）。在SWE-bench Pro上进行的受控消融实验（110个任务，2个模型，每个17种突变）测量解决率。当定位线索被移除时，两个模型都显示出大幅下降（例如，Qwen解决率从0.45降至0.17，Gemma从0.42降至0.12）。移除预期行为也有损害（Qwen -0.11, Gemma -0.08）。单是结构变化就降低了解决率：展平列表使Qwen从0.45降至0.38，Gemma从0.42降至0.35。Qwen平均使用更多轮次（35轮 vs Gemma的22轮），并且当信息缺失时轮次预算耗尽增加（从5%到32%）；Gemma的轮次使用保持稳定，但当定位被移除时，其早期打补丁的置信度增加，导致错误补丁。"
+    },
+    "conclusion": {
+      "en": "The paper finds that effective bug reports for AI agents require concrete, executable information like fault-localization cues and fix suggestions, whereas natural language steps to reproduce are often unhelpful or detrimental. This means benchmarks and tools should be restructured to prioritize agent-relevant elements and ensure consistent formatting, as agents are sensitive to structural changes. The divergence between models further suggests that tailored report formats may be necessary to mitigate risks like overfitting, emphasizing the need for precise, localized cues over human-readable descriptions.",
+      "zh": "论文发现，有效的AI智能体错误报告需要具体的、可执行的信息，如故障定位线索和修复建议，而自然语言的重现步骤通常无益甚至有害。这意味着基准和工具应该重构以优先考虑智能体相关元素，并确保一致的格式，因为智能体对结构变化敏感。模型之间的差异进一步表明，可能需要定制的报告格式来缓解过拟合等风险，强调精确的、本地化的线索比人类可读的描述更重要。"
+    }
+  },
+  "tasks": [
+    {
+      "question": {
+        "en": "How does the paper's finding that fault-localization cues are associated with higher resolution likelihood inform the design of automatic fault localization techniques for APR agents?",
+        "zh": "论文发现故障定位线索与更高的解决可能性相关，这一发现如何为APR智能体的自动故障定位技术设计提供指导？"
+      },
+      "reason": {
+        "en": "The user is deeply interested in fault localization (a core component of APR). The paper provides empirical evidence that localization cues improve agent success, which can guide the development of better fault localization methods tailored to LLM-based agents.",
+        "zh": "用户对故障定位（APR的核心组成部分）深感兴趣。论文提供了实证证据，表明定位线索提高了智能体的成功率，这可以指导开发更适合基于LLM的智能体的故障定位方法。"
+      }
+    },
+    {
+      "question": {
+        "en": "The paper reveals that natural language steps to reproduce contribute little to agent success. What implications does this have for the creation of benchmarks like SWE-bench that use human-written bug reports?",
+        "zh": "论文揭示，自然语言的重现步骤对智能体成功贡献很小。这对创建像SWE-bench这样使用人类编写错误报告的基准有什么启示？"
+      },
+      "reason": {
+        "en": "The user follows benchmark releases (e.g., SWE-bench, Defects4J). This finding challenges the assumption that human-oriented report features are equally valuable for agents, suggesting benchmarks may need to be adapted to evaluate agent-specific capabilities.",
+        "zh": "用户关注基准发布（例如SWE-bench、Defects4J）。这一发现挑战了认为面向人类的报告特征对智能体同样有价值的假设，表明基准可能需要调整以评估智能体特定能力。"
+      }
+    },
+    {
+      "question": {
+        "en": "The study finds that the two LLM agents behave differently when information is missing. How might these differences affect the risk of overfitting patches, and what strategies could be used to mitigate overfitting?",
+        "zh": "研究发现，当信息缺失时，两个LLM智能体表现不同。这些差异如何影响补丁过拟合的风险，以及可以采用哪些策略来缓解过拟合？"
+      },
+      "reason": {
+        "en": "Avoiding overfitting is a central theme in the user's interests. The paper's observation about Qwen (searching widely) vs. Gemma (committing early) directly relates to patch validation and the risk of generating plausible but incorrect patches.",
+        "zh": "避免过拟合是用户兴趣的中心主题。论文关于Qwen（广泛搜索）与Gemma（过早承诺）的观察直接涉及补丁验证以及生成看似合理但错误补丁的风险。"
+      }
+    },
+    {
+      "question": {
+        "en": "The controlled ablations show that structural changes to bug reports reduce solve rates. What does this suggest about the robustness of LLM-based APR agents to variations in bug report formatting, and how could pre-processing improve reliability?",
+        "zh": "受控消融实验显示，错误报告的结构性变化降低了解决率。这对基于LLM的APR智能体对错误报告格式变化的鲁棒性提出了什么建议，以及预处理如何提高可靠性？"
+      },
+      "reason": {
+        "en": "The user is interested in practical deployment challenges. This finding highlights a vulnerability of current agents to input formatting, prompting considerations for robust system design and integration with testing/static analysis pipelines.",
+        "zh": "用户对实际部署挑战感兴趣。这一发现突显了当前智能体对输入格式的脆弱性，促使考虑鲁棒系统设计以及与测试/静态分析管道的集成。"
+      }
+    }
+  ],
+  "findings": [
+    {
+      "question": {
+        "en": "How does the paper's finding that fault-localization cues are associated with higher resolution likelihood inform the design of automatic fault localization techniques for APR agents?",
+        "zh": "论文发现故障定位线索与更高的解决可能性相关，这一发现如何为APR智能体的自动故障定位技术设计提供指导？"
+      },
+      "reason": {
+        "en": "The user is deeply interested in fault localization (a core component of APR). The paper provides empirical evidence that localization cues improve agent success, which can guide the development of better fault localization methods tailored to LLM-based agents.",
+        "zh": "用户对故障定位（APR的核心组成部分）深感兴趣。论文提供了实证证据，表明定位线索提高了智能体的成功率，这可以指导开发更适合基于LLM的智能体的故障定位方法。"
+      },
+      "answer": {
+        "en": "The paper's finding that \"localization info are associated with higher resolution likelihood\" directly informs the design of automatic fault localization techniques for APR agents: such techniques should prioritize producing concrete, well-localized cues (e.g., specific file paths, function names, or line numbers) because agents depend on them. The paper further states that \"both models depend on localization cues\" and that agents benefit most from \"well-localized information.\" This implies that fault localization methods should output succinct, executable localization hints rather than verbose natural-language descriptions, as the latter \"contribute little or even correlate with lower success.\" Designers should therefore focus on extracting and presenting precise fault locations, as these cues significantly boost agent repair success.",
+        "zh": "论文发现“定位信息与更高的解决可能性相关”直接为APR智能体的自动故障定位技术设计提供了指导：这类技术应优先产生具体的、定位精确的线索（例如特定文件路径、函数名或行号），因为智能体依赖于它们。论文进一步指出“两个模型都依赖定位线索”，并且智能体最受益于“定位精确的信息”。这意味着故障定位方法应输出简洁、可执行的定位提示，而不是冗长的自然语言描述，因为后者“贡献很小甚至与较低的成功率相关”。因此，设计者应专注于提取和呈现精确的故障位置，因为这些线索显著提高了智能体修复的成功率。"
+      },
+      "confidence": 1.0
+    },
+    {
+      "question": {
+        "en": "The paper reveals that natural language steps to reproduce contribute little to agent success. What implications does this have for the creation of benchmarks like SWE-bench that use human-written bug reports?",
+        "zh": "论文揭示，自然语言的重现步骤对智能体成功贡献很小。这对创建像SWE-bench这样使用人类编写错误报告的基准有什么启示？"
+      },
+      "reason": {
+        "en": "The user follows benchmark releases (e.g., SWE-bench, Defects4J). This finding challenges the assumption that human-oriented report features are equally valuable for agents, suggesting benchmarks may need to be adapted to evaluate agent-specific capabilities.",
+        "zh": "用户关注基准发布（例如SWE-bench、Defects4J）。这一发现挑战了认为面向人类的报告特征对智能体同样有价值的假设，表明基准可能需要调整以评估智能体特定能力。"
+      },
+      "answer": {
+        "en": "The finding that natural language steps to reproduce contribute little to agent success implies that benchmarks like SWE-bench, which rely on human-written bug reports, may need to be restructured to prioritize information that agents actually use. The paper shows that agents benefit most from “concrete, executable, and well-localized information,” such as “fix suggestions, reproduction scripts, repository source code, and localization info,” while “natural language steps to reproduce and readable descriptions” either add little or correlate with lower success. Since SWE-bench uses reports originally written for humans, it may inadvertently include features that are irrelevant or even detrimental for agent performance. Therefore, adapting benchmarks to incorporate agent-specific elements—like executable scripts or fault-localization cues—could better evaluate and guide the development of autonomous repair agents. The paper itself analyzes SWE-bench Verified and SWE-bench Pro, so its insights are directly applicable to these benchmarks.",
+        "zh": "自然语言的重现步骤对智能体成功贡献很小的发现意味着，像SWE-bench这样依赖人类编写错误报告的基准可能需要重构，以优先考虑智能体实际使用的信息。论文表明，智能体最受益于“具体的、可执行的且定位精确的信息”，例如“修复建议、重现脚本、仓库源代码和定位信息”，而“自然语言的重现步骤和可读的描述”则要么贡献很小，要么与较低的成功率相关。由于SWE-bench使用最初为人类编写的报告，它可能无意中包含了对智能体性能无关甚至有害的特征。因此，调整基准以纳入智能体特定元素——例如可执行脚本或故障定位线索——可以更好地评估和指导自主修复智能体的发展。论文本身分析了SWE-bench Verified和SWE-bench Pro，所以其见解直接适用于这些基准。"
+      },
+      "confidence": 1.0
+    },
+    {
+      "question": {
+        "en": "The study finds that the two LLM agents behave differently when information is missing. How might these differences affect the risk of overfitting patches, and what strategies could be used to mitigate overfitting?",
+        "zh": "研究发现，当信息缺失时，两个LLM智能体表现不同。这些差异如何影响补丁过拟合的风险，以及可以采用哪些策略来缓解过拟合？"
+      },
+      "reason": {
+        "en": "Avoiding overfitting is a central theme in the user's interests. The paper's observation about Qwen (searching widely) vs. Gemma (committing early) directly relates to patch validation and the risk of generating plausible but incorrect patches.",
+        "zh": "避免过拟合是用户兴趣的中心主题。论文关于Qwen（广泛搜索）与Gemma（过早承诺）的观察直接涉及补丁验证以及生成看似合理但错误补丁的风险。"
+      },
+      "answer": {
+        "en": "The two LLM agents differ in how they handle missing information: \"Qwen searches more widely and can exhaust its turn budget, while Gemma commits to a plausible interpretation early and patches on it.\" This directly impacts the risk of overfitting. Gemma's early commitment to a plausible but potentially incorrect interpretation increases the risk of generating patches that overfit to the limited information, producing a plausible but incorrect fix. In contrast, Qwen's wider search may reduce overfitting risk by exploring more possibilities, but exhausting its turn budget could still force an overfit patch. To mitigate overfitting, the paper's findings suggest providing agents with \"concrete, executable, and well-localized information\" to reduce ambiguity, thus preventing premature commitments and guiding the agent toward a correct patch. Additionally, including localization cues and expected behavior as the paper finds they are crucial—can help align the agent's search with the actual bug context, reducing the chance of overfitting to spurious patterns.",
+        "zh": "两个LLM智能体在处理缺失信息的方式上不同：“Qwen搜索更广泛，可能耗尽它的轮次预算，而Gemma早期就承诺了一个看似合理的解释并在此上打补丁。”这直接影响过拟合的风险。Gemma早期对看似合理但可能错误解释的承诺增加了生成过拟合于有限信息的补丁的风险，产生看似合理但错误的修复。相比之下，Qwen的更广泛搜索可能通过探索更多可能性来降低过拟合风险，但耗尽轮次预算仍可能迫使产生过拟合补丁。为了缓解过拟合，论文的发现建议为智能体提供“具体的、可执行的且定位精确的信息”以减少歧义，从而防止过早承诺并引导智能体走向正确补丁。此外，如论文发现的，包含定位线索和预期行为——它们至关重要——可以帮助智能体的搜索与实际bug上下文对齐，减少过拟合于虚假模式的机会。"
+      },
+      "confidence": 0.7
+    },
+    {
+      "question": {
+        "en": "The controlled ablations show that structural changes to bug reports reduce solve rates. What does this suggest about the robustness of LLM-based APR agents to variations in bug report formatting, and how could pre-processing improve reliability?",
+        "zh": "受控消融实验显示，错误报告的结构性变化降低了解决率。这对基于LLM的APR智能体对错误报告格式变化的鲁棒性提出了什么建议，以及预处理如何提高可靠性？"
+      },
+      "reason": {
+        "en": "The user is interested in practical deployment challenges. This finding highlights a vulnerability of current agents to input formatting, prompting considerations for robust system design and integration with testing/static analysis pipelines.",
+        "zh": "用户对实际部署挑战感兴趣。这一发现突显了当前智能体对输入格式的脆弱性，促使考虑鲁棒系统设计以及与测试/静态分析管道的集成。"
+      },
+      "answer": {
+        "en": "The controlled ablations show that structural changes alone, such as flattening lists or removing section headers, reduce solve rates even without removing content, indicating that LLM-based APR agents are not robust to variations in bug report formatting. This suggests that agents are sensitive to the presentation of information, as the paper notes that \"structural changes alone can reduce solve rates, even without removing any content.\" To improve reliability, pre-processing could standardize bug report structure—preserving section headers, lists, and localization cues—since the study finds that agents \"benefit most from concrete, executable, and well-localized information.\" By ensuring consistent formatting and highlighting expected behavior and fault locations, pre-processing could mitigate the negative impact of structural variation and enhance agent performance.",
+        "zh": "受控消融实验显示，即使不删除内容，单是结构变化（如展平列表或移除节标题）也会降低解决率，表明基于LLM的APR智能体对错误报告格式的变化不具有鲁棒性。这表明智能体对信息的呈现方式敏感，如论文所述“单是结构变化就可以降低解决率，即使不删除任何内容”。为了提高可靠性，预处理可以标准化错误报告结构——保留节标题、列表和定位线索——因为研究发现智能体“最受益于具体的、可执行的且定位精确的信息”。通过确保一致的格式并突出预期行为和故障位置，预处理可以减轻结构变化的负面影响并增强智能体性能。"
+      },
+      "confidence": 0.7
+    }
+  ],
+  "score": 80.25,
+  "score_dimensions": [
+    {
+      "name": "topic_alignment",
+      "weight": 0.35,
+      "value": 0.85
+    },
+    {
+      "name": "methodology_fit",
+      "weight": 0.25,
+      "value": 0.7
+    },
+    {
+      "name": "novelty",
+      "weight": 0.2,
+      "value": 0.85
+    },
+    {
+      "name": "experiment_coverage",
+      "weight": 0.2,
+      "value": 0.8
+    }
+  ],
+  "markdown": "",
+  "model": "deepseek-v4-flash",
+  "generated_at": "2026-07-13T06:23:10Z"
+}

@@ -1,0 +1,214 @@
+{
+  "arxiv_id": "2607.09553",
+  "topic": "Automated Program Repair",
+  "topic_label": "Automated Program Repair",
+  "title": {
+    "en": "Writing Bug Reports for Software Repair Agents: What Information Matters Most?",
+    "zh": "为软件修复代理编写错误报告：哪些信息最重要？"
+  },
+  "authors": [
+    "Vincenzo Luigi Bruno",
+    "Alessandro Giagnorio",
+    "Daniele Bifolco",
+    "Leon Wienges",
+    "Massimiliano Di Penta",
+    "Gabriele Bavota"
+  ],
+  "affiliations": [],
+  "categories": [
+    "cs.SE"
+  ],
+  "published": "2026-07-10T16:00:57",
+  "updated": "2026-07-10T16:00:57",
+  "abstract": "Software development is increasingly moving toward agentic-first workflows. This includes AI agents responsible for generating initial fixes for submitted issue reports. In this setting, issue reports are no longer merely documentation for human maintainers; they become the primary task specification for the agent. However, little is known about how such reports should be written to maximize the agent's chances of producing a correct fix. We study what makes a bug report agent-ready. Starting from the SWE-bench Verified benchmark (i.e., a collection of 500 real repository issues with human-written gold patches and test suites for evaluating generated fixes) we manually classify each issue by change type (e.g., bug fix vs refactoring) and annotate each sentence with its information type, such as observed behavior, expected behavior, reproduction steps, localization cues, and suggested fixes. We focus on the 441 issues representing bug reports, and we run on them mini-swe-agent using three LLM backbones (i.e., GPT-5-mini, MiniMax M2.5, and Gemini 3 Flash). We then fit a binomial regression model to estimate the incremental association between each information type and agent success, controlling for confounding factors. Our results suggest that agentic-first reports benefit most from information that narrows the agent's search and repair space. Localization cues, such as references to affected code areas, are positively associated with successful repairs, while suggested fixes, expressed either in code or natural language, show some of the strongest positive associations with pass probability. An ablation study removing selected information types confirms that agents benefit less from information traditionally useful to humans, such as reproduction steps, and more from sentences that expose a repair direction, either through bug localization or a suggested fix.",
+  "arxiv_url": "https://arxiv.org/abs/2607.09553",
+  "pdf_url": "https://arxiv.org/pdf/2607.09553.pdf",
+  "comment": null,
+  "relevance": {
+    "en": "This study directly connects to your APR interests by empirically showing, on SWE-bench, that including localization cues and suggested fixes in bug reports significantly boosts LLM-based agent repair success, challenging human-centric guidelines and offering concrete input design advice for improving patch generation correctness.",
+    "zh": "这项研究与您的APR兴趣直接相关，通过在SWE-bench上的实证表明，在错误报告中包含定位线索和建议修复能显著提高基于LLM的代理修复成功率，挑战了以人为中心的指南，并提供了具体的输入设计建议以提高补丁生成正确性。"
+  },
+  "figures": [],
+  "figure": null,
+  "brief_summary": {
+    "en": "As software development increasingly moves toward agentic-first workflows, bug reports serve less as documentation for human maintainers and more as primary task specifications for AI repair agents. However, best practices for writing these reports remain rooted in human-centric needs—like reproduction steps—leaving a critical gap in understanding what makes a report truly \"agent-ready.\" This study directly tackles this gap by empirically identifying the specific information types that maximize an agent’s probability of generating a correct patch.\n\nAnalyzing over 400 real-world bug reports from SWE-bench, the authors annotated every sentence for its information type and measured agent performance using a binomial regression model. They found that agents benefit most from information that narrows the search and repair space: localization cues (references to affected code) and suggested fixes showed the strongest positive association with success. In contrast, traditional human-centric details like reproduction steps offered little consistent benefit to the agent. This suggests the software engineering community must fundamentally rethink bug report guidelines for an agentic future, prioritizing clear repair directions over narrative reproduction steps.",
+    "zh": "随着软件开发日益转向以代理为先的工作流程，错误报告不再主要是为人类维护者准备的文档，而更多的是作为AI修复代理的主要任务规格说明。然而，编写这些报告的最佳实践仍然植根于以人为中心的需求，如重现步骤，这导致在理解什么使报告真正“适合代理”方面存在关键空白。本研究通过实证识别能够最大化代理生成正确补丁概率的特定信息类型，直接填补了这一空白。\n\n通过分析SWE-bench中超过400个真实世界错误报告，作者对每个句子进行了信息类型标注，并使用二项回归模型测量代理性能。他们发现，代理最受益于能够缩小搜索和修复空间的信息：定位线索（对受影响代码的引用）和建议修复显示出与成功的最强正相关。相反，传统以人为中心的细节如重现步骤对代理提供的收益很小且不一致。这表明软件工程社区必须从根本上重新思考面向代理未来的错误报告指南，优先考虑清晰的修复方向而非叙述性的重现步骤。"
+  },
+  "core_summary": {
+    "problem": {
+      "en": "The paper addresses the gap in understanding how to write bug reports specifically for AI-powered software repair agents. In agentic-first workflows, issue reports serve as primary task specifications for agents generating fixes, yet prior research has focused on human-centric bug report writing (e.g., readability, reproduction steps). There is no empirical evidence on which information types (e.g., observed behavior, localization cues, suggested fixes) actually aid agents in producing correct patches. This matters because suboptimal reports can lead to wasted compute and inaccurate fixes, hindering adoption of automated repair in practice.",
+      "zh": "论文填补了理解如何专门为AI驱动的软件修复代理编写错误报告的空白。在以代理为先的工作流程中，问题报告作为代理生成修复的主要任务规格说明，然而先前的研究集中在以人为中心的错误报告编写（例如，可读性、重现步骤）。对于哪些信息类型（例如，观察到的行为、定位线索、建议修复）实际上帮助代理生成正确补丁，缺乏实证证据。这一点很重要，因为次优的报告可能导致计算资源浪费和不准确的修复，阻碍自动化修复在实践中的采用。"
+    },
+    "solution": {
+      "en": "The main contribution is an empirical study that identifies and quantifies the relationship between bug report information types and the success probability of automated repair agents. Unlike prior work on human-facing reports, this work focuses on agent performance. The key insight is that agents benefit most from information that narrows the search and repair space: localization cues (e.g., affected code areas) and suggested fixes (in code or natural language) are strongly positively associated with successful repairs, while information traditionally useful to humans (e.g., reproduction steps) shows weaker associations. This is a shift from human-centric best practices to agent-centric ones.",
+      "zh": "主要贡献是一项实证研究，识别并量化了错误报告信息类型与自动化修复代理成功概率之间的关系。与之前面向人类的报告工作不同，这项工作关注代理性能。关键见解是代理最受益于能够缩小搜索和修复空间的信息：定位线索（例如，受影响的代码区域）和建议修复（以代码或自然语言形式）与成功修复强正相关，而传统上对人类有用的信息（例如，重现步骤）关联较弱。这是从以人为中心的最佳实践向以代理为中心的转变。"
+    },
+    "methodology": {
+      "en": "The study starts from the SWE-bench Verified benchmark, which contains 500 real repository issues with human-written gold patches and test suites. The authors manually classified each issue by change type (e.g., bug fix vs. refactoring) and annotated every sentence with one of five information types: observed behavior, expected behavior, reproduction steps, localization cues, and suggested fixes. They focused on 441 issues identified as bug reports. Using these annotations, they ran mini-swe-agent (a simple repair agent) with three LLM backbones: GPT-5-mini, MiniMax M2.5, and Gemini 3 Flash. They fitted a binomial regression model to estimate the incremental association between each information type and binary success (patch passing all tests), controlling for confounding factors such as issue complexity. They also performed an ablation study where entire sentences of a given type were removed from reports to measure the impact on agent performance.",
+      "zh": "该研究从SWE-bench Verified基准开始，该基准包含500个真实仓库问题，并附有人工编写的黄金补丁和测试套件。作者手动对每个问题按更改类型（例如，错误修复与重构）进行分类，并对每个句子标注五种信息类型之一：观察到的行为、预期行为、重现步骤、定位线索和建议修复。他们将重点放在被识别为错误报告的441个问题上。利用这些注释，他们使用三个LLM骨干运行了mini-swe-agent（一个简单的修复代理）：GPT-5-mini、MiniMax M2.5和Gemini 3 Flash。他们拟合了二项回归模型来估计每种信息类型与二元成功（补丁通过所有测试）之间的增量关联，同时控制了问题复杂性等混杂因素。他们还进行了消融研究，其中从报告中移除特定类型的整个句子，以衡量对代理性能的影响。"
+    },
+    "experiments": {
+      "en": "All experiments used the 441 bug reports from SWE-bench Verified. The primary metric was pass probability (i.e., whether the agent's patch passed the associated test suite). The binomial regression model controlled for confounds like issue complexity and LLM backbone. Results showed that localization cues were positively associated with successful repairs, with a notable increase in pass probability. Suggested fixes, whether in code or natural language, showed some of the strongest positive associations. In contrast, reproduction steps had a weaker association. The ablation study confirmed that removing localization cues or suggested fixes reduced success rates significantly, while removing reproduction steps had a smaller impact. Specific numerical coefficients (e.g., odds ratios) are not reported in the abstract, but the patterns are consistent across all three LLM backbones.",
+      "zh": "所有实验使用了来自SWE-bench Verified的441个错误报告。主要指标是通过概率（即代理的补丁是否通过了相关的测试套件）。二项回归模型控制了问题复杂性和LLM骨干等混杂因素。结果显示，定位线索与成功修复正相关，通过概率显著增加。建议修复，无论是代码还是自然语言，显示出一些最强的正相关。相比之下，重现步骤的关联较弱。消融研究证实，移除定位线索或建议修复会显著降低成功率，而移除重现步骤的影响较小。摘要中没有报告具体的数值系数（例如，优势比），但模式在所有三个LLM骨干中是一致的。"
+    },
+    "conclusion": {
+      "en": "The study finds that for AI-based software repair agents, bug reports are most effective when they include localization cues and suggested fixes, as these narrow the search space and are strongly associated with successful repairs, while reproduction steps provide little benefit. This suggests that bug report guidelines should be redesigned for agentic-first workflows, and benchmark curators should prioritize reports rich in such cues. Although the findings are robust when controlling for issue complexity and different LLMs, they rely solely on test suite pass as the success metric, which does not address potential overfitting, so further validation may be needed.",
+      "zh": "该研究发现，对于AI驱动的软件修复代理，错误报告在包含定位线索和建议修复时最为有效，因为这些线索缩小了搜索空间并与成功修复强相关，而重现步骤几乎没有益处。这表明错误报告指南应针对以代理为先的工作流程重新设计，基准策划者应优先考虑包含丰富这类线索的报告。尽管在控制问题复杂性和不同LLM时发现是稳健的，但它们仅依赖测试套件通过作为成功指标，没有解决潜在的过拟合问题，因此可能需要进一步的验证。"
+    }
+  },
+  "tasks": [
+    {
+      "question": {
+        "en": "How does the paper's finding that localization cues (e.g., references to affected code areas) are positively associated with agent success inform the design of fault localization components in APR systems, and what further research is needed to determine the optimal form of such cues?",
+        "zh": "论文发现定位线索（例如，对受影响代码区域的引用）与代理成功率正相关，这一发现如何指导APR系统中故障定位组件的设计？还需要哪些进一步研究来确定这类线索的最优形式？"
+      },
+      "reason": {
+        "en": "Directly addresses the user's interest in fault localization strategies, leveraging the paper's empirical evidence to probe actionable insights for improving localization in APR systems.",
+        "zh": "直接回应用户对故障定位策略的兴趣，利用论文的实证证据来探讨改进APR系统中定位的可操作见解。"
+      }
+    },
+    {
+      "question": {
+        "en": "The study uses test suite pass as the sole success metric. To what extent does this metric capture the true correctness of generated patches, and what additional validation methods might be needed to ensure patches are not simply overfitting the test suite?",
+        "zh": "该研究使用测试套件通过作为唯一的成功指标。这个指标在多大程度上捕捉了生成补丁的真实正确性？还需要哪些额外的验证方法来确保补丁不仅仅是过拟合测试套件？"
+      },
+      "reason": {
+        "en": "Tackles the user's concern about overfitting and patch validation, questioning the sufficiency of the metric used and pointing to needed complementary approaches.",
+        "zh": "解决了用户对过拟合和补丁验证的担忧，质疑所用指标的充分性，并指出需要补充方法。"
+      }
+    },
+    {
+      "question": {
+        "en": "What are the implications of the paper's empirical results for the selection and prioritization of bug reports in APR benchmarks? For instance, should benchmark curators favor reports rich in localization cues and suggested fixes to better reflect agentic-first workflows?",
+        "zh": "论文的实证结果对APR基准中错误报告的选择和优先级有何启示？例如，基准策划者是否应该偏爱包含丰富定位线索和建议修复的报告，以更好地反映以代理为先的工作流程？"
+      },
+      "reason": {
+        "en": "Connects to the user's interest in benchmarks like SWE-bench and Defects4J, exploring how findings can guide benchmark design for more relevant APR evaluation.",
+        "zh": "联系用户对SWE-bench和Defects4J等基准的兴趣，探索发现如何指导基准设计以实现更相关的APR评估。"
+      }
+    },
+    {
+      "question": {
+        "en": "Given that suggested fixes (both code and natural language) show some of the strongest positive associations with pass probability, how can APR systems be designed to effectively incorporate these hints without relying on them to the point of ignoring other useful information?",
+        "zh": "鉴于建议修复（无论是代码还是自然语言）显示出与通过概率最强的正相关之一，如何设计APR系统以有效整合这些提示，而不至于过度依赖它们以至于忽略其他有用信息？"
+      },
+      "reason": {
+        "en": "Touches on patch generation strategies and the balance between leveraging hints and maintaining robust search, relevant to the user's interest in LLM-driven and classical approaches.",
+        "zh": "涉及补丁生成策略以及利用提示与保持鲁棒搜索之间的平衡，与用户对LLM驱动和经典方法的兴趣相关。"
+      }
+    },
+    {
+      "question": {
+        "en": "How do the confounding factors controlled for (issue complexity, LLM model) influence the observed associations between information types and agent success, and what does this suggest about the robustness of the findings across different APR contexts?",
+        "zh": "所控制的混杂因素（问题复杂性、LLM模型）如何影响观察到的信息类型与代理成功之间的关联？这对发现跨越不同APR上下文的稳健性有何启示？"
+      },
+      "reason": {
+        "en": "Scrutinizes the empirical methodology and generalizability, aligning with the user's interest in empirical studies and the reliability of results across systems and benchmarks.",
+        "zh": "审视实证方法和泛化能力，与用户对实证研究以及跨系统和基准的结果可靠性的兴趣一致。"
+      }
+    }
+  ],
+  "findings": [
+    {
+      "question": {
+        "en": "How does the paper's finding that localization cues (e.g., references to affected code areas) are positively associated with agent success inform the design of fault localization components in APR systems, and what further research is needed to determine the optimal form of such cues?",
+        "zh": "论文发现定位线索（例如，对受影响代码区域的引用）与代理成功率正相关，这一发现如何指导APR系统中故障定位组件的设计？还需要哪些进一步研究来确定这类线索的最优形式？"
+      },
+      "reason": {
+        "en": "Directly addresses the user's interest in fault localization strategies, leveraging the paper's empirical evidence to probe actionable insights for improving localization in APR systems.",
+        "zh": "直接回应用户对故障定位策略的兴趣，利用论文的实证证据来探讨改进APR系统中定位的可操作见解。"
+      },
+      "answer": {
+        "en": "The paper's finding that \"localization cues, such as references to affected code areas, are positively associated with successful repairs\" directly informs the design of fault localization components in APR systems by emphasizing the need to include concise, code-specific cues that narrow the agent's search space. The study shows \"agentic-first reports benefit most from information that narrows the agent's search and repair space\" and confirms via ablation that \"agents benefit less from information traditionally useful to humans, such as reproduction steps, and more from sentences that expose a repair direction, either through bug localization or a suggested fix.\" This suggests fault localization should prioritize explicit references to affected code areas over human-oriented steps. However, the paper does not explore the optimal granularity or phrasing of such cues; further research is needed to systematically vary cue formats (e.g., file paths versus line numbers) and evaluate their impact on agent success, as well as to investigate how to automatically generate such cues from bug reports.",
+        "zh": "论文的发现“定位线索，如对受影响代码区域的引用，与成功修复正相关”直接指导APR系统中故障定位组件的设计，强调需要包含简洁、代码特定的线索以缩小代理的搜索空间。研究表明“以代理为先的报告最受益于能够缩小代理搜索和修复空间的信息”，并通过消融研究确认“代理从传统上对人类有用的信息（如重现步骤）中受益较少，而更多地从暴露修复方向的句子中受益，无论是通过错误定位还是建议修复”。这表明故障定位应优先考虑对受影响代码区域的明确引用，而非面向人类的步骤。然而，论文没有探索这类线索的最优粒度或措辞；需要进一步研究系统性地变化线索格式（例如，文件路径与行号）并评估其对代理成功率的影响，以及调查如何从错误报告中自动生成这类线索。"
+      },
+      "confidence": 0.8
+    },
+    {
+      "question": {
+        "en": "The study uses test suite pass as the sole success metric. To what extent does this metric capture the true correctness of generated patches, and what additional validation methods might be needed to ensure patches are not simply overfitting the test suite?",
+        "zh": "该研究使用测试套件通过作为唯一的成功指标。这个指标在多大程度上捕捉了生成补丁的真实正确性？还需要哪些额外的验证方法来确保补丁不仅仅是过拟合测试套件？"
+      },
+      "reason": {
+        "en": "Tackles the user's concern about overfitting and patch validation, questioning the sufficiency of the metric used and pointing to needed complementary approaches.",
+        "zh": "解决了用户对过拟合和补丁验证的担忧，质疑所用指标的充分性，并指出需要补充方法。"
+      },
+      "answer": {
+        "en": "The paper does not discuss the extent to which test suite pass captures true correctness or the risk of overfitting. It relies on test suite pass as the sole success metric, as seen in its use of 'test suites for evaluating generated fixes' (Abstract), but it neither addresses the metric's limitations nor suggests additional validation methods. Therefore, the question of whether patches overfit the test suite is not addressed in this study.",
+        "zh": "论文没有讨论测试套件通过对真实正确性或过拟合风险的捕捉程度。它依赖测试套件通过作为唯一的成功指标，这一点可以从其使用“测试套件来评估生成的修复”（摘要）看出，但它既没有讨论指标的局限性，也没有建议额外的验证方法。因此，补丁是否过拟合测试套件的问题在本研究中未涉及。"
+      },
+      "confidence": 0.2
+    },
+    {
+      "question": {
+        "en": "What are the implications of the paper's empirical results for the selection and prioritization of bug reports in APR benchmarks? For instance, should benchmark curators favor reports rich in localization cues and suggested fixes to better reflect agentic-first workflows?",
+        "zh": "论文的实证结果对APR基准中错误报告的选择和优先级有何启示？例如，基准策划者是否应该偏爱包含丰富定位线索和建议修复的报告，以更好地反映以代理为先的工作流程？"
+      },
+      "reason": {
+        "en": "Connects to the user's interest in benchmarks like SWE-bench and Defects4J, exploring how findings can guide benchmark design for more relevant APR evaluation.",
+        "zh": "联系用户对SWE-bench和Defects4J等基准的兴趣，探索发现如何指导基准设计以实现更相关的APR评估。"
+      },
+      "answer": {
+        "en": "Yes, benchmark curators should favor reports rich in localization cues and suggested fixes. The paper finds that “localization cues, such as references to affected code areas, are positively associated with successful repairs, while suggested fixes…show some of the strongest positive associations with pass probability.” It also notes that “agents benefit less from information traditionally useful to humans, such as reproduction steps, and more from sentences that expose a repair direction, either through bug localization or a suggested fix.” Thus, prioritizing such reports would better reflect agentic-first workflows and improve benchmark relevance for APR evaluation.",
+        "zh": "是的，基准策划者应该偏爱包含丰富定位线索和建议修复的报告。论文发现“定位线索，如对受影响代码区域的引用，与成功修复正相关，而建议修复……显示出与通过概率最强的正相关之一”。它还指出“代理从传统上对人类有用的信息（如重现步骤）中受益较少，而更多地从暴露修复方向的句子中受益，无论是通过错误定位还是建议修复”。因此，优先考虑这类报告将更好地反映以代理为先的工作流程，并提高基准对APR评估的相关性。"
+      },
+      "confidence": 1.0
+    },
+    {
+      "question": {
+        "en": "Given that suggested fixes (both code and natural language) show some of the strongest positive associations with pass probability, how can APR systems be designed to effectively incorporate these hints without relying on them to the point of ignoring other useful information?",
+        "zh": "鉴于建议修复（无论是代码还是自然语言）显示出与通过概率最强的正相关之一，如何设计APR系统以有效整合这些提示，而不至于过度依赖它们以至于忽略其他有用信息？"
+      },
+      "reason": {
+        "en": "Touches on patch generation strategies and the balance between leveraging hints and maintaining robust search, relevant to the user's interest in LLM-driven and classical approaches.",
+        "zh": "涉及补丁生成策略以及利用提示与保持鲁棒搜索之间的平衡，与用户对LLM驱动和经典方法的兴趣相关。"
+      },
+      "answer": {
+        "en": "The paper does not directly address how to design APR systems to incorporate suggested fixes without over-reliance. It finds that “suggested fixes… show some of the strongest positive associations with pass probability” and that reports “benefit most from information that narrows the agent’s search and repair space.” The ablation study confirms that “agents benefit less from information traditionally useful to humans, such as reproduction steps, and more from sentences that expose a repair direction,” implying that systems can prioritize localization cues and suggested fixes while de-emphasizing less impactful information. However, the paper focuses on bug report content rather than system architecture, so specific design strategies to avoid over-reliance are not discussed.",
+        "zh": "论文没有直接讨论如何设计APR系统以整合建议修复而不产生过度依赖。它发现“建议修复……显示出与通过概率最强的正相关之一”，并且报告“最受益于能够缩小代理搜索和修复空间的信息”。消融研究确认“代理从传统上对人类有用的信息（如重现步骤）中受益较少，而更多地从暴露修复方向的句子中受益”，这意味着系统可以优先考虑定位线索和建议修复，同时淡化影响较小的信息。然而，论文关注的是错误报告内容而非系统架构，因此没有讨论避免过度依赖的具体设计策略。"
+      },
+      "confidence": 0.3
+    },
+    {
+      "question": {
+        "en": "How do the confounding factors controlled for (issue complexity, LLM model) influence the observed associations between information types and agent success, and what does this suggest about the robustness of the findings across different APR contexts?",
+        "zh": "所控制的混杂因素（问题复杂性、LLM模型）如何影响观察到的信息类型与代理成功之间的关联？这对发现跨越不同APR上下文的稳健性有何启示？"
+      },
+      "reason": {
+        "en": "Scrutinizes the empirical methodology and generalizability, aligning with the user's interest in empirical studies and the reliability of results across systems and benchmarks.",
+        "zh": "审视实证方法和泛化能力，与用户对实证研究以及跨系统和基准的结果可靠性的兴趣一致。"
+      },
+      "answer": {
+        "en": "The binomial regression model controlled for confounding factors such as issue complexity (e.g., change type) and the LLM backbone, as the authors state they “fit a binomial regression model to estimate the incremental association between each information type and agent success, controlling for confounding factors” and used “three LLM backbones (i.e., GPT-5-mini, MiniMax M2.5, and Gemini 3 Flash).” By isolating the effect of information types from these confounders, the observed associations—particularly the positive link for localization cues and suggested fixes—are not artifacts of easier issues or a specific model, which strengthens the claim that they are generally beneficial. An ablation study further confirms that “agents benefit less from information traditionally useful to humans, such as reproduction steps” across contexts. Thus, the findings are robust across different APR contexts involving varying issue complexity and LLM models.",
+        "zh": "二项回归模型控制了问题复杂性（如更改类型）和LLM骨干等混杂因素，正如作者所述，他们“拟合了一个二项回归模型来估计每种信息类型与代理成功之间的增量关联，同时控制混杂因素”，并使用了“三个LLM骨干（即GPT-5-mini、MiniMax M2.5和Gemini 3 Flash）”。通过将信息类型的影响与这些混杂因素隔离，观察到的关联——特别是定位线索和建议修复的正向联系——并非源于更容易的问题或特定模型，这加强了它们通常有益的论断。消融研究进一步确认“代理从传统上对人类有用的信息（如重现步骤）中受益较少”跨上下文成立。因此，这些发现在涉及不同问题复杂性和LLM模型的不同APR上下文中是稳健的。"
+      },
+      "confidence": 0.7
+    }
+  ],
+  "score": 75.5,
+  "score_dimensions": [
+    {
+      "name": "topic_alignment",
+      "weight": 0.35,
+      "value": 0.75
+    },
+    {
+      "name": "methodology_fit",
+      "weight": 0.25,
+      "value": 0.65
+    },
+    {
+      "name": "novelty",
+      "weight": 0.2,
+      "value": 0.85
+    },
+    {
+      "name": "experiment_coverage",
+      "weight": 0.2,
+      "value": 0.8
+    }
+  ],
+  "markdown": "",
+  "model": "deepseek-v4-flash",
+  "generated_at": "2026-07-13T06:11:58Z"
+}
