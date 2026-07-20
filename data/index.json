@@ -1,6 +1,98 @@
 {
   "papers": [
     {
+      "arxiv_id": "2607.12463",
+      "topic": "Automated Program Repair",
+      "topic_label": "Automated Program Repair",
+      "title": {
+        "en": "Function-Aware Fill-in-the-Middle as Mid-Training for Coding Agent Foundation Models",
+        "zh": "面向编码智能体基础模型的函数感知中间填充作为中期训练"
+      },
+      "authors": [
+        "Yubo Wang",
+        "Jiarong Liang",
+        "Yuxuan Zhang",
+        "Xuye Liu",
+        "Cong Wei",
+        "Yuyu Zhang"
+      ],
+      "score": 70.5,
+      "published": "2026-07-14",
+      "generated_at": "2026-07-20T05:47:14Z"
+    },
+    {
+      "arxiv_id": "2607.12605",
+      "topic": "Automated Program Repair",
+      "topic_label": "Automated Program Repair",
+      "title": {
+        "en": "Multi-Perspective Agentic Program Repair via Code Property Graphs and Temporal Execution Graphs",
+        "zh": "基于代码属性图和时间执行图的多视角智能程序修复"
+      },
+      "authors": [
+        "Zhili Huang",
+        "Ling Xu",
+        "Hongyu Zhang"
+      ],
+      "score": 90.75000000000001,
+      "published": "2026-07-14",
+      "generated_at": "2026-07-20T05:45:56Z"
+    },
+    {
+      "arxiv_id": "2607.13091",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "Self-Improving AI Coding Agents Through Accumulated Behavioral Rules: A Closed-Loop Framework",
+        "zh": "通过累积行为规则自我改进的AI编码智能体：一种闭环框架"
+      },
+      "authors": [
+        "Aditya Aggarwal",
+        "Nahid Farhady Ghalaty"
+      ],
+      "score": 63.0,
+      "published": "2026-07-13",
+      "generated_at": "2026-07-20T05:42:56Z"
+    },
+    {
+      "arxiv_id": "2607.13921",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "Generative Compilation: On-the-Fly Compiler Feedback as AI Generates Code",
+        "zh": "生成式编译：AI生成代码时的即时编译器反馈"
+      },
+      "authors": [
+        "Niels Mündler-Sasahara",
+        "Hristo Venev",
+        "Dawn Song",
+        "Martin Vechev",
+        "Jingxuan He"
+      ],
+      "score": 71.5,
+      "published": "2026-07-15",
+      "generated_at": "2026-07-20T05:40:56Z"
+    },
+    {
+      "arxiv_id": "2607.14573",
+      "topic": "LLM for Code Generation",
+      "topic_label": "LLM for Code Generation",
+      "title": {
+        "en": "Alipay-PIBench: A Realistic Payment Integration Benchmark for Coding Agents",
+        "zh": "Alipay-PIBench：面向编码智能体的真实支付集成基准"
+      },
+      "authors": [
+        "Shiyu Ying",
+        "Xuejie Cao",
+        "Yingfan Ma",
+        "Yuanhao Dong",
+        "Wenyu Chen",
+        "Bowen Song"
+      ],
+      "score": 72.25,
+      "published": "2026-07-16",
+      "generated_at": "2026-07-20T05:39:13Z"
+    },
+    {
       "arxiv_id": "2607.06065",
       "topic": "Automated Program Repair",
       "topic_label": "Automated Program Repair",
@@ -1711,5 +1803,5 @@
       "generated_at": "2026-05-14T14:40:43Z"
     }
   ],
-  "updated_at": "2026-07-13T06:30:40Z"
+  "updated_at": "2026-07-20T05:47:14Z"
 }

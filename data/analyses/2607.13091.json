@@ -1,0 +1,186 @@
+{
+  "arxiv_id": "2607.13091",
+  "topic": "LLM for Code Generation",
+  "topic_label": "LLM for Code Generation",
+  "title": {
+    "en": "Self-Improving AI Coding Agents Through Accumulated Behavioral Rules: A Closed-Loop Framework",
+    "zh": "通过累积行为规则自我改进的AI编码智能体：一种闭环框架"
+  },
+  "authors": [
+    "Aditya Aggarwal",
+    "Nahid Farhady Ghalaty"
+  ],
+  "affiliations": [],
+  "categories": [
+    "cs.SE",
+    "cs.AI"
+  ],
+  "published": "2026-07-13T21:13:46",
+  "updated": "2026-07-13T21:13:46",
+  "abstract": "LLM-based coding agents repeat the same classes of mistakes across sessions because they lack a mechanism to retain corrections from human review feedback. We present a closed-loop framework in which every accepted review comment is codified as a persistent behavioral rule, progressively expanding the set of error classes the agent can self-detect. The framework combines an accumulating rule set in a version-controlled instruction file, a self-review checklist executed before code submission, and automated validation that ensures rule set integrity as it grows. In deployment across a 35+ service microservices platform, the rule set grew from 5 to 18 behavioral rules, 15+ language-specific standards, and a 15-item self-review checklist, all derived from real review feedback. We present empirical results from 11 recorded working sessions spanning code generation, PR review, incident investigation, and cross service refactoring. We observe that accumulated rules shift review effort from low-level correctness toward design-level validation, achieve a measured 0% recurrence rate for ruled-against error classes, and transfer across heterogeneous agent interfaces. We compare our approach against related work in experiential LLM learning (Reflexion, ExpeL, Voyager) and automated code review (CodeReviewer, SWE-bench agents), showing that our framework achieves persistent cross-session learning without weight updates, operates on production codebases rather than synthetic benchmarks, and addresses an orthogonal dimension (behavioral consistency over time) that existing benchmarks do not measure. The result is a coding agent that improves with every review cycle, accumulating the engineering wisdom of its human collaborators without changing a single model weight.",
+  "arxiv_url": "https://arxiv.org/abs/2607.13091",
+  "pdf_url": "https://arxiv.org/pdf/2607.13091.pdf",
+  "comment": "Already presented and accepted in - 32nd ICE IEEE/ITMC Conference (ICE 2026)",
+  "relevance": {
+    "en": "This paper extends your interest in repository-level code generation by demonstrating persistent cross-session learning from human review feedback on a production microservices platform, without weight updates. It also introduces a new evaluation dimension—behavioral consistency over time—that complements your focus on advanced benchmarks beyond pass@k.",
+    "zh": "本文通过展示在生产微服务平台上从人工审查反馈中进行持久跨会话学习（无需权重更新），扩展了您对仓库级代码生成的兴趣。它还引入了一个新的评估维度——随时间的行为一致性——补充了您对超越pass@k的高级基准的关注。"
+  },
+  "figures": [],
+  "figure": null,
+  "brief_summary": {
+    "en": "LLM-based coding agents repeatedly make the same mistakes across sessions because they lack a mechanism to retain corrections from human review. Prior approaches like Reflexion or ExpeL either require weight updates or operate on synthetic benchmarks, failing to persist behavioral improvements on production codebases. This means human reviewers waste effort pointing out the same low-level issues—missing null checks, incorrect logging patterns—session after session.\n\nThe paper proposes a closed-loop framework that codifies every accepted review comment as a persistent behavioral rule in a version-controlled instruction file. Before each task, the agent reads the growing rule set and performs a self-review, automatically avoiding previously corrected error classes. Deployed on a 35+ service microservices platform, the rule set expanded from 5 to 18 behavioral rules, achieving a measured 0% recurrence rate for ruled-against errors and shifting human review effort from low-level correctness toward design-level validation. The framework achieves persistent cross-session learning without any weight updates, accumulating engineering wisdom from human collaborators while leaving the underlying model unchanged.",
+    "zh": "基于LLM的编码智能体在不同会话中反复犯同样的错误，因为它们缺乏保留人工审查修正的机制。先前的方案如Reflexion或ExpeL要么需要权重更新，要么在合成基准上运行，无法在生产代码库上持久化行为改进。这意味着人工审查者浪费精力反复指出相同的低级问题——缺失空值检查、不正确的日志模式——一次又一次。\n\n本文提出一种闭环框架，将每个被接受的审查评论编码为版本控制指令文件中的持久行为规则。在每个任务之前，智能体读取不断增长的规则集并执行自我审查，自动避免先前纠正过的错误类别。部署在拥有35+服务的微服务平台后，规则集从5条行为规则扩展到18条，实现了针对规则禁止错误的0%复发率，并将人工审查精力从低级正确性转向设计级验证。该框架无需任何权重更新即可实现跨会话的持久学习，从人类协作者那里积累工程智慧，同时保持底层模型不变。"
+  },
+  "core_summary": {
+    "problem": {
+      "en": "LLM-based coding agents repeatedly make the same classes of mistakes across different working sessions because they lack any mechanism to retain and apply corrections from human review feedback. Prior work in experiential learning for LLMs (e.g., Reflexion, ExpeL, Voyager) focuses on improving task performance through self-reflection or episodic memory, but these approaches typically require weight updates, operate on synthetic benchmarks, or do not persist behavioral improvements across sessions on production codebases. Similarly, automated code review tools like CodeReviewer and SWE-bench agents detect errors in individual submissions but do not accumulate a growing body of engineering wisdom from human reviewers. The concrete gap is the absence of a lightweight, persistent, cross-session learning method that captures human review corrections as explicit behavioral rules, enabling the agent to self-detect and avoid previously corrected error classes without modifying model weights. This matters in practice because without such a mechanism, human reviewers must repeatedly point out the same low-level issues (e.g., missing null checks, incorrect logging patterns) across code reviews, wasting effort that could be spent on higher-level design validation.",
+      "zh": "基于LLM的编码智能体在不同工作会话中反复犯同一类错误，因为它们缺乏保留和应用人工审查反馈修正的机制。先前关于LLM经验学习的工作（例如Reflexion、ExpeL、Voyager）侧重于通过自我反思或情景记忆提高任务性能，但这些方法通常需要权重更新、在合成基准上运行，或者无法在生产代码库的会话间持久化行为改进。类似地，自动代码审查工具如CodeReviewer和SWE-bench智能体检测单个提交中的错误，但不从人工审查者那里累积不断增长的工程智慧。具体差距是缺乏一种轻量级、持久、跨会话的学习方法，该方法将人工审查修正捕获为显式行为规则，使智能体能够自我检测并避免先前纠正的错误类别，而无需修改模型权重。这在实践中很重要，因为如果没有这样的机制，人工审查者必须在代码审查中反复指出相同的低级问题（例如，缺失空值检查、不正确的日志模式），浪费了本可用于更高级别设计验证的精力。"
+    },
+    "solution": {
+      "en": "The paper presents a closed-loop framework in which every accepted human review comment is codified as a persistent behavioral rule, progressively expanding the set of error classes the agent can self-detect. The key insight is to externalize learning into a version-controlled instruction file that the agent reads before each task, rather than updating the model's weights or relying on ephemeral in-context examples. This differs fundamentally from prior work: Reflexion uses self-reflection on the same task but does not persist rules across sessions; ExpeL stores experiences in a database but requires retrieval and often fine-tuning; Voyager uses skill libraries but focuses on Minecraft tasks, not production code. The framework achieves persistent cross-session learning without any weight updates, operates on real production codebases, and addresses the orthogonal dimension of behavioral consistency over time—something existing benchmarks (e.g., SWE-bench, HumanEval) do not measure. The result is a coding agent that improves with every review cycle, accumulating the engineering wisdom of its human collaborators without changing a single model weight.",
+      "zh": "本文提出一个闭环框架，其中每个被接受的人工审查评论都被编码为持久行为规则，逐步扩展智能体可以自我检测的错误类别。关键见解是将学习外部化到版本控制的指令文件中，智能体在每个任务之前读取该文件，而不是更新模型权重或依赖短暂的上下文内示例。这与先前工作有根本不同：Reflexion在同一任务上使用自我反思但不跨会话持久化规则；ExpeL将经验存储在数据库中但需要检索且通常需要微调；Voyager使用技能库但专注于Minecraft任务而非生产代码。该框架无需任何权重更新即可实现跨会话的持久学习，在真实生产代码库上运行，并解决了随时间的行为一致性这一正交维度——现有基准（如SWE-bench、HumanEval）未测量这一点。结果是编码智能体随着每次审查周期而改进，积累人类协作者的工程智慧，而不改变任何模型权重。"
+    },
+    "methodology": {
+      "en": "The framework consists of three tightly integrated components. First, an accumulating rule set is stored in a version-controlled instruction file (e.g., YAML or Markdown) that lives alongside the codebase. This file contains three categories: behavioral rules (e.g., 'always validate input parameters before use'), language-specific standards (e.g., 'use f-strings in Python, not % formatting'), and a self-review checklist (e.g., 'have all error paths been logged?'). The rule set starts small (initially 5 behavioral rules) and grows as human reviewers accept comments. Second, before any code submission, the agent executes a self-review step: it reads the current instruction file and checks its generated code against every rule and checklist item. This step is automated via a prompt that instructs the LLM to verify compliance and flag violations. Third, automated validation scripts ensure the rule set remains consistent as it grows—for example, detecting contradictory rules (e.g., 'always use tabs' vs. 'always use spaces') or malformed entries. The closed-loop pipeline is: (1) agent receives a task and the current instruction file; (2) agent generates code; (3) agent performs self-review using the checklist; (4) code is submitted for human review; (5) human provides comments; (6) accepted comments are manually or semi-automatically codified into new rules/standards/checklist items; (7) the instruction file is updated and version-controlled; (8) future sessions use the expanded rule set. No model fine-tuning or weight updates occur. The framework is agent-agnostic: it works with any LLM-based coding agent (e.g., GPT-4, Claude) by simply including the instruction file in the system prompt or context window.",
+      "zh": "该框架由三个紧密集成的组件组成。首先，累积的规则集存储在版本控制的指令文件（例如YAML或Markdown）中，与代码库共存。该文件包含三类内容：行为规则（例如“在使用前始终验证输入参数”）、语言特定标准（例如“在Python中使用f-string，而不是%格式化”）和自我审查清单（例如“所有错误路径是否都已记录？”）。规则集从少量开始（最初5条行为规则），随着人工审查者接受评论而增长。其次，在任何代码提交之前，智能体执行自我审查步骤：它读取当前指令文件，并根据每条规则和清单项检查其生成的代码。此步骤通过提示自动化，指示LLM验证合规性并标记违规。第三，自动验证脚本确保规则集在增长时保持一致——例如，检测矛盾规则（例如“始终使用制表符”与“始终使用空格”）或格式错误的条目。闭环流程为：(1) 智能体接收任务和当前指令文件；(2) 智能体生成代码；(3) 智能体使用清单执行自我审查；(4) 代码提交进行人工审查；(5) 人工提供评论；(6) 被接受的评论手动或半自动编码为新规则/标准/清单项；(7) 指令文件更新并受版本控制；(8) 未来会话使用扩展后的规则集。不进行模型微调或权重更新。该框架与智能体无关：它通过简单地将指令文件包含在系统提示或上下文窗口中，适用于任何基于LLM的编码智能体（例如GPT-4、Claude）。"
+    },
+    "experiments": {
+      "en": "The framework was deployed on a production microservices platform with over 35 services. The authors recorded 11 working sessions spanning four task types: code generation, pull request review, incident investigation, and cross-service refactoring. Over these sessions, the rule set grew from an initial 5 behavioral rules to 18 behavioral rules, plus 15+ language-specific standards and a 15-item self-review checklist—all derived from real human review feedback. The key quantitative result is a measured 0% recurrence rate for error classes that had been codified into rules: once a rule was added, the agent never made that same class of mistake again in subsequent sessions. Qualitatively, the authors observed that the focus of human review effort shifted over time from low-level correctness issues (e.g., missing null checks, incorrect API usage) toward design-level validation (e.g., architectural consistency, scalability concerns). The framework also demonstrated transfer across heterogeneous agent interfaces: the same rule set was used successfully with different underlying LLMs (e.g., GPT-4 and Claude) without modification. The authors compare their approach against related work in experiential LLM learning (Reflexion, ExpeL, Voyager) and automated code review (CodeReviewer, SWE-bench agents), arguing that their framework achieves persistent cross-session learning without weight updates, operates on production codebases rather than synthetic benchmarks, and addresses an orthogonal dimension (behavioral consistency over time) that existing benchmarks do not measure. No direct performance numbers (e.g., pass@k) are reported against these baselines, as the focus is on a different metric: recurrence prevention.",
+      "zh": "该框架部署在一个拥有超过35个服务的生产微服务平台上。作者记录了11次工作会话，涵盖四种任务类型：代码生成、拉取请求审查、事件调查和跨服务重构。在这些会话中，规则集从最初的5条行为规则增长到18条行为规则，加上15+条语言特定标准和15项自我审查清单——全部来自真实的人工审查反馈。关键的定量结果是，对于已编码为规则的错误类别，测量到0%的复发率：一旦添加了规则，智能体在后续会话中从未再犯同一类错误。定性上，作者观察到人工审查精力的重点随时间从低级正确性问题（例如缺失空值检查、不正确的API使用）转向设计级验证（例如架构一致性、可扩展性问题）。该框架还展示了跨异构智能体接口的迁移能力：相同的规则集成功用于不同的底层LLM（例如GPT-4和Claude），无需修改。作者将其方法与经验性LLM学习（Reflexion、ExpeL、Voyager）和自动代码审查（CodeReviewer、SWE-bench智能体）的相关工作进行比较，认为他们的框架实现了无需权重更新的持久跨会话学习，在生产代码库上运行而非合成基准，并解决了一个现有基准未测量的正交维度（随时间的行为一致性）。没有报告针对这些基线的直接性能数字（例如pass@k），因为重点在于不同的指标：复发预防。"
+    },
+    "conclusion": {
+      "en": "The closed-loop framework achieves persistent cross-session learning for LLM-based coding agents by externalizing human corrections into a version-controlled rule set, eliminating recurrence of known errors and shifting reviewer effort from low-level correctness to design-level validation. This externalization provides immediate retention of feedback without weight updates, but learning is confined to explicit, manually codified rules and does not improve the agent's ability to solve novel tasks or generalize beyond captured error classes. The approach complements post-training methods like RLHF by addressing behavioral consistency—an orthogonal dimension not measured by existing benchmarks—and demonstrates practical integration with real production codebases. For practitioners, this means a low-cost way to accumulate engineering wisdom across sessions, though it requires ongoing rule maintenance and does not replace the need for broader capability improvements.",
+      "zh": "该闭环框架通过将人工修正外部化为版本控制的规则集，实现了基于LLM的编码智能体的持久跨会话学习，消除了已知错误的复发，并将审查者精力从低级正确性转向设计级验证。这种外部化提供了无需权重更新的即时反馈保留，但学习仅限于显式、手动编码的规则，不会提高智能体解决新任务或泛化到已捕获错误类别之外的能力。该方法通过解决行为一致性（现有基准未测量的正交维度）补充了RLHF等后训练技术，并展示了与真实生产代码库的实际集成。对于实践者而言，这意味着一种低成本的方式跨会话积累工程智慧，尽管它需要持续的规则维护，并且不能替代更广泛能力改进的需求。"
+    }
+  },
+  "tasks": [
+    {
+      "question": {
+        "en": "How does the framework's approach of accumulating behavioral rules compare to post-training techniques like RLHF or RL with execution feedback in terms of learning from human feedback and improving code correctness? What are the advantages and limitations of externalizing learning versus updating model weights?",
+        "zh": "该框架通过累积行为规则的方法与RLHF或带执行反馈的RL等后训练技术相比，在从人类反馈中学习和提高代码正确性方面有何不同？将学习外部化与更新模型权重相比有哪些优势和局限性？"
+      },
+      "reason": {
+        "en": "The user is specifically interested in post-training techniques (SFT, RLHF, RL with execution feedback) that improve correctness on real-world software engineering tasks. The paper presents an alternative that learns without weight updates, making a direct comparison highly relevant to understanding trade-offs between external rule accumulation and weight-based learning.",
+        "zh": "用户特别关注后训练技术（SFT、RLHF、带执行反馈的RL），这些技术旨在提高真实世界软件工程任务的正确性。本文提出了一种无需权重更新的替代方案，因此直接比较对于理解外部规则累积与基于权重的学习之间的权衡非常相关。"
+      }
+    },
+    {
+      "question": {
+        "en": "The framework uses a version-controlled instruction file that grows over time. How does this approach handle the challenge of long-context in repository-level code generation, and what strategies are used to ensure the rule set remains effective as it scales?",
+        "zh": "该框架使用随时间增长的版本控制指令文件。这种方法如何处理仓库级代码生成中的长上下文挑战？采用了哪些策略来确保规则集在扩展时仍然有效？"
+      },
+      "reason": {
+        "en": "The user's interest includes repository-level generation and long-context handling. The paper's rule set is included in the prompt, which directly relates to long-context management. This question probes how the framework addresses scalability and context length limitations, which are critical for real-world codebases.",
+        "zh": "用户的兴趣包括仓库级生成和长上下文处理。论文的规则集包含在提示中，这直接关系到长上下文管理。这个问题探讨了框架如何解决可扩展性和上下文长度限制，这对于真实世界的代码库至关重要。"
+      }
+    },
+    {
+      "question": {
+        "en": "The paper evaluates the framework using real production sessions and measures recurrence rate and shift in review focus. How does this evaluation methodology address the need for benchmarks that measure compilation, execution, and integration with existing codebases? What additional evaluation approaches could complement this to assess generalizability?",
+        "zh": "论文使用真实生产会话评估框架，并测量复发率和审查重点的转变。这种评估方法如何满足衡量编译、执行和与现有代码库集成的基准需求？哪些额外的评估方法可以补充这一点以评估泛化能力？"
+      },
+      "reason": {
+        "en": "The user cares about new benchmarks and evaluation methodologies beyond pass@k, especially those measuring compilation, execution, integration, and human-in-the-loop usage. This question examines how the paper's empirical approach aligns with those criteria and identifies potential extensions.",
+        "zh": "用户关心超越pass@k的新基准和评估方法，特别是那些衡量编译、执行、集成和人在回路中使用的。这个问题考察了论文的实证方法如何符合这些标准，并确定了潜在的扩展方向。"
+      }
+    },
+    {
+      "question": {
+        "en": "The framework relies on human review feedback to generate behavioral rules. How does this human-in-the-loop mechanism relate to preference learning approaches like RLHF for code generation? Could the accumulated rule set serve as a form of explicit preference model, and what are the implications for training LLMs?",
+        "zh": "该框架依赖人工审查反馈生成行为规则。这种人在回路机制与代码生成的偏好学习方法（如RLHF）有何关联？累积的规则集能否作为一种显式偏好模型？这对训练LLM有何影响？"
+      },
+      "reason": {
+        "en": "The user is interested in human-in-the-loop usage and preference learning. The paper's codification of human feedback into rules offers a structured alternative to implicit preference models. This question explores the connection and potential synergies with RLHF, which is a key post-training technique.",
+        "zh": "用户对人在回路使用和偏好学习感兴趣。论文将人类反馈编码为规则，为隐式偏好模型提供了一种结构化替代方案。这个问题探讨了与RLHF（一种关键后训练技术）的联系和潜在协同作用。"
+      }
+    }
+  ],
+  "findings": [
+    {
+      "question": {
+        "en": "How does the framework's approach of accumulating behavioral rules compare to post-training techniques like RLHF or RL with execution feedback in terms of learning from human feedback and improving code correctness? What are the advantages and limitations of externalizing learning versus updating model weights?",
+        "zh": "该框架通过累积行为规则的方法与RLHF或带执行反馈的RL等后训练技术相比，在从人类反馈中学习和提高代码正确性方面有何不同？将学习外部化与更新模型权重相比有哪些优势和局限性？"
+      },
+      "reason": {
+        "en": "The user is specifically interested in post-training techniques (SFT, RLHF, RL with execution feedback) that improve correctness on real-world software engineering tasks. The paper presents an alternative that learns without weight updates, making a direct comparison highly relevant to understanding trade-offs between external rule accumulation and weight-based learning.",
+        "zh": "用户特别关注后训练技术（SFT、RLHF、带执行反馈的RL），这些技术旨在提高真实世界软件工程任务的正确性。本文提出了一种无需权重更新的替代方案，因此直接比较对于理解外部规则累积与基于权重的学习之间的权衡非常相关。"
+      },
+      "answer": {
+        "en": "The framework's approach of accumulating behavioral rules differs fundamentally from post-training techniques like RLHF or RL with execution feedback by externalizing learning into a version-controlled rule set rather than updating model weights. The paper explicitly states that it achieves \"persistent cross-session learning without weight updates\" and that the result is \"a coding agent that improves with every review cycle, accumulating the engineering wisdom of its human collaborators without changing a single model weight.\" This externalization yields a key advantage: a measured \"0% recurrence rate for ruled-against error classes\" because once a rule is codified, the agent self-detects and avoids that error in future sessions. Additionally, the framework \"shift[s] review effort from low-level correctness toward design-level validation,\" indicating that accumulated rules free human reviewers for higher-level concerns. However, the paper acknowledges that this approach \"addresses an orthogonal dimension (behavioral consistency over time) that existing benchmarks do not measure,\" implying a limitation: it does not improve the underlying model's general capability or reasoning—it only enforces explicit, codified rules. Unlike RLHF, which updates model weights to internalize preferences broadly, or RL with execution feedback, which optimizes for task success via reward signals, the rule-accumulation method cannot generalize beyond the specific rules derived from past feedback. Its advantage is immediate, zero-cost retention of human corrections without retraining; its limitation is that learning is confined to explicit, manually codified rules and does not enhance the model's latent knowledge or adaptability to novel error classes not yet captured in the rule set.",
+        "zh": "该框架通过累积行为规则的方法与RLHF或带执行反馈的RL等后训练技术有根本不同，它将学习外部化为版本控制的规则集，而不是更新模型权重。论文明确指出它实现了“无需权重更新的持久跨会话学习”，并且结果是“一个编码智能体，随着每次审查周期而改进，积累人类协作者的工程智慧，而不改变任何模型权重”。这种外部化带来了一个关键优势：针对规则禁止的错误类别实现了“0%复发率”，因为一旦规则被编码，智能体在未来会话中会自动检测并避免该错误。此外，该框架“将审查精力从低级正确性转向设计级验证”，表明累积的规则使人工审查者能够专注于更高级别的问题。然而，论文承认这种方法“解决了一个现有基准未测量的正交维度（随时间的行为一致性）”，暗示其局限性：它不会改进底层模型的通用能力或推理能力——它只强制执行显式编码的规则。与RLHF（通过更新模型权重广泛内化偏好）或带执行反馈的RL（通过奖励信号优化任务成功）不同，规则累积方法无法泛化到超出过去反馈衍生的特定规则。其优势是无需重新训练即可立即零成本保留人工修正；其局限性在于学习仅限于显式、手动编码的规则，并且不会增强模型对尚未捕获的新错误类别的潜在知识或适应性。"
+      },
+      "confidence": 0.8
+    },
+    {
+      "question": {
+        "en": "The framework uses a version-controlled instruction file that grows over time. How does this approach handle the challenge of long-context in repository-level code generation, and what strategies are used to ensure the rule set remains effective as it scales?",
+        "zh": "该框架使用随时间增长的版本控制指令文件。这种方法如何处理仓库级代码生成中的长上下文挑战？采用了哪些策略来确保规则集在扩展时仍然有效？"
+      },
+      "reason": {
+        "en": "The user's interest includes repository-level generation and long-context handling. The paper's rule set is included in the prompt, which directly relates to long-context management. This question probes how the framework addresses scalability and context length limitations, which are critical for real-world codebases.",
+        "zh": "用户的兴趣包括仓库级生成和长上下文处理。论文的规则集包含在提示中，这直接关系到长上下文管理。这个问题探讨了框架如何解决可扩展性和上下文长度限制，这对于真实世界的代码库至关重要。"
+      },
+      "answer": {
+        "en": "The paper does not directly address the challenge of long-context in repository-level code generation. It describes a framework that accumulates behavioral rules in a version-controlled instruction file, which grows over time—from 5 to 18 behavioral rules, 15+ language-specific standards, and a 15-item self-review checklist—but it does not discuss strategies for managing increasing prompt length or token limits. The focus is on \"automated validation that ensures rule set integrity as it grows\" and shifting review effort toward design-level validation, not on mitigating context window constraints. Therefore, the question of long-context handling is not addressed in the paper.",
+        "zh": "论文没有直接解决仓库级代码生成中的长上下文挑战。它描述了一个在版本控制指令文件中累积行为规则的框架，该文件随时间增长——从5条行为规则扩展到18条，加上15+条语言特定标准和15项自我审查清单——但它没有讨论管理不断增长的提示长度或令牌限制的策略。重点在于“确保规则集在增长时保持完整性的自动验证”以及将审查精力转向设计级验证，而不是缓解上下文窗口约束。因此，论文未涉及长上下文处理的问题。"
+      },
+      "confidence": 0.2
+    },
+    {
+      "question": {
+        "en": "The paper evaluates the framework using real production sessions and measures recurrence rate and shift in review focus. How does this evaluation methodology address the need for benchmarks that measure compilation, execution, and integration with existing codebases? What additional evaluation approaches could complement this to assess generalizability?",
+        "zh": "论文使用真实生产会话评估框架，并测量复发率和审查重点的转变。这种评估方法如何满足衡量编译、执行和与现有代码库集成的基准需求？哪些额外的评估方法可以补充这一点以评估泛化能力？"
+      },
+      "reason": {
+        "en": "The user cares about new benchmarks and evaluation methodologies beyond pass@k, especially those measuring compilation, execution, integration, and human-in-the-loop usage. This question examines how the paper's empirical approach aligns with those criteria and identifies potential extensions.",
+        "zh": "用户关心超越pass@k的新基准和评估方法，特别是那些衡量编译、执行、集成和人在回路中使用的。这个问题考察了论文的实证方法如何符合这些标准，并确定了潜在的扩展方向。"
+      },
+      "answer": {
+        "en": "The paper's evaluation methodology addresses integration by deploying the framework on a \"35+ service microservices platform\" and measuring outcomes from \"11 recorded working sessions\" of real production code generation, PR review, and refactoring. It tracks \"0% recurrence rate for ruled-against error classes\" and a \"shift review effort from low-level correctness toward design-level validation,\" demonstrating that the framework integrates with existing codebases and human review workflows. However, it does not directly measure compilation success rates, execution correctness, or pass@k-style benchmarks; the authors explicitly note their approach \"addresses an orthogonal dimension (behavioral consistency over time) that existing benchmarks do not measure.\" To assess generalizability, additional evaluation approaches could include cross-project benchmarks (e.g., applying the framework to unrelated codebases), measuring compilation and execution pass rates on held-out tasks, and conducting controlled experiments with varied agent interfaces and programming languages to quantify rule transferability beyond the single microservices platform studied.",
+        "zh": "论文的评估方法通过将框架部署在“35+服务的微服务平台”上，并测量来自“11次记录的工作会话”的真实生产代码生成、PR审查和重构结果，解决了集成问题。它跟踪了“针对规则禁止错误类别的0%复发率”和“将审查精力从低级正确性转向设计级验证”，表明该框架与现有代码库和人工审查工作流集成。然而，它没有直接测量编译成功率、执行正确性或pass@k风格的基准；作者明确指出他们的方法“解决了一个现有基准未测量的正交维度（随时间的行为一致性）”。为了评估泛化能力，额外的评估方法可以包括跨项目基准（例如，将框架应用于无关的代码库）、在保留任务上测量编译和执行通过率，以及进行受控实验，使用不同的智能体接口和编程语言，以量化规则在单一微服务平台之外的可迁移性。"
+      },
+      "confidence": 0.7
+    },
+    {
+      "question": {
+        "en": "The framework relies on human review feedback to generate behavioral rules. How does this human-in-the-loop mechanism relate to preference learning approaches like RLHF for code generation? Could the accumulated rule set serve as a form of explicit preference model, and what are the implications for training LLMs?",
+        "zh": "该框架依赖人工审查反馈生成行为规则。这种人在回路机制与代码生成的偏好学习方法（如RLHF）有何关联？累积的规则集能否作为一种显式偏好模型？这对训练LLM有何影响？"
+      },
+      "reason": {
+        "en": "The user is interested in human-in-the-loop usage and preference learning. The paper's codification of human feedback into rules offers a structured alternative to implicit preference models. This question explores the connection and potential synergies with RLHF, which is a key post-training technique.",
+        "zh": "用户对人在回路使用和偏好学习感兴趣。论文将人类反馈编码为规则，为隐式偏好模型提供了一种结构化替代方案。这个问题探讨了与RLHF（一种关键后训练技术）的联系和潜在协同作用。"
+      },
+      "answer": {
+        "en": "The paper's human-in-the-loop mechanism codifies human review feedback into explicit, persistent behavioral rules, which contrasts with implicit preference learning approaches like RLHF. The framework states that 'every accepted review comment is codified as a persistent behavioral rule' and that the rule set 'progressively expand[s] the set of error classes the agent can self-detect.' This accumulated rule set functions as an explicit, human-readable preference model—a structured checklist that encodes desired behaviors and error avoidance. However, the paper explicitly notes that this learning occurs 'without changing a single model weight,' meaning the rules are not used to fine-tune the LLM via gradient updates as in RLHF. Instead, they serve as a self-review mechanism applied at inference time. The implications for training LLMs are indirect: the rule set could potentially be distilled into a reward model or used to generate preference pairs for RLHF, but the paper does not explore this. The framework is presented as an orthogonal dimension—'behavioral consistency over time'—that existing benchmarks do not measure, and it operates on production codebases rather than synthetic benchmarks. Thus, while the rule set is a form of explicit preference model, its relationship to RLHF is complementary rather than directly synergistic, as it avoids weight updates and focuses on cross-session behavioral retention.",
+        "zh": "论文的人在回路机制将人工审查反馈编码为显式、持久的行为规则，这与RLHF等隐式偏好学习方法形成对比。该框架指出“每个被接受的审查评论都被编码为持久行为规则”，并且规则集“逐步扩展智能体可以自我检测的错误类别”。这个累积的规则集充当了一个显式、人类可读的偏好模型——一个编码了期望行为和错误避免的结构化清单。然而，论文明确指出这种学习发生在“不改变任何模型权重”的情况下，意味着规则不用于通过梯度更新来微调LLM（如RLHF）。相反，它们作为推理时应用的自我审查机制。对训练LLM的影响是间接的：规则集可能被蒸馏成奖励模型或用于生成RLHF的偏好对，但论文没有探索这一点。该框架被呈现为一个正交维度——“随时间的行为一致性”——现有基准未测量，并且它运行在生产代码库上而非合成基准上。因此，虽然规则集是一种显式偏好模型，但它与RLHF的关系是互补而非直接协同的，因为它避免了权重更新，专注于跨会话的行为保留。"
+      },
+      "confidence": 0.4
+    }
+  ],
+  "score": 63.0,
+  "score_dimensions": [
+    {
+      "name": "topic_alignment",
+      "weight": 0.35,
+      "value": 0.7
+    },
+    {
+      "name": "methodology_fit",
+      "weight": 0.25,
+      "value": 0.5
+    },
+    {
+      "name": "novelty",
+      "weight": 0.2,
+      "value": 0.7
+    },
+    {
+      "name": "experiment_coverage",
+      "weight": 0.2,
+      "value": 0.6
+    }
+  ],
+  "markdown": "",
+  "model": "deepseek-v4-flash",
+  "generated_at": "2026-07-20T05:42:56Z"
+}
