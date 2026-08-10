@@ -1,6 +1,26 @@
 {
   "papers": [
     {
+      "arxiv_id": "2608.04682",
+      "topic": "Automated Program Repair",
+      "topic_label": "Automated Program Repair",
+      "title": {
+        "en": "Active-SWE: Benchmarking Coding Agents for Proactive Bug Fixing without Issue Reports",
+        "zh": "Active-SWE: Benchmarking Coding Agents for Proactive Bug Fixing without Issue Reports"
+      },
+      "authors": [
+        "Haobin Li",
+        "Ping Deng",
+        "Weizhong Qian",
+        "Liang Jiang",
+        "Zhenyu Huang",
+        "Mouxing Yang"
+      ],
+      "score": 60.9,
+      "published": "2026-08-05",
+      "generated_at": "2026-08-10T03:44:40Z"
+    },
+    {
       "arxiv_id": "2607.12463",
       "topic": "Automated Program Repair",
       "topic_label": "Automated Program Repair",
@@ -1803,5 +1823,5 @@
       "generated_at": "2026-05-14T14:40:43Z"
     }
   ],
-  "updated_at": "2026-07-20T05:47:14Z"
+  "updated_at": "2026-08-10T03:44:40Z"
 }

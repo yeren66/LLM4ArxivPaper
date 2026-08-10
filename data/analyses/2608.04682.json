@@ -1,0 +1,120 @@
+{
+  "arxiv_id": "2608.04682",
+  "topic": "Automated Program Repair",
+  "topic_label": "Automated Program Repair",
+  "title": {
+    "en": "Active-SWE: Benchmarking Coding Agents for Proactive Bug Fixing without Issue Reports",
+    "zh": "Active-SWE: Benchmarking Coding Agents for Proactive Bug Fixing without Issue Reports"
+  },
+  "authors": [
+    "Haobin Li",
+    "Ping Deng",
+    "Weizhong Qian",
+    "Liang Jiang",
+    "Zhenyu Huang",
+    "Mouxing Yang",
+    "Xi Peng"
+  ],
+  "affiliations": [],
+  "categories": [
+    "cs.SE",
+    "cs.AI"
+  ],
+  "published": "2026-08-05T10:50:01",
+  "updated": "2026-08-05T10:50:01",
+  "abstract": "Coding agents powered by large language models (LLMs) are increasingly adopted in software engineering (SWE) scenarios, capable of fixing a specific bug in large-scale codebase. However, existing SWE benchmarks typically assume that high-quality issue reports with detailed information are always available, which is easily violated in practice due to the complexity of report acquisition and curation. To address this, we introduce Active-SWE, a benchmark for evaluating coding agents on proactively discovering and fixing multiple bugs without report guidance, covering 1,663 tasks across six bug categories and eight languages. Beyond shifting the focus from existing reactive bug fixing to proactive bug fixing, Active-SWE enables a more in-depth evaluation by expanding the scope from fixing a specific recorded bug to multiple-bug fixing and potential bug discovery scenarios. To construct Active-SWE, we propose a novel difficulty-aware task formulation pipeline with a dual-track evaluation framework, facilitating comprehensive evaluation of proactive bug-fixing capability. Extensive experiments reveal that most state-of-the-art coding agents struggle with proactive bug-fixing tasks, demonstrating limited performance in locating and resolving recorded bugs, handling multiple bug fixing scenarios, and discovering valid potential bugs.",
+  "arxiv_url": "https://arxiv.org/abs/2608.04682",
+  "pdf_url": "https://arxiv.org/pdf/2608.04682.pdf",
+  "comment": "24 pages, 17 figures",
+  "relevance": {
+    "en": "(Online LLM not enabled — relevance note unavailable. See the 5-aspect core below to judge how this paper relates to your work.)",
+    "zh": "(Online LLM not enabled — relevance note unavailable. See the 5-aspect core below to judge how this paper relates to your work.)"
+  },
+  "figures": [],
+  "figure": null,
+  "brief_summary": {
+    "en": "Coding agents powered by large language models (LLMs) are increasingly adopted in software engineering (SWE) scenarios, capable of fixing a specific bug in large-scale codebase. However, existing SWE benchmarks typically assume that high-quality issue reports with detailed information are always available, which is easily violated in practice due to the complexity of report acquisition and curation. To address this, we introduce Active-SWE, a benchmark for evaluating coding agents on proactively discovering and fixing multiple bugs without report guidance, covering 1,663 tasks across six bug categories and eight languages.\n\nBeyond shifting the focus from existing reactive bug fixing to proactive bug fixing, Active-SWE enables a more in-depth evaluation by expanding the scope from fixing a specific recorded bug to multiple-bug fixing and potential bug discovery scenarios. To construct Active-SWE, we propose a novel difficulty-aware task formulation pipeline with a dual-track evaluation framework, facilitating comprehensive evaluation of proactive bug-fixing capability. Extensive experiments reveal that most state-of-the-art coding agents struggle with proactive bug-fixing tasks, demonstrating limited performance in locating and resolving recorded bugs, handling multiple bug fixing scenarios, and discovering valid potential bugs.",
+    "zh": "Coding agents powered by large language models (LLMs) are increasingly adopted in software engineering (SWE) scenarios, capable of fixing a specific bug in large-scale codebase. However, existing SWE benchmarks typically assume that high-quality issue reports with detailed information are always available, which is easily violated in practice due to the complexity of report acquisition and curation. To address this, we introduce Active-SWE, a benchmark for evaluating coding agents on proactively discovering and fixing multiple bugs without report guidance, covering 1,663 tasks across six bug categories and eight languages.\n\nBeyond shifting the focus from existing reactive bug fixing to proactive bug fixing, Active-SWE enables a more in-depth evaluation by expanding the scope from fixing a specific recorded bug to multiple-bug fixing and potential bug discovery scenarios. To construct Active-SWE, we propose a novel difficulty-aware task formulation pipeline with a dual-track evaluation framework, facilitating comprehensive evaluation of proactive bug-fixing capability. Extensive experiments reveal that most state-of-the-art coding agents struggle with proactive bug-fixing tasks, demonstrating limited performance in locating and resolving recorded bugs, handling multiple bug fixing scenarios, and discovering valid potential bugs."
+  },
+  "core_summary": null,
+  "tasks": [
+    {
+      "question": {
+        "en": "What is the main contribution of this paper?",
+        "zh": "What is the main contribution of this paper?"
+      },
+      "reason": {
+        "en": "Understand the core innovation",
+        "zh": "Understand the core innovation"
+      }
+    },
+    {
+      "question": {
+        "en": "How do the experiments validate the method's effectiveness?",
+        "zh": "How do the experiments validate the method's effectiveness?"
+      },
+      "reason": {
+        "en": "Assess the method's reliability",
+        "zh": "Assess the method's reliability"
+      }
+    }
+  ],
+  "findings": [
+    {
+      "question": {
+        "en": "What is the main contribution of this paper?",
+        "zh": "What is the main contribution of this paper?"
+      },
+      "reason": {
+        "en": "Understand the core innovation",
+        "zh": "Understand the core innovation"
+      },
+      "answer": {
+        "en": "Skip to main content [](https://arxiv.org/IgnoreMe) [ ![archive](/static/base/1.0.1/images/arxiv-logo-primary-light.svg) ](https://arxiv.org/) [ Search ](https://arxiv.org/search) [Submit](https://arxiv.org/user/create) [Donate](https://info.arxiv.org/about/donate.html) [Log in](https://arxiv.org/login) Search arXiv Press Enter to search * [Advanced search](https://arxiv.org/search/advanced) # Computer Science > Software Engineering **arXiv:2608.04682** (cs) [Submitted on 5 Aug 2026] # Title:Active-SWE: Benchmarking Coding Agents for Proactive Bug Fixing without Issue Reports Authors:[Haobin Li](https://arxiv.org/search/cs?searchtype=author&query=Li,+H), [Ping Deng](https://arxiv.org/search/cs?searchtype=author&query=Deng,+P), [Weizhong Qian](https://arxiv.org/search/cs?searchtype=author&query=Qian,+W), [Liang Jiang](https://arxiv.org/search/cs?searchtype=author&query=Jiang,+L), [Zhenyu Huang](https://arxiv.org/search/cs?searchtype=author&query=Huang,+Z), [Mouxing Yang](https://arxiv.org/search/cs?searchtype=author&query=Yang,+M), [Xi Peng](https://arxiv.org/search/cs?searchtype=author&query=Peng,+X) View a PDF of the paper titled Active-SWE: Benchmarking Coding Agents for Proactive Bug Fixing without Issue Reports, by Haobin Li and 6 other authors [View PDF](/pdf/2608.04682) [HTML (experimental)](https://arxiv.org/html/2608.04682v1) > Abstract:Coding agents powered by large language models (LLMs) are increasingly adopted in software engineering (SWE) scenarios, capable of fixing a specific bug in large-scale codebase.",
+        "zh": "Skip to main content [](https://arxiv.org/IgnoreMe) [ ![archive](/static/base/1.0.1/images/arxiv-logo-primary-light.svg) ](https://arxiv.org/) [ Search ](https://arxiv.org/search) [Submit](https://arxiv.org/user/create) [Donate](https://info.arxiv.org/about/donate.html) [Log in](https://arxiv.org/login) Search arXiv Press Enter to search * [Advanced search](https://arxiv.org/search/advanced) # Computer Science > Software Engineering **arXiv:2608.04682** (cs) [Submitted on 5 Aug 2026] # Title:Active-SWE: Benchmarking Coding Agents for Proactive Bug Fixing without Issue Reports Authors:[Haobin Li](https://arxiv.org/search/cs?searchtype=author&query=Li,+H), [Ping Deng](https://arxiv.org/search/cs?searchtype=author&query=Deng,+P), [Weizhong Qian](https://arxiv.org/search/cs?searchtype=author&query=Qian,+W), [Liang Jiang](https://arxiv.org/search/cs?searchtype=author&query=Jiang,+L), [Zhenyu Huang](https://arxiv.org/search/cs?searchtype=author&query=Huang,+Z), [Mouxing Yang](https://arxiv.org/search/cs?searchtype=author&query=Yang,+M), [Xi Peng](https://arxiv.org/search/cs?searchtype=author&query=Peng,+X) View a PDF of the paper titled Active-SWE: Benchmarking Coding Agents for Proactive Bug Fixing without Issue Reports, by Haobin Li and 6 other authors [View PDF](/pdf/2608.04682) [HTML (experimental)](https://arxiv.org/html/2608.04682v1) > Abstract:Coding agents powered by large language models (LLMs) are increasingly adopted in software engineering (SWE) scenarios, capable of fixing a specific bug in large-scale codebase."
+      },
+      "confidence": 0.7
+    },
+    {
+      "question": {
+        "en": "How do the experiments validate the method's effectiveness?",
+        "zh": "How do the experiments validate the method's effectiveness?"
+      },
+      "reason": {
+        "en": "Assess the method's reliability",
+        "zh": "Assess the method's reliability"
+      },
+      "answer": {
+        "en": "Skip to main content [](https://arxiv.org/IgnoreMe) [ ![archive](/static/base/1.0.1/images/arxiv-logo-primary-light.svg) ](https://arxiv.org/) [ Search ](https://arxiv.org/search) [Submit](https://arxiv.org/user/create) [Donate](https://info.arxiv.org/about/donate.html) [Log in](https://arxiv.org/login) Search arXiv Press Enter to search * [Advanced search](https://arxiv.org/search/advanced) # Computer Science > Software Engineering **arXiv:2608.04682** (cs) [Submitted on 5 Aug 2026] # Title:Active-SWE: Benchmarking Coding Agents for Proactive Bug Fixing without Issue Reports Authors:[Haobin Li](https://arxiv.org/search/cs?searchtype=author&query=Li,+H), [Ping Deng](https://arxiv.org/search/cs?searchtype=author&query=Deng,+P), [Weizhong Qian](https://arxiv.org/search/cs?searchtype=author&query=Qian,+W), [Liang Jiang](https://arxiv.org/search/cs?searchtype=author&query=Jiang,+L), [Zhenyu Huang](https://arxiv.org/search/cs?searchtype=author&query=Huang,+Z), [Mouxing Yang](https://arxiv.org/search/cs?searchtype=author&query=Yang,+M), [Xi Peng](https://arxiv.org/search/cs?searchtype=author&query=Peng,+X) View a PDF of the paper titled Active-SWE: Benchmarking Coding Agents for Proactive Bug Fixing without Issue Reports, by Haobin Li and 6 other authors [View PDF](/pdf/2608.04682) [HTML (experimental)](https://arxiv.org/html/2608.04682v1) > Abstract:Coding agents powered by large language models (LLMs) are increasingly adopted in software engineering (SWE) scenarios, capable of fixing a specific bug in large-scale codebase.",
+        "zh": "Skip to main content [](https://arxiv.org/IgnoreMe) [ ![archive](/static/base/1.0.1/images/arxiv-logo-primary-light.svg) ](https://arxiv.org/) [ Search ](https://arxiv.org/search) [Submit](https://arxiv.org/user/create) [Donate](https://info.arxiv.org/about/donate.html) [Log in](https://arxiv.org/login) Search arXiv Press Enter to search * [Advanced search](https://arxiv.org/search/advanced) # Computer Science > Software Engineering **arXiv:2608.04682** (cs) [Submitted on 5 Aug 2026] # Title:Active-SWE: Benchmarking Coding Agents for Proactive Bug Fixing without Issue Reports Authors:[Haobin Li](https://arxiv.org/search/cs?searchtype=author&query=Li,+H), [Ping Deng](https://arxiv.org/search/cs?searchtype=author&query=Deng,+P), [Weizhong Qian](https://arxiv.org/search/cs?searchtype=author&query=Qian,+W), [Liang Jiang](https://arxiv.org/search/cs?searchtype=author&query=Jiang,+L), [Zhenyu Huang](https://arxiv.org/search/cs?searchtype=author&query=Huang,+Z), [Mouxing Yang](https://arxiv.org/search/cs?searchtype=author&query=Yang,+M), [Xi Peng](https://arxiv.org/search/cs?searchtype=author&query=Peng,+X) View a PDF of the paper titled Active-SWE: Benchmarking Coding Agents for Proactive Bug Fixing without Issue Reports, by Haobin Li and 6 other authors [View PDF](/pdf/2608.04682) [HTML (experimental)](https://arxiv.org/html/2608.04682v1) > Abstract:Coding agents powered by large language models (LLMs) are increasingly adopted in software engineering (SWE) scenarios, capable of fixing a specific bug in large-scale codebase."
+      },
+      "confidence": 0.7
+    }
+  ],
+  "score": 60.9,
+  "score_dimensions": [
+    {
+      "name": "topic_alignment",
+      "weight": 0.35,
+      "value": 0.14
+    },
+    {
+      "name": "methodology_fit",
+      "weight": 0.25,
+      "value": 0.8
+    },
+    {
+      "name": "novelty",
+      "weight": 0.2,
+      "value": 0.8
+    },
+    {
+      "name": "experiment_coverage",
+      "weight": 0.2,
+      "value": 1.0
+    }
+  ],
+  "markdown": "",
+  "model": "deepseek-v4-flash",
+  "generated_at": "2026-08-10T03:44:40Z"
+}
