@@ -1,6 +1,24 @@
 {
   "papers": [
     {
+      "arxiv_id": "2609.17993",
+      "topic": "Automated Program Repair",
+      "topic_label": "Automated Program Repair",
+      "title": {
+        "en": "Experimental Settings in LLM-Based Program Repair: A Study of Inputs, Tool Access, Feedback, and Validation",
+        "zh": "Experimental Settings in LLM-Based Program Repair: A Study of Inputs, Tool Access, Feedback, and Validation"
+      },
+      "authors": [
+        "Xushu Dai",
+        "Yicheng Cai",
+        "Nanqing Luo",
+        "Pei-Yu Tseng"
+      ],
+      "score": 62.7,
+      "published": "2026-09-16",
+      "generated_at": "2026-09-21T07:26:44Z"
+    },
+    {
       "arxiv_id": "2608.04682",
       "topic": "Automated Program Repair",
       "topic_label": "Automated Program Repair",
@@ -1823,5 +1841,5 @@
       "generated_at": "2026-05-14T14:40:43Z"
     }
   ],
-  "updated_at": "2026-08-10T03:44:40Z"
+  "updated_at": "2026-09-21T07:26:44Z"
 }
